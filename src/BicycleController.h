@@ -25,7 +25,8 @@ public:
 	void triggerSensor(SensorMode sensorMode);
 
 	bool getIsRiderActive();
-	double getAverageVelocity();
+	double getAverageVelocity();   // km/hour
+	double getDistanceTravelled(); // metres
 
 protected:
 
@@ -49,6 +50,8 @@ protected:
 
 	bool bIsRiderActive;
 	int riderInactiveTime;
+
+	double distanceTravelled;
 
 	int simulateVelocity;
 

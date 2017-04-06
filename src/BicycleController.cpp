@@ -29,6 +29,7 @@ void BicycleController::setup() {
 	timeSinceLastSensor = 0;
 	lastVelocityTimeout = 0;
 	simulateVelocity = 0;
+	distanceTravelled = 0; // neters
 
 	bIsRiderActive = false;
 
@@ -120,6 +121,7 @@ void BicycleController::changeMode() {
 	lastSensorTimeout = ofGetElapsedTimeMillis();
 	lastVelocityTimeout = ofGetElapsedTimeMillis();
 	lastMeasuredVelocity = 0;
+
 }
 
 //--------------------------------------------------------------
@@ -204,18 +206,20 @@ void BicycleController::triggerSensor(SensorMode sensorMode) {
 
 		if (!bIsRiderActive) {
 			bIsRiderActive = true;
+			distanceTravelled = 0;
 			ofLogVerbose() << "Rider Active";
 		}
 		
 		lastSensorTimeout = ofGetElapsedTimeMillis();
 		lastMeasuredVelocity = (wheelDiameter * PI / 1000.0 / 1000.0) / (timeSinceLastSensor / 1000.0 / 60.0 / 60.0);
-
+		distanceTravelled += (wheelDiameter * PI / 1000.0);
 	}
 
 	unlock();
 
 }
 
+//--------------------------------------------------------------
 bool BicycleController::getIsRiderActive() {
 	ofScopedLock lock(mutex);
 	return bIsRiderActive;
@@ -225,6 +229,11 @@ bool BicycleController::getIsRiderActive() {
 double BicycleController::getAverageVelocity() {
 	ofScopedLock lock(mutex);
 	return currentAverageVelocity;
+}
+
+//--------------------------------------------------------------
+double BicycleController::getDistanceTravelled() {
+	return distanceTravelled;
 }
 
 //--------------------------------------------------------------

@@ -28,6 +28,9 @@ void BicycleController::setup() {
 	lastMeasuredVelocity = 0;
 	timeSinceLastSensor = 0;
 	lastVelocityTimeout = 0;
+	simulateVelocity = 0;
+
+	bIsRiderActive = false;
 
 	startThread();
 	
@@ -40,15 +43,18 @@ void BicycleController::setDefaults() {
 	nextSensorMode = SENSOR_SIMULATE;
 
 	wheelDiameter = 678; // in millimetres
-	updateVelocityTime = 250; // in millis
-	simulateVelocity = 0;
+	updateVelocityTime = 500; // in millis
 
-	velocityDecay = 10.0;
+	velocityDecay = 2.0;
 	velocityEase = 0.25;
+
+	riderInactiveTime = 8000; //millis
+
 }
 
 //--------------------------------------------------------------
 void BicycleController::update() {
+
 	if (!bUse) return;
 
 	// check thread safe GUI changes
@@ -121,68 +127,93 @@ void BicycleController::threadedFunction() {
 
 	while (isThreadRunning()) {
 
-		lock();
+		if (bUse) {
 
-		// grab the current mode
-		int thisCurrentMode = currentSensorMode;
-		
-		// calculate the amount of time since the last sensor measurement
-		timeSinceLastSensor = ofGetElapsedTimeMillis() - lastSensorTimeout;
+			lock();
 
-		unlock();
+			// grab the current mode
+			int thisCurrentMode = currentSensorMode;
 
-		
+			// calculate the amount of time since the last sensor measurement
+			timeSinceLastSensor = ofGetElapsedTimeMillis() - lastSensorTimeout;
 
-		switch (thisCurrentMode) {
-		case SENSOR_SIMULATE:
-		{
-			double wheelCircumference = wheelDiameter * PI;
-			double targetVelocity = simulateVelocity * 1000.0 * 1000.0 / 60.0 / 60.0; // km/h * meters * millimeters / minutes / seconds = mm/s
-			double simulateTimeout = wheelCircumference / targetVelocity * 1000.0; // mm / mm/s * 1000.0 = milliseconds
-			if (timeSinceLastSensor >= simulateTimeout) {
-				triggerSensor(SENSOR_SIMULATE);
+			unlock();
+
+
+
+			switch (thisCurrentMode) {
+			case SENSOR_SIMULATE:
+			{
+				double wheelCircumference = wheelDiameter * PI;
+				double targetVelocity = simulateVelocity * 1000.0 * 1000.0 / 60.0 / 60.0; // km/h * meters * millimeters / minutes / seconds = mm/s
+				double simulateTimeout = wheelCircumference / targetVelocity * 1000.0; // mm / mm/s * 1000.0 = milliseconds
+				if (timeSinceLastSensor >= simulateTimeout) {
+					triggerSensor(SENSOR_SIMULATE);
+				}
 			}
-		}
-		break;
-		case SENSOR_TEENSY:
-		{
+			break;
+			case SENSOR_TEENSY:
+			{
+
+			}
+			break;
+			case SENSOR_GPIO:
+			{
+
+			}
+			break;
+			}
+
+
+
+			lock();
+
+			// ease currentVelocity - both ease toward zero AND ease toward last measured velocity
+			if (ofGetElapsedTimeMillis() - lastVelocityTimeout > updateVelocityTime) {
+				currentAverageVelocity = currentAverageVelocity * (1.0 - velocityEase) + lastMeasuredVelocity * velocityEase;
+				lastMeasuredVelocity = lastMeasuredVelocity - velocityDecay; // do we need this?
+				if (lastMeasuredVelocity < 0.0) lastMeasuredVelocity = 0;
+				lastVelocityTimeout = ofGetElapsedTimeMillis();
+			}
+
+			// check if rider is inactive
+			if (ofGetElapsedTimeMillis() - lastSensorTimeout > riderInactiveTime) {
+				if (bIsRiderActive) {
+					bIsRiderActive = false;
+					currentAverageVelocity = lastMeasuredVelocity = 0.0;
+					ofLogVerbose() << "Rider Inactive";
+				}
+			}
+
+			unlock();
 
 		}
-		break;
-		case SENSOR_GPIO:
-		{
-
-		}
-		break;
-		}
-
-		
-
-		lock();
-
-		// ease currentVelocity - both ease toward zero AND ease toward last measured velocity
-		if (ofGetElapsedTimeMillis() - lastVelocityTimeout > updateVelocityTime) {
-			currentAverageVelocity = currentAverageVelocity * (1.0 - velocityEase) + lastMeasuredVelocity * velocityEase;
-			lastMeasuredVelocity = lastMeasuredVelocity - velocityDecay;
-			if (lastMeasuredVelocity < 0.0) lastMeasuredVelocity = 0;
-			lastVelocityTimeout = ofGetElapsedTimeMillis();
-		}
-		
-		unlock();
 
 		ofSleepMillis(1);
+
 	}
 
 }
 
 //--------------------------------------------------------------
 void BicycleController::triggerSensor(SensorMode sensorMode) {
+	
 	lock();
+
 	if (sensorMode == currentSensorMode) {
+
+		if (!bIsRiderActive) {
+			bIsRiderActive = true;
+			ofLogVerbose() << "Rider Active";
+		}
+		
 		lastSensorTimeout = ofGetElapsedTimeMillis();
-		lastMeasuredVelocity = (wheelDiameter * PI / 1000.0 / 1000.0) / (timeSinceLastSensor / 1000.0 / 60.0 / 60.0); // should we ease? ie., c * 0.9 + n * 0.1 etc?
+		lastMeasuredVelocity = (wheelDiameter * PI / 1000.0 / 1000.0) / (timeSinceLastSensor / 1000.0 / 60.0 / 60.0);
+
 	}
+
 	unlock();
+
 }
 
 //--------------------------------------------------------------
@@ -199,10 +230,14 @@ void BicycleController::drawGUI() {
 		{
 
 			ImGui::SliderInt("Wheel Diameter (mm)", &wheelDiameter, 600, 700);
+
 			ImGui::SliderInt("Update Velocity (millis)", &updateVelocityTime, 20, 1000);
+
 			ImGui::SliderFloat("Velocity Decay (per/update)", &velocityDecay, 0.0, 20.0);
 			ImGui::SliderFloat("Velocity Ease (per/update)", &velocityEase, 0.01, 1.0);
 			
+			ImGui::SliderInt("Rider Inactive Time (millis)", &riderInactiveTime, 5000, 30000);
+
 			ImGui::Combo("Sensor Mode", (int*)&nextSensorMode, sensorModes);
 
 			switch (nextSensorMode) {
@@ -224,6 +259,8 @@ void BicycleController::drawGUI() {
 			}
 
 			lock();
+
+			ImGui::NewLine();
 			ImGui::Text("Current average velocity %.3f km/hour", currentAverageVelocity);
 			ImGui::Text("Last measured velocity %.3f km/hour", lastMeasuredVelocity);
 			ImGui::Text("Time since last sensor reading : %.0f millis", timeSinceLastSensor);

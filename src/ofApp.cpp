@@ -6,6 +6,7 @@ void ofApp::setup(){
 	ofBackground(0);
 	ofSetVerticalSync(false);
 	ofSetFrameRate(1000);
+	ofSetLogLevel(OF_LOG_VERBOSE);
 
 	bShowDebug = true;
 

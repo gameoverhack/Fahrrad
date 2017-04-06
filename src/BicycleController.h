@@ -46,6 +46,9 @@ protected:
 	int updateVelocityTime;
 	int lastVelocityTimeout;
 
+	bool bIsRiderActive;
+	int riderInactiveTime;
+
 	int simulateVelocity;
 
 	double lastMeasuredVelocity;
@@ -53,8 +56,6 @@ protected:
 
 	double timeSinceLastSensor;
 	int lastSensorTimeout;
-
-	//string getMode();
 
 	void changeMode();
 
@@ -73,7 +74,7 @@ protected:
 		ar & BOOST_SERIALIZATION_NVP(velocityDecay);
 		ar & BOOST_SERIALIZATION_NVP(velocityEase);
 		ar & BOOST_SERIALIZATION_NVP(updateVelocityTime);
-		ar & BOOST_SERIALIZATION_NVP(simulateVelocity);
+		ar & BOOST_SERIALIZATION_NVP(riderInactiveTime);
 	}
 
 };

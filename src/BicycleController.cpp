@@ -216,6 +216,11 @@ void BicycleController::triggerSensor(SensorMode sensorMode) {
 
 }
 
+bool BicycleController::getIsRiderActive() {
+	ofScopedLock lock(mutex);
+	return bIsRiderActive;
+}
+
 //--------------------------------------------------------------
 double BicycleController::getAverageVelocity() {
 	ofScopedLock lock(mutex);

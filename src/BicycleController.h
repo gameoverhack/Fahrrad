@@ -24,6 +24,7 @@ public:
 
 	void triggerSensor(SensorMode sensorMode);
 
+	bool getIsRiderActive();
 	double getAverageVelocity();
 
 protected:

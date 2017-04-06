@@ -9,6 +9,15 @@ void ofApp::setup(){
 	ofSetLogLevel(OF_LOG_VERBOSE);
 
 	bShowDebug = true;
+	bShowFullScreen = false;
+	bShowCursor = true;
+
+	ofSetFullscreen(bShowFullScreen);
+	if (bShowCursor) {
+		ofShowCursor();
+	} else {
+		ofHideCursor();
+	}
 
 	bicycleController.setup();
 
@@ -54,19 +63,39 @@ void ofApp::exit() {
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-	switch (key) {
 
+	switch (key) {
 	case 'd':
 	{
-		bShowDebug = !bShowDebug;
+		bShowDebug ^= true;
 	}
+	break;
+	case 'f':
+	{
+		bShowFullScreen ^= true;
+		ofSetFullscreen(bShowFullScreen);
+	}
+	break;
+	case 'm':
+	{
+		bShowCursor ^= true;
+		if (bShowCursor) {
+			ofShowCursor();
+		}
+		else {
+			ofHideCursor();
+		}
+	}
+	break;
 	case ' ':
 	{
 		bicycleController.triggerSensor(BicycleController::SENSOR_KEYBOARD);
 	}
+	break;
 	default:
 		break;
 	}
+
 }
 
 //--------------------------------------------------------------

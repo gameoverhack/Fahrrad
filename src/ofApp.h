@@ -27,6 +27,8 @@ public:
 	void gotMessage(ofMessage msg);
 
 	bool bShowDebug;
+	bool bShowFullScreen;
+	bool bShowCursor;
 
 	ofxImGui gui;
 

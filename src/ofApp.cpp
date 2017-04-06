@@ -24,9 +24,9 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	float avgVelocity = bicycleController.getAverageVelocity();
+	double avgVelocity = bicycleController.getAverageVelocity();
 	ostringstream os;
-	os << std::setprecision(2) << avgVelocity << " km/h";
+	os << std::setprecision(1) << std::fixed << avgVelocity  << " km/h";
 
 	font.drawString(os.str(), 1000, 400);
 

@@ -9,6 +9,10 @@ BicycleController::BicycleController() {
 //--------------------------------------------------------------
 BicycleController::~BicycleController() {
 	ofLogNotice() << className << ": destructor";
+
+	// kill the thread
+	waitForThread();
+
 	IGuiBase::~IGuiBase(); // call base destructor
 }
 
@@ -38,6 +42,9 @@ void BicycleController::setDefaults() {
 	wheelDiameter = 678; // in millimetres
 	updateVelocityTime = 250; // in millis
 	simulateVelocity = 0;
+
+	velocityDecay = 10.0;
+	velocityEase = 0.25;
 }
 
 //--------------------------------------------------------------
@@ -57,19 +64,9 @@ void BicycleController::update() {
 		currentSensorMode = nextSensorMode;
 	}
 
-
 	unlock();
 
-
-	// lock speed updates
-
-	// if simulated mode...copy the desired speed to the current speed
-
-	// if in teensy mode ... get the speed from the teensy and copy to current speed
-
-	// if in GPIO mode ... get the speed from the teensy and copy to current speed
-
-	// unlock speed updates
+	// doing all velocity updates in threadedUpdate for now
 
 	// lock the model
 	// copy to the appModel
@@ -85,21 +82,6 @@ void BicycleController::changeMode() {
 	ofLogNotice() << "Shutting down: " << sensorModes[currentSensorMode];
 
 	switch (currentSensorMode) {
-	case SENSOR_NONE:
-	{
-		// nothing
-	}
-	break;
-	case SENSOR_SIMULATE:
-	{
-
-	}
-	break;
-	case SENSOR_KEYBOARD:
-	{
-
-	}
-	break;
 	case SENSOR_TEENSY:
 	{
 
@@ -117,21 +99,6 @@ void BicycleController::changeMode() {
 	ofLogNotice() << "Setting up: " << sensorModes[nextSensorMode];
 
 	switch (nextSensorMode) {
-	case SENSOR_NONE:
-	{
-
-	}
-	break;
-	case SENSOR_SIMULATE:
-	{
-		lastSensorTimeout = ofGetElapsedTimeMillis();
-	}
-	break;
-	case SENSOR_KEYBOARD:
-	{
-		lastSensorTimeout = ofGetElapsedTimeMillis();
-	}
-	break;
 	case SENSOR_TEENSY:
 	{
 
@@ -144,6 +111,7 @@ void BicycleController::changeMode() {
 	break;
 	}
 
+	lastSensorTimeout = ofGetElapsedTimeMillis();
 	lastVelocityTimeout = ofGetElapsedTimeMillis();
 	lastMeasuredVelocity = 0;
 }
@@ -154,19 +122,18 @@ void BicycleController::threadedFunction() {
 	while (isThreadRunning()) {
 
 		lock();
+
+		// grab the current mode
 		int thisCurrentMode = currentSensorMode;
 		
+		// calculate the amount of time since the last sensor measurement
 		timeSinceLastSensor = ofGetElapsedTimeMillis() - lastSensorTimeout;
+
 		unlock();
 
 		
 
 		switch (thisCurrentMode) {
-		case SENSOR_NONE:
-		{
-
-		}
-		break;
 		case SENSOR_SIMULATE:
 		{
 			double wheelCircumference = wheelDiameter * PI;
@@ -175,11 +142,6 @@ void BicycleController::threadedFunction() {
 			if (timeSinceLastSensor >= simulateTimeout) {
 				triggerSensor(SENSOR_SIMULATE);
 			}
-		}
-		break;
-		case SENSOR_KEYBOARD:
-		{
-			// nothing
 		}
 		break;
 		case SENSOR_TEENSY:
@@ -194,14 +156,15 @@ void BicycleController::threadedFunction() {
 		break;
 		}
 
+		
+
 		lock();
-		// not sure if we will need this when not simulating
-		// but basically this eases the measured velocity toward zero
-		// and only updates/eases the currentAverage toward last measured
+
+		// ease currentVelocity - both ease toward zero AND ease toward last measured velocity
 		if (ofGetElapsedTimeMillis() - lastVelocityTimeout > updateVelocityTime) {
-			lastMeasuredVelocity = lastMeasuredVelocity - 1.0;
+			currentAverageVelocity = currentAverageVelocity * (1.0 - velocityEase) + lastMeasuredVelocity * velocityEase;
+			lastMeasuredVelocity = lastMeasuredVelocity - velocityDecay;
 			if (lastMeasuredVelocity < 0.0) lastMeasuredVelocity = 0;
-			currentAverageVelocity = currentAverageVelocity * 0.1 + lastMeasuredVelocity * 0.9;
 			lastVelocityTimeout = ofGetElapsedTimeMillis();
 		}
 		
@@ -230,28 +193,22 @@ double BicycleController::getAverageVelocity() {
 
 //--------------------------------------------------------------
 void BicycleController::drawGUI() {
+
 	if (ImGui::CollapsingHeader(className.c_str())) {
 		beginGUI();
 		{
 
 			ImGui::SliderInt("Wheel Diameter (mm)", &wheelDiameter, 600, 700);
 			ImGui::SliderInt("Update Velocity (millis)", &updateVelocityTime, 20, 1000);
+			ImGui::SliderFloat("Velocity Decay (per/update)", &velocityDecay, 0.0, 20.0);
+			ImGui::SliderFloat("Velocity Ease (per/update)", &velocityEase, 0.01, 1.0);
+			
 			ImGui::Combo("Sensor Mode", (int*)&nextSensorMode, sensorModes);
 
 			switch (nextSensorMode) {
-			case SENSOR_NONE:
-			{
-
-			}
-			break;
 			case SENSOR_SIMULATE:
 			{
 				ImGui::SliderInt("Target Speed", &simulateVelocity, 0, 60);
-			}
-			break;
-			case SENSOR_KEYBOARD:
-			{
-
 			}
 			break;
 			case SENSOR_TEENSY:

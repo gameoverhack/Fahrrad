@@ -44,12 +44,12 @@ void BicycleController::setDefaults() {
 	nextSensorMode = SENSOR_SIMULATE;
 
 	wheelDiameter = 678; // in millimetres
-	updateVelocityTime = 500; // in millis
+	updateVelocityTime = 250; // in millis
 
-	velocityDecay = 2.0;
-	velocityEase = 0.25;
+	velocityDecay = 0.0;
+	velocityEase = 0.5;
 
-	riderInactiveTime = 8000; //millis
+	riderInactiveTime = 6200; //millis
 
 }
 
@@ -288,10 +288,10 @@ void BicycleController::drawGUI() {
 
 //--------------------------------------------------------------
 bool BicycleController::loadParameters() {
-	return Serializer.loadClass(ofToDataPath("configs/" + className + ".conf"), (*this), ARCHIVE_BINARY);
+	return Serializer.loadClass(fixPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }
 
 //--------------------------------------------------------------
 bool BicycleController::saveParameters() {
-	return Serializer.saveClass(ofToDataPath("configs/" + className + ".conf"), (*this), ARCHIVE_BINARY);
+	return Serializer.saveClass(fixPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }

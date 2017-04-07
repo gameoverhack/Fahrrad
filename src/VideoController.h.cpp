@@ -20,7 +20,9 @@ void VideoController::setup() {
 	IGuiBase::setup();
 
 	bSetVideoPath = false;
+
 	listDirectory();
+
 }
 
 //--------------------------------------------------------------
@@ -28,6 +30,8 @@ void VideoController::setDefaults() {
 	ofLogNotice() << className << ": setDefaults";
 
 	videoPath = "C:/Users/gameover8/Desktop/video";
+	currentVideoIndex = 0;
+
 }
 
 //--------------------------------------------------------------
@@ -40,14 +44,41 @@ void VideoController::update() {
 			videoPath = result.getPath();
 			listDirectory();
 		}
-		
 	}
+
+	if (nextVideoIndex != currentVideoIndex) {
+
+		vid.stop();
+
+		if (nextVideoIndex != 0) {
+			ofLogVerbose() << "Loading video: " << videoFilePaths[nextVideoIndex];
+			vid.load(videoFilePaths[nextVideoIndex]);
+			vid.play();
+		}
+
+		currentVideoIndex = nextVideoIndex;
+	}
+
+	vid.update();
+
 }
 
 //--------------------------------------------------------------
 void VideoController::listDirectory() {
+	
 	dir.allowExt("mov");
 	dir.listDir(videoPath);
+
+	videoFilePaths.clear();
+	videoFilePaths.push_back("NONE");
+
+	for (int i = 0; i < dir.size(); i++) {
+		videoFilePaths.push_back(dir.getPath(i));
+	}
+	
+	nextVideoIndex = currentVideoIndex;
+	currentVideoIndex = 0;
+
 }
 
 //--------------------------------------------------------------
@@ -56,10 +87,15 @@ void VideoController::drawGUI() {
 		beginGUI();
 		{
 			bSetVideoPath = ImGui::Button("Set Video Path");
-			//ImGui::SliderInt("Time Out", &timeOut, 1, 2000);
+			ImGui::Combo("Video File", &nextVideoIndex, videoFilePaths);
 		}
 		endGUI();
 	}
+}
+
+//--------------------------------------------------------------
+ofTexture & VideoController::getVideoTexture() {
+	return vid.getTexture();
 }
 
 //--------------------------------------------------------------

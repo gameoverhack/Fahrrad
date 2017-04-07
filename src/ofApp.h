@@ -4,6 +4,7 @@
 #include "ofxImGui.h"
 
 #include "BicycleController.h"
+#include "VideoController.h"
 
 class ofApp : public ofBaseApp{
 
@@ -33,6 +34,7 @@ public:
 	ofxImGui gui;
 
 	BicycleController bicycleController;
+	VideoController videoController;
 
 	ofTrueTypeFont font;
 

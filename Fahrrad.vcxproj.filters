@@ -94,6 +94,9 @@
     <ClCompile Include="src\BicycleController.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\VideoController.h.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -828,6 +831,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\Utils.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VideoController.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

@@ -13,7 +13,7 @@ BicycleController::~BicycleController() {
 	// kill the thread
 	waitForThread();
 
-	IGuiBase::~IGuiBase(); // call base destructor
+	this->IGuiBase::~IGuiBase(); // call base destructor
 }
 
 //--------------------------------------------------------------
@@ -34,7 +34,7 @@ void BicycleController::setup() {
 	bIsRiderActive = false;
 
 	startThread();
-	
+
 }
 
 //--------------------------------------------------------------
@@ -199,7 +199,7 @@ void BicycleController::threadedFunction() {
 
 //--------------------------------------------------------------
 void BicycleController::triggerSensor(SensorMode sensorMode) {
-	
+
 	lock();
 
 	if (sensorMode == currentSensorMode) {
@@ -209,7 +209,7 @@ void BicycleController::triggerSensor(SensorMode sensorMode) {
 			distanceTravelled = 0;
 			ofLogVerbose() << "Rider Active";
 		}
-		
+
 		lastSensorTimeout = ofGetElapsedTimeMillis();
 		lastMeasuredVelocity = (wheelDiameter * PI / 1000.0 / 1000.0) / (timeSinceLastSensor / 1000.0 / 60.0 / 60.0);
 		distanceTravelled += (wheelDiameter * PI / 1000.0);
@@ -249,7 +249,7 @@ void BicycleController::drawGUI() {
 
 			ImGui::SliderFloat("Velocity Decay (per/update)", &velocityDecay, 0.0, 20.0);
 			ImGui::SliderFloat("Velocity Ease (per/update)", &velocityEase, 0.01, 1.0);
-			
+
 			ImGui::SliderInt("Rider Inactive Time (millis)", &riderInactiveTime, 5000, 30000);
 
 			ImGui::Combo("Sensor Mode", (int*)&nextSensorMode, sensorModes);
@@ -278,7 +278,7 @@ void BicycleController::drawGUI() {
 			ImGui::Text("Current average velocity %.3f km/hour", currentAverageVelocity);
 			ImGui::Text("Last measured velocity %.3f km/hour", lastMeasuredVelocity);
 			ImGui::Text("Time since last sensor reading : %.0f millis", timeSinceLastSensor);
-			
+
 			unlock();
 
 		}
@@ -288,10 +288,10 @@ void BicycleController::drawGUI() {
 
 //--------------------------------------------------------------
 bool BicycleController::loadParameters() {
-	return Serializer.loadClass(ofToDataPath("configs\\" + className + ".conf"), (*this), ARCHIVE_BINARY);
+	return Serializer.loadClass(ofToDataPath("configs/" + className + ".conf"), (*this), ARCHIVE_BINARY);
 }
 
 //--------------------------------------------------------------
 bool BicycleController::saveParameters() {
-	return Serializer.saveClass(ofToDataPath("configs\\" + className + ".conf"), (*this), ARCHIVE_BINARY);
+	return Serializer.saveClass(ofToDataPath("configs/" + className + ".conf"), (*this), ARCHIVE_BINARY);
 }

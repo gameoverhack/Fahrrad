@@ -1,6 +1,5 @@
-ofxBezierWarp
 ofxImGui
 ofxNetwork
 ofxOpenCv
-ofxVectorGraphics
 ofxXmlSettings
+ofxBoost

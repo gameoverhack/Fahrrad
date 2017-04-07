@@ -13,9 +13,6 @@
     <ClCompile Include="src\ofApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxBezierWarp\src\ofxBezierWarp.cpp">
-      <Filter>addons\ofxBezierWarp\src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxImGui\src\BaseEngine.cpp">
       <Filter>addons\ofxImGui\src</Filter>
     </ClCompile>
@@ -73,12 +70,6 @@
     <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvShortImage.cpp">
       <Filter>addons\ofxOpenCv\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxVectorGraphics\src\ofxVectorGraphics.cpp">
-      <Filter>addons\ofxVectorGraphics\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxVectorGraphics\libs\CreEPS.cpp">
-      <Filter>addons\ofxVectorGraphics\libs</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.cpp">
       <Filter>addons\ofxXmlSettings\src</Filter>
     </ClCompile>
@@ -104,12 +95,6 @@
     </Filter>
     <Filter Include="addons">
       <UniqueIdentifier>{71834F65-F3A9-211E-73B8-DC85}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxBezierWarp">
-      <UniqueIdentifier>{8D575A6D-76F4-902A-C094-C61D}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxBezierWarp\src">
-      <UniqueIdentifier>{A5DD9EA4-BCC8-6ADD-A6B9-7B93}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxImGui">
       <UniqueIdentifier>{0CD6A942-69FF-3BAA-3AF1-ADD1}</UniqueIdentifier>
@@ -216,15 +201,6 @@
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\videostab">
       <UniqueIdentifier>{D4F01CB4-61E3-5965-F3B1-CFB9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxVectorGraphics">
-      <UniqueIdentifier>{5A7F3658-B06B-DB97-F4E1-DD19}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxVectorGraphics\src">
-      <UniqueIdentifier>{F615F000-D48C-B1D6-F1C2-6EDD}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxVectorGraphics\libs">
-      <UniqueIdentifier>{B341F552-35C4-7EB6-B3C9-9D96}</UniqueIdentifier>
-    </Filter>
     <Filter Include="addons\ofxXmlSettings">
       <UniqueIdentifier>{877F005D-13E6-0592-1D97-F2E3}</UniqueIdentifier>
     </Filter>
@@ -241,9 +217,6 @@
     </ClInclude>
     <ClInclude Include="src\ofApp.h">
       <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxBezierWarp\src\ofxBezierWarp.h">
-      <Filter>addons\ofxBezierWarp\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxImGui\src\BaseEngine.h">
       <Filter>addons\ofxImGui\src</Filter>
@@ -805,15 +778,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\videostab\videostab.hpp">
       <Filter>addons\ofxOpenCv\libs\opencv\include\opencv2\videostab</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxVectorGraphics\src\ofxVectorGraphics.h">
-      <Filter>addons\ofxVectorGraphics\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxVectorGraphics\libs\CreEPS.hpp">
-      <Filter>addons\ofxVectorGraphics\libs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxVectorGraphics\libs\CreEPS_Types.hpp">
-      <Filter>addons\ofxVectorGraphics\libs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.h">
       <Filter>addons\ofxXmlSettings\src</Filter>

@@ -9,7 +9,7 @@ VideoController::VideoController() {
 //--------------------------------------------------------------
 VideoController::~VideoController() {
 	ofLogNotice() << className << ": destructor";
-	IGuiBase::~IGuiBase(); // call base destructor
+	this->IGuiBase::~IGuiBase(); // call base destructor
 }
 
 //--------------------------------------------------------------
@@ -64,10 +64,10 @@ void VideoController::drawGUI() {
 
 //--------------------------------------------------------------
 bool VideoController::loadParameters() {
-	return Serializer.loadClass(ofToDataPath("configs\\" + className + ".conf"), (*this), ARCHIVE_BINARY);
+	return Serializer.loadClass(fixPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }
 
 //--------------------------------------------------------------
 bool VideoController::saveParameters() {
-	return Serializer.saveClass(ofToDataPath("configs\\" + className + ".conf"), (*this), ARCHIVE_BINARY);
+	return Serializer.saveClass(fixPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }

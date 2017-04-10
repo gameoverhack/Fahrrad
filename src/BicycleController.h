@@ -3,6 +3,10 @@
 #include "ofMain.h"
 #include "IGuiBase.h"
 
+#ifndef TARGET_WIN32
+#include "ofxGPIO.h"
+#endif
+
 class BicycleController : public IGuiBase, public ofThread {
 
 public:
@@ -41,7 +45,7 @@ protected:
 
 	SensorMode nextSensorMode;
 	SensorMode currentSensorMode;
-	
+
 	int wheelDiameter;
 
 	float velocityDecay;
@@ -63,6 +67,12 @@ protected:
 
 	double timeSinceLastSensor;
 	int lastSensorTimeout;
+
+#ifndef TARGET_WIN32
+    GPIO gpio17;
+    string gio17_state;
+    string lastMsg;
+#endif
 
 	void changeMode();
 

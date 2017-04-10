@@ -4,3 +4,4 @@ ofxOpenCv
 ofxXmlSettings
 ofxBoost
 ofxOMXPlayer
+ofxGPIO

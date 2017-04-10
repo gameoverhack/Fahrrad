@@ -97,7 +97,9 @@ void BicycleController::changeMode() {
 	break;
 	case SENSOR_GPIO:
 	{
-
+#ifndef TARGET_WIN32
+        gpio17.unexport_gpio();
+#endif
 	}
 	break;
 	}
@@ -114,7 +116,13 @@ void BicycleController::changeMode() {
 	break;
 	case SENSOR_GPIO:
 	{
+#ifndef TARGET_WIN32
+        gpio17.setup("17");
+        gpio17.export_gpio();
+        gpio17.setdir_gpio("in");
 
+        lastMsg = "0";
+#endif
 	}
 	break;
 	}
@@ -162,7 +170,17 @@ void BicycleController::threadedFunction() {
 			break;
 			case SENSOR_GPIO:
 			{
+#ifndef TARGET_WIN32
+                // read gpio value
+                gpio17.getval_gpio(gio17_state);
+                // can we get analogue or only digital values?
 
+                // if some gpio value, then triggerSensor(SENSOR_GPIO)
+                if(gio17_state == "0" && lastMsg == "1"){
+                    triggerSensor(SENSOR_GPIO);
+                }
+                lastMsg = gio17_state;
+#endif
 			}
 			break;
 			}
@@ -261,7 +279,7 @@ void BicycleController::drawGUI() {
 			ImGui::SliderInt("Rider Inactive Time (millis)", &riderInactiveTime, 5000, 30000);
 
 			ImGui::SliderFloat("Velocity Normal (km/h)", &velocityNormalSpeed, 0.01, 60.0);
-			
+
 			ImGui::Combo("Sensor Mode", (int*)&nextSensorMode, sensorModes);
 
 			switch (nextSensorMode) {

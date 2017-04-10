@@ -20,6 +20,7 @@ void ofApp::setup(){
 	}
 
 	bicycleController.setup();
+	videoController.setup();
 
 	font.load(ofToDataPath("fonts/verdana.ttf"), 96, true);
 }
@@ -28,6 +29,7 @@ void ofApp::setup(){
 void ofApp::update(){
 	
 	bicycleController.update();
+	videoController.update();
 
 }
 
@@ -35,10 +37,14 @@ void ofApp::update(){
 void ofApp::draw(){
 
 	double avgVelocity = bicycleController.getAverageVelocity();
+	double normalisedVelocity = bicycleController.getNormalisedVelocity();
 	double dstTravelled = bicycleController.getDistanceTravelled();
 
 	ostringstream os;
 	os << std::setprecision(1) << std::fixed << avgVelocity  << " km/h" << endl << dstTravelled << " m";
+
+	videoController.setSpeed(normalisedVelocity);
+	videoController.getVideoTexture().draw(0, 0, ofGetWidth(), ofGetHeight());
 
 	font.drawString(os.str(), 1000, 400);
 
@@ -47,6 +53,7 @@ void ofApp::draw(){
 		gui.begin();
 		{
 			bicycleController.drawGUI();
+			videoController.drawGUI();
 
 			ImGui::Spacing(); ImGui::Spacing();
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

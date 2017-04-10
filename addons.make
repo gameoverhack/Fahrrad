@@ -3,3 +3,4 @@ ofxNetwork
 ofxOpenCv
 ofxXmlSettings
 ofxBoost
+ofxOMXPlayer

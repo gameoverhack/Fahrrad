@@ -21,6 +21,9 @@ void VideoController::setup() {
 
 	bSetVideoPath = false;
 	lastSpeedUpdateTime = ofGetElapsedTimeMillis();
+#ifndef TARGET_WIN32
+    defaultTexture.allocate(1,1,GL_RGB);
+#endif
 
 	listDirectory();
 
@@ -29,8 +32,11 @@ void VideoController::setup() {
 //--------------------------------------------------------------
 void VideoController::setDefaults() {
 	ofLogNotice() << className << ": setDefaults";
-
+#ifdef TARGET_WIN32
 	videoPath = "C:/Users/gameover8/Desktop/video";
+#else
+    videoPath = "/home/pi/openFrameworks/addons/ofxOMXPlayer/video";
+#endif
 	currentVideoIndex = 0;
 	speedUpdateTimeout = 1000;
 
@@ -41,40 +47,53 @@ void VideoController::update() {
 	if (!bUse) return;
 
 	if (bSetVideoPath) {
+#ifndef TARGET_WIN32
+    ofSetWindowShape(10, 10);
+#endif
 		ofFileDialogResult result = ofSystemLoadDialog("Select Video Folder", true);
-		if (result.getPath() != "") {
-			videoPath = result.getPath();
-			listDirectory();
-		}
+		if (result.bSuccess){
+            if (result.getPath() != "") {
+                videoPath = result.getPath();
+                listDirectory();
+            }
+        }
+#ifndef TARGET_WIN32
+    ofSetWindowShape(1920, 1080);
+#endif
 	}
 
 	if (nextVideoIndex != currentVideoIndex) {
 
-		vid.stop();
-
-		if (nextVideoIndex != 0) {
+		if (nextVideoIndex != 0 && videoFilePaths[nextVideoIndex] != "") {
 			ofLogVerbose() << "Loading video: " << videoFilePaths[nextVideoIndex];
 
 #ifdef TARGET_WIN32
+            vid.stop();
 			vid.load(videoFilePaths[nextVideoIndex]);
-			vid.play();
+            vid.play();
 #else
-			vid.load(videoFilePaths[nextVideoIndex]);
-			vid.play();
+            ofxOMXPlayerSettings settings;
+            settings.videoPath = videoFilePaths[nextVideoIndex];
+            settings.useHDMIForAudio = false;	//default true
+            settings.enableLooping = true;		//default true
+            settings.enableTexture = true;		//default true
+            vid.setup(settings);
 #endif
-			
+
 		}
 
 		currentVideoIndex = nextVideoIndex;
 	}
 
+#ifdef TARGET_WIN32
 	vid.update();
+#endif
 
 }
 
 //--------------------------------------------------------------
 void VideoController::listDirectory() {
-	
+
 	dir.allowExt("mov");
 	dir.listDir(videoPath);
 
@@ -84,7 +103,7 @@ void VideoController::listDirectory() {
 	for (int i = 0; i < dir.size(); i++) {
 		videoFilePaths.push_back(dir.getPath(i));
 	}
-	
+
 	nextVideoIndex = currentVideoIndex;
 	currentVideoIndex = 0;
 
@@ -124,7 +143,16 @@ void VideoController::setSpeed(float speed) {
 
 //--------------------------------------------------------------
 ofTexture & VideoController::getVideoTexture() {
-	return vid.getTexture();
+#ifdef TARGET_WIN32
+    return vid.getTexture();
+#else
+    if(vid.isTextureEnabled()){
+        return vid.getTextureReference();
+    }else{
+        return defaultTexture;
+    }
+
+#endif
 }
 
 //--------------------------------------------------------------

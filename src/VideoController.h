@@ -5,7 +5,7 @@
 #ifdef TARGET_WIN32
 // normal OF video player
 #else
-#include "ofxOMXVideo.h"
+#include "ofxOMXPlayer.h"
 #endif
 
 class VideoController : public IGuiBase {
@@ -28,7 +28,8 @@ protected:
 #ifdef TARGET_WIN32
 	ofVideoPlayer vid;
 #else
-	ofxOMXVideo vid;
+	ofxOMXPlayer vid;
+	ofTexture defaultTexture;
 #endif
 
 	ofDirectory dir;
@@ -40,7 +41,7 @@ protected:
 
 	int nextVideoIndex;
 	int currentVideoIndex;
-	
+
 	bool bSetVideoPath;
 
 	void listDirectory();

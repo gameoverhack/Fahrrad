@@ -20,6 +20,7 @@ void VideoController::setup() {
 	IGuiBase::setup();
 
 	bSetVideoPath = false;
+	lastSpeedUpdateTime = ofGetElapsedTimeMillis();
 
 	listDirectory();
 
@@ -31,6 +32,7 @@ void VideoController::setDefaults() {
 
 	videoPath = "C:/Users/gameover8/Desktop/video";
 	currentVideoIndex = 0;
+	speedUpdateTimeout = 1000;
 
 }
 
@@ -52,8 +54,15 @@ void VideoController::update() {
 
 		if (nextVideoIndex != 0) {
 			ofLogVerbose() << "Loading video: " << videoFilePaths[nextVideoIndex];
+
+#ifdef TARGET_WIN32
 			vid.load(videoFilePaths[nextVideoIndex]);
 			vid.play();
+#else
+			vid.load(videoFilePaths[nextVideoIndex]);
+			vid.play();
+#endif
+			
 		}
 
 		currentVideoIndex = nextVideoIndex;
@@ -88,9 +97,29 @@ void VideoController::drawGUI() {
 		{
 			bSetVideoPath = ImGui::Button("Set Video Path");
 			ImGui::Combo("Video File", &nextVideoIndex, videoFilePaths);
+			ImGui::SliderInt("Speed Update Time (millis)", &speedUpdateTimeout, 0, 2000);
 		}
 		endGUI();
 	}
+}
+
+//--------------------------------------------------------------
+void VideoController::setSpeed(float speed) {
+
+	if (ofGetElapsedTimeMillis() - lastSpeedUpdateTime >= speedUpdateTimeout) {
+
+		if (speed == 0.0f) {
+			vid.setPaused(true);
+		} else {
+			if (vid.isPaused()) {
+				vid.setPaused(false);
+			}
+			vid.setSpeed(speed);
+		}
+
+		lastSpeedUpdateTime = ofGetElapsedTimeMillis();
+	}
+
 }
 
 //--------------------------------------------------------------

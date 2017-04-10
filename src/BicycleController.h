@@ -26,6 +26,7 @@ public:
 
 	bool getIsRiderActive();
 	double getAverageVelocity();   // km/hour
+	double getNormalisedVelocity(); // 0.0 -> 1.0 -> x.0
 	double getDistanceTravelled(); // metres
 
 protected:
@@ -45,6 +46,8 @@ protected:
 
 	float velocityDecay;
 	float velocityEase;
+	float velocityNormalSpeed;
+	double currentNormalisedVelocity;
 	int updateVelocityTime;
 	int lastVelocityTimeout;
 
@@ -77,6 +80,7 @@ protected:
 		ar & BOOST_SERIALIZATION_NVP(wheelDiameter);
 		ar & BOOST_SERIALIZATION_NVP(velocityDecay);
 		ar & BOOST_SERIALIZATION_NVP(velocityEase);
+		ar & BOOST_SERIALIZATION_NVP(velocityNormalSpeed);
 		ar & BOOST_SERIALIZATION_NVP(updateVelocityTime);
 		ar & BOOST_SERIALIZATION_NVP(riderInactiveTime);
 	}

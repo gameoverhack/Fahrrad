@@ -37,11 +37,13 @@ void ofApp::update(){
 void ofApp::draw(){
 
 	double avgVelocity = bicycleController.getAverageVelocity();
+	double normalisedVelocity = bicycleController.getNormalisedVelocity();
 	double dstTravelled = bicycleController.getDistanceTravelled();
 
 	ostringstream os;
 	os << std::setprecision(1) << std::fixed << avgVelocity  << " km/h" << endl << dstTravelled << " m";
 
+	videoController.setSpeed(normalisedVelocity);
 	videoController.getVideoTexture().draw(0, 0, ofGetWidth(), ofGetHeight());
 
 	font.drawString(os.str(), 1000, 400);

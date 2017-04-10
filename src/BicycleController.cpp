@@ -48,6 +48,7 @@ void BicycleController::setDefaults() {
 
 	velocityDecay = 0.0;
 	velocityEase = 0.5;
+	velocityNormalSpeed = 20.0;
 
 	riderInactiveTime = 6200; //millis
 
@@ -173,6 +174,7 @@ void BicycleController::threadedFunction() {
 			// ease currentVelocity - both ease toward zero AND ease toward last measured velocity
 			if (ofGetElapsedTimeMillis() - lastVelocityTimeout > updateVelocityTime) {
 				currentAverageVelocity = currentAverageVelocity * (1.0 - velocityEase) + lastMeasuredVelocity * velocityEase;
+				currentNormalisedVelocity = currentAverageVelocity / velocityNormalSpeed;
 				lastMeasuredVelocity = lastMeasuredVelocity - velocityDecay; // do we need this?
 				if (lastMeasuredVelocity < 0.0) lastMeasuredVelocity = 0;
 				lastVelocityTimeout = ofGetElapsedTimeMillis();
@@ -232,6 +234,12 @@ double BicycleController::getAverageVelocity() {
 }
 
 //--------------------------------------------------------------
+double BicycleController::getNormalisedVelocity() {
+	ofScopedLock lock(mutex);
+	return currentNormalisedVelocity;
+}
+
+//--------------------------------------------------------------
 double BicycleController::getDistanceTravelled() {
 	return distanceTravelled;
 }
@@ -252,6 +260,8 @@ void BicycleController::drawGUI() {
 
 			ImGui::SliderInt("Rider Inactive Time (millis)", &riderInactiveTime, 5000, 30000);
 
+			ImGui::SliderFloat("Velocity Normal (km/h)", &velocityNormalSpeed, 0.01, 60.0);
+			
 			ImGui::Combo("Sensor Mode", (int*)&nextSensorMode, sensorModes);
 
 			switch (nextSensorMode) {
@@ -276,6 +286,7 @@ void BicycleController::drawGUI() {
 
 			ImGui::NewLine();
 			ImGui::Text("Current average velocity %.3f km/hour", currentAverageVelocity);
+			ImGui::Text("Current normalised velocity %.3f", currentNormalisedVelocity);
 			ImGui::Text("Last measured velocity %.3f km/hour", lastMeasuredVelocity);
 			ImGui::Text("Time since last sensor reading : %.0f millis", timeSinceLastSensor);
 

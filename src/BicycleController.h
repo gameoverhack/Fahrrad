@@ -3,6 +3,10 @@
 #include "ofMain.h"
 #include "IGuiBase.h"
 
+#ifndef TARGET_WIN32
+#include "ofxGPIO.h"
+#endif
+
 class BicycleController : public IGuiBase, public ofThread {
 
 public:
@@ -26,6 +30,7 @@ public:
 
 	bool getIsRiderActive();
 	double getAverageVelocity();   // km/hour
+	double getNormalisedVelocity(); // 0.0 -> 1.0 -> x.0
 	double getDistanceTravelled(); // metres
 
 protected:
@@ -40,11 +45,13 @@ protected:
 
 	SensorMode nextSensorMode;
 	SensorMode currentSensorMode;
-	
+
 	int wheelDiameter;
 
 	float velocityDecay;
 	float velocityEase;
+	float velocityNormalSpeed;
+	double currentNormalisedVelocity;
 	int updateVelocityTime;
 	int lastVelocityTimeout;
 
@@ -60,6 +67,12 @@ protected:
 
 	double timeSinceLastSensor;
 	int lastSensorTimeout;
+
+#ifndef TARGET_WIN32
+    GPIO gpio17;
+    string gio17_state;
+    string lastMsg;
+#endif
 
 	void changeMode();
 
@@ -77,6 +90,7 @@ protected:
 		ar & BOOST_SERIALIZATION_NVP(wheelDiameter);
 		ar & BOOST_SERIALIZATION_NVP(velocityDecay);
 		ar & BOOST_SERIALIZATION_NVP(velocityEase);
+		ar & BOOST_SERIALIZATION_NVP(velocityNormalSpeed);
 		ar & BOOST_SERIALIZATION_NVP(updateVelocityTime);
 		ar & BOOST_SERIALIZATION_NVP(riderInactiveTime);
 	}

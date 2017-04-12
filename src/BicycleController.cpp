@@ -48,6 +48,7 @@ void BicycleController::setDefaults() {
 
 	velocityDecay = 0.0;
 	velocityEase = 0.5;
+	velocityNormalSpeed = 20.0;
 
 	riderInactiveTime = 6200; //millis
 
@@ -96,7 +97,9 @@ void BicycleController::changeMode() {
 	break;
 	case SENSOR_GPIO:
 	{
-
+#ifndef TARGET_WIN32
+        gpio17.unexport_gpio();
+#endif
 	}
 	break;
 	}
@@ -113,7 +116,13 @@ void BicycleController::changeMode() {
 	break;
 	case SENSOR_GPIO:
 	{
+#ifndef TARGET_WIN32
+        gpio17.setup("17");
+        gpio17.export_gpio();
+        gpio17.setdir_gpio("in");
 
+        lastMsg = "0";
+#endif
 	}
 	break;
 	}
@@ -161,7 +170,17 @@ void BicycleController::threadedFunction() {
 			break;
 			case SENSOR_GPIO:
 			{
+#ifndef TARGET_WIN32
+                // read gpio value
+                gpio17.getval_gpio(gio17_state);
+                // can we get analogue or only digital values?
 
+                // if some gpio value, then triggerSensor(SENSOR_GPIO)
+                if(gio17_state == "0" && lastMsg == "1"){
+                    triggerSensor(SENSOR_GPIO);
+                }
+                lastMsg = gio17_state;
+#endif
 			}
 			break;
 			}
@@ -173,6 +192,7 @@ void BicycleController::threadedFunction() {
 			// ease currentVelocity - both ease toward zero AND ease toward last measured velocity
 			if (ofGetElapsedTimeMillis() - lastVelocityTimeout > updateVelocityTime) {
 				currentAverageVelocity = currentAverageVelocity * (1.0 - velocityEase) + lastMeasuredVelocity * velocityEase;
+				currentNormalisedVelocity = currentAverageVelocity / velocityNormalSpeed;
 				lastMeasuredVelocity = lastMeasuredVelocity - velocityDecay; // do we need this?
 				if (lastMeasuredVelocity < 0.0) lastMeasuredVelocity = 0;
 				lastVelocityTimeout = ofGetElapsedTimeMillis();
@@ -232,6 +252,12 @@ double BicycleController::getAverageVelocity() {
 }
 
 //--------------------------------------------------------------
+double BicycleController::getNormalisedVelocity() {
+	ofScopedLock lock(mutex);
+	return currentNormalisedVelocity;
+}
+
+//--------------------------------------------------------------
 double BicycleController::getDistanceTravelled() {
 	return distanceTravelled;
 }
@@ -251,6 +277,8 @@ void BicycleController::drawGUI() {
 			ImGui::SliderFloat("Velocity Ease (per/update)", &velocityEase, 0.01, 1.0);
 
 			ImGui::SliderInt("Rider Inactive Time (millis)", &riderInactiveTime, 5000, 30000);
+
+			ImGui::SliderFloat("Velocity Normal (km/h)", &velocityNormalSpeed, 0.01, 60.0);
 
 			ImGui::Combo("Sensor Mode", (int*)&nextSensorMode, sensorModes);
 
@@ -276,6 +304,7 @@ void BicycleController::drawGUI() {
 
 			ImGui::NewLine();
 			ImGui::Text("Current average velocity %.3f km/hour", currentAverageVelocity);
+			ImGui::Text("Current normalised velocity %.3f", currentNormalisedVelocity);
 			ImGui::Text("Last measured velocity %.3f km/hour", lastMeasuredVelocity);
 			ImGui::Text("Time since last sensor reading : %.0f millis", timeSinceLastSensor);
 

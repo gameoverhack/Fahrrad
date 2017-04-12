@@ -12,6 +12,8 @@ void ofApp::setup(){
 	bShowFullScreen = false;
 	bShowCursor = true;
 
+	bVideo = true;
+
 	ofSetFullscreen(bShowFullScreen);
 	if (bShowCursor) {
 		ofShowCursor();
@@ -21,16 +23,17 @@ void ofApp::setup(){
 
 	bicycleController.setup();
 	videoController.setup();
+	cameraController.setup();
 
 	font.load(ofToDataPath("fonts/verdana.ttf"), 96, true);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	
+
 	bicycleController.update();
 	videoController.update();
-
+    cameraController.update();
 }
 
 //--------------------------------------------------------------
@@ -44,7 +47,12 @@ void ofApp::draw(){
 	os << std::setprecision(1) << std::fixed << avgVelocity  << " km/h" << endl << dstTravelled << " m";
 
 	videoController.setSpeed(normalisedVelocity);
-	videoController.getVideoTexture().draw(0, 0, ofGetWidth(), ofGetHeight());
+	if(bVideo){
+        videoController.getVideoTexture().draw(0, 0, ofGetWidth(), ofGetHeight());
+	}
+	else{
+        cameraController.getCameraTexture().draw(0, 0, ofGetWidth(), ofGetHeight());
+	}
 
 	font.drawString(os.str(), 1000, 400);
 
@@ -54,6 +62,7 @@ void ofApp::draw(){
 		{
 			bicycleController.drawGUI();
 			videoController.drawGUI();
+			cameraController.drawGUI();
 
 			ImGui::Spacing(); ImGui::Spacing();
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -94,9 +103,19 @@ void ofApp::keyPressed(int key){
 		}
 	}
 	break;
+	case 'v':
+	{
+		bVideo ^= true;
+	}
+	break;
 	case ' ':
 	{
-		bicycleController.triggerSensor(BicycleController::SENSOR_KEYBOARD);
+        if(bVideo){
+            bicycleController.triggerSensor(BicycleController::SENSOR_KEYBOARD);
+        }
+        else{
+            cameraController.saveIMG();
+        }
 	}
 	break;
 	default:
@@ -151,6 +170,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }

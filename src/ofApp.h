@@ -5,6 +5,7 @@
 
 #include "BicycleController.h"
 #include "VideoController.h"
+#include "CamController.h"
 
 class ofApp : public ofBaseApp{
 
@@ -31,10 +32,13 @@ public:
 	bool bShowFullScreen;
 	bool bShowCursor;
 
+	bool bVideo;
+
 	ofxImGui gui;
 
 	BicycleController bicycleController;
 	VideoController videoController;
+	CamController cameraController;
 
 	ofTrueTypeFont font;
 

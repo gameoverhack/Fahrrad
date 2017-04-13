@@ -36,22 +36,23 @@ void CamController::setup() {
 
 	cam.setDeviceID(0);
 	cam.setDesiredFrameRate(60);
-	cam.setPixelFormat(OF_PIXELS_NATIVE);
+	cam.setPixelFormat(OF_PIXELS_YUY2);
 	cam.initGrabber(w, h);
 
 	// setup shader
-	bool didLoadShader = shader.load(ofToDataPath("shader/Empty_GLES.vert"), ofToDataPath("shader/Empty_GLES.frag"), "");
+#ifdef TARGET_WIN32
+	bool didLoadShader = shader.load(ofToDataPath("shader/passWIN.vert"), ofToDataPath("shader/colorWIN.frag"), "");
+#else
+	bool didLoadShader = shader.load(ofToDataPath("shader/passGLES.vert"), ofToDataPath("shader/colorGLES.frag"), "");
+#endif
 
 	if (!didLoadShader)
 	{
 		ofLogError() << "Load Shader FAIL";
 	}
 
-	ofFbo::Settings settings;
-	settings.width = w;
-	settings.height = h;
-	settings.internalformat = GL_RGB;
-	fbo.allocate(settings);
+
+	fbo.allocate(w, h, GL_RGBA);
 
 	pixels.allocate(w, h, OF_IMAGE_COLOR);
 
@@ -60,10 +61,19 @@ void CamController::setup() {
 	mesh.addVertex(ofVec3f(w, 0, 0));
 	mesh.addVertex(ofVec3f(0, h, 0));
 	mesh.addVertex(ofVec3f(w, h, 0));
+
+#ifdef TARGET_WIN32
+	mesh.addTexCoord(ofVec2f(0, 0));
+	mesh.addTexCoord(ofVec2f(w, 0));
+	mesh.addTexCoord(ofVec2f(0, h));
+	mesh.addTexCoord(ofVec2f(w, h));
+#else
 	mesh.addTexCoord(ofVec2f(0, 0));
 	mesh.addTexCoord(ofVec2f(1, 0));
 	mesh.addTexCoord(ofVec2f(0, 1));
 	mesh.addTexCoord(ofVec2f(1, 1));
+#endif
+
 	mesh.addIndex(0);
 	mesh.addIndex(1);
 	mesh.addIndex(3);
@@ -138,19 +148,25 @@ void CamController::update() {
 			ofClear(0, 0, 0, 0);
 			shader.begin();
 			{
+#ifdef TARGET_WIN32
+				shader.setUniformTexture("tex", cam.getTexture(), 1);
+#else
 				shader.setUniformTexture("Ytex", cam.getTexturePlanes()[0], 0);
 				shader.setUniformTexture("Utex", cam.getTexturePlanes()[1], 1);
 				shader.setUniformTexture("Vtex", cam.getTexturePlanes()[2], 2);
 				shader.setUniform2f("tex_scaleY", 1.0, 1.0);
 				shader.setUniform2f("tex_scaleU", 1.0, 1.0);
 				shader.setUniform2f("tex_scaleV", 1.0, 1.0);
+#endif
 				shader.setUniform1f("brightness", brightness);
 				shader.setUniform1f("contrast", contrast);
 				shader.setUniform1f("saturation", saturation);
 
 				mesh.draw();
+				
 			}
 			shader.end();
+			cam.draw(0, 0); // thanks openGL we need to fix the shader
 		}
 		fbo.end();
 	}

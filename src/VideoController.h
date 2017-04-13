@@ -31,7 +31,7 @@ protected:
 	ofxOMXPlayer vid;
 	ofTexture defaultTexture;
 #endif
-
+	
 	ofDirectory dir;
 	string videoPath;
 	vector<string> videoFilePaths;

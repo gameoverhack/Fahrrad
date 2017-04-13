@@ -64,6 +64,8 @@ void VideoController::update() {
 
 	if (nextVideoIndex != currentVideoIndex) {
 
+		if (nextVideoIndex >= videoFilePaths.size()) nextVideoIndex = 0;
+
 		if (nextVideoIndex != 0 && videoFilePaths[nextVideoIndex] != "") {
 			ofLogVerbose() << "Loading video: " << videoFilePaths[nextVideoIndex];
 

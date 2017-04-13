@@ -1,4 +1,5 @@
 #include "ofApp.h"
+//#define USE_BIKE
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -12,33 +13,34 @@ void ofApp::setup(){
 	bShowFullScreen = false;
 	bShowCursor = true;
 
-	bVideo = true;
-
 	ofSetFullscreen(bShowFullScreen);
 	if (bShowCursor) {
 		ofShowCursor();
 	} else {
 		ofHideCursor();
 	}
-
+#ifdef USE_BIKE
 	bicycleController.setup();
 	videoController.setup();
+#else
 	cameraController.setup();
-
+#endif
 	font.load(ofToDataPath("fonts/verdana.ttf"), 96, true);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+#ifdef USE_BIKE
 	bicycleController.update();
 	videoController.update();
+#else
     cameraController.update();
+#endif
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
+#ifdef USE_BIKE
 	double avgVelocity = bicycleController.getAverageVelocity();
 	double normalisedVelocity = bicycleController.getNormalisedVelocity();
 	double dstTravelled = bicycleController.getDistanceTravelled();
@@ -47,23 +49,23 @@ void ofApp::draw(){
 	os << std::setprecision(1) << std::fixed << avgVelocity  << " km/h" << endl << dstTravelled << " m";
 
 	videoController.setSpeed(normalisedVelocity);
-	if(bVideo){
-        videoController.getVideoTexture().draw(0, 0, ofGetWidth(), ofGetHeight());
-	}
-	else{
-        cameraController.getCameraTexture().draw(0, 0, ofGetWidth(), ofGetHeight());
-	}
 
+    videoController.getVideoTexture().draw(0, 0, ofGetWidth(), ofGetHeight());
 	font.drawString(os.str(), 1000, 400);
+#else
+    cameraController.getCameraTexture().draw(0, 0, ofGetWidth(), ofGetHeight());
+#endif
 
 	if (bShowDebug) {
 
 		gui.begin();
 		{
+#ifdef USE_BIKE
 			bicycleController.drawGUI();
 			videoController.drawGUI();
+#else
 			cameraController.drawGUI();
-
+#endif
 			ImGui::Spacing(); ImGui::Spacing();
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		}
@@ -103,19 +105,14 @@ void ofApp::keyPressed(int key){
 		}
 	}
 	break;
-	case 'v':
-	{
-		bVideo ^= true;
-	}
-	break;
 	case ' ':
 	{
-        if(bVideo){
-            bicycleController.triggerSensor(BicycleController::SENSOR_KEYBOARD);
-        }
-        else{
-            cameraController.triggerSensor(CamController::SENSOR_KEYBOARD);
-        }
+#ifdef USE_BIKE
+		bicycleController.triggerSensor(BicycleController::SENSOR_KEYBOARD);
+#else
+		cameraController.triggerSensor(CamController::SENSOR_KEYBOARD);
+#endif
+
 	}
 	break;
 	default:

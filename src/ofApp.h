@@ -32,8 +32,6 @@ public:
 	bool bShowFullScreen;
 	bool bShowCursor;
 
-	bool bVideo;
-
 	ofxImGui gui;
 
 	BicycleController bicycleController;

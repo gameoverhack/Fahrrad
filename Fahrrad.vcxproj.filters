@@ -88,6 +88,9 @@
     <ClCompile Include="src\VideoController.h.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\CamController.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -798,6 +801,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\VideoController.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CamController.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

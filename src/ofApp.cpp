@@ -114,7 +114,7 @@ void ofApp::keyPressed(int key){
             bicycleController.triggerSensor(BicycleController::SENSOR_KEYBOARD);
         }
         else{
-            cameraController.saveIMG();
+            cameraController.triggerSensor(CamController::SENSOR_KEYBOARD);
         }
 	}
 	break;

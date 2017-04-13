@@ -24,6 +24,7 @@ void ofApp::setup(){
 	videoController.setup();
 #else
 	cameraController.setup();
+	flickrController.setup();
 #endif
 	font.load(ofToDataPath("fonts/verdana.ttf"), 96, true);
 }
@@ -35,6 +36,7 @@ void ofApp::update(){
 	videoController.update();
 #else
     cameraController.update();
+	flickrController.update();
 #endif
 }
 
@@ -65,6 +67,7 @@ void ofApp::draw(){
 			videoController.drawGUI();
 #else
 			cameraController.drawGUI();
+			flickrController.drawGUI();
 #endif
 			ImGui::Spacing(); ImGui::Spacing();
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

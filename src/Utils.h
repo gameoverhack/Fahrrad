@@ -9,17 +9,17 @@
 #define CONFIG_TYPE ".lnxconf"
 #endif
 
-static string fixPath(string path) {
-#ifdef TARGET_WIN32
-	vector<string> pathParts = ofSplitString(path, "/");
-	path = "";
-	for (int i = 0; i < pathParts.size() - 1; i++) {
-		path += pathParts[i] + "\\";
-	}
-	path += pathParts[pathParts.size() - 1];
-#endif
-	return ofToDataPath(path);
-}
+//static string fixPath(string path) {
+//#ifdef TARGET_WIN32
+//	vector<string> pathParts = ofSplitString(path, "/");
+//	path = "";
+//	for (int i = 0; i < pathParts.size() - 1; i++) {
+//		path += pathParts[i] + "\\";
+//	}
+//	path += pathParts[pathParts.size() - 1];
+//#endif
+//	return ofToDataPath(path);
+//}
 
 //from: https://eliasdaler.github.io/using-imgui-with-sfml-pt2
 

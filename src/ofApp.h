@@ -6,6 +6,7 @@
 #include "BicycleController.h"
 #include "VideoController.h"
 #include "CamController.h"
+#include "FlickrController.h"
 
 class ofApp : public ofBaseApp{
 
@@ -37,6 +38,7 @@ public:
 	BicycleController bicycleController;
 	VideoController videoController;
 	CamController cameraController;
+	FlickrController flickrController;
 
 	ofTrueTypeFont font;
 

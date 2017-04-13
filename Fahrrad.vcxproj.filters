@@ -91,6 +91,15 @@
     <ClCompile Include="src\CamController.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxFlickr\src\md5.cpp">
+      <Filter>addons\ofxFlickr\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxFlickr\src\ofxFlickr.cpp">
+      <Filter>addons\ofxFlickr\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FlickrController.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -212,6 +221,12 @@
     </Filter>
     <Filter Include="addons\ofxXmlSettings\libs">
       <UniqueIdentifier>{687714A8-1662-FA1C-261F-50F0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxFlickr">
+      <UniqueIdentifier>{f415e00e-c08e-46fa-939c-7559e79bd527}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxFlickr\src">
+      <UniqueIdentifier>{c23300ad-9fed-401a-9980-5e226de9cb8b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -804,6 +819,15 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\CamController.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFlickr\src\md5.h">
+      <Filter>addons\ofxFlickr\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFlickr\src\ofxFlickr.h">
+      <Filter>addons\ofxFlickr\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FlickrController.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

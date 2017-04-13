@@ -122,12 +122,7 @@ void CamController::update() {
 
 	// check what mode we're in
 	if (nextSensorMode != currentSensorMode) {
-
-		// change sensor mode
 		changeMode();
-
-		// set current to next mode
-		currentSensorMode = nextSensorMode;
 	}
 
 	unlock();
@@ -208,7 +203,11 @@ void CamController::changeMode() {
 	break;
 	}
 
+	// reset timeouts
 	lastSensorTimeout = ofGetElapsedTimeMillis();
+
+	// set current to next mode
+	currentSensorMode = nextSensorMode;
 
 }
 
@@ -369,10 +368,10 @@ ofTexture & CamController::getCameraTexture() {
 
 //--------------------------------------------------------------
 bool CamController::loadParameters() {
-	return Serializer.loadClass(fixPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
+	return Serializer.loadClass(ofToDataPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }
 
 //--------------------------------------------------------------
 bool CamController::saveParameters() {
-	return Serializer.saveClass(fixPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
+	return Serializer.saveClass(ofToDataPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }

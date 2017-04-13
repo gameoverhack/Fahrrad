@@ -36,7 +36,7 @@ void CamController::setup() {
 
 	cam.setDeviceID(0);
 	cam.setDesiredFrameRate(60);
-	cam.setPixelFormat(OF_PIXELS_YUY2);
+	cam.setPixelFormat(OF_PIXELS_NATIVE);
 	cam.initGrabber(w, h);
 
 	// setup shader
@@ -51,8 +51,7 @@ void CamController::setup() {
 		ofLogError() << "Load Shader FAIL";
 	}
 
-
-	fbo.allocate(w, h, GL_RGBA);
+	fbo.allocate(w, h, GL_RGB);
 
 	pixels.allocate(w, h, OF_IMAGE_COLOR);
 
@@ -149,7 +148,7 @@ void CamController::update() {
 			shader.begin();
 			{
 #ifdef TARGET_WIN32
-				shader.setUniformTexture("tex", cam.getTexture(), 1);
+				shader.setUniformTexture("tex", cam.getTexture(), 0);
 #else
 				shader.setUniformTexture("Ytex", cam.getTexturePlanes()[0], 0);
 				shader.setUniformTexture("Utex", cam.getTexturePlanes()[1], 1);
@@ -166,7 +165,7 @@ void CamController::update() {
 				
 			}
 			shader.end();
-			cam.draw(0, 0); // thanks openGL we need to fix the shader
+			//cam.draw(0, 0); // thanks openGL we need to fix the shader
 		}
 		fbo.end();
 	}

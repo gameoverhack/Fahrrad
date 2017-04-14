@@ -22,7 +22,8 @@ public:
 		PHOTO_REQUESTED,
 		PHOTO_COUNTDOWN,
 		PHOTO_SAVEIMAGE,
-		PHOTO_FINISHING
+		PHOTO_FINISHING,
+		PHOTO_FINISHED
 	} PhotoState;
 
 	void setup();
@@ -57,7 +58,8 @@ protected:
 		"PHOTO_REQUESTED",
 		"PHOTO_COUNTDOWN",
 		"PHOTO_SAVEIMAGE",
-		"PHOTO_FINISHING"
+		"PHOTO_FINISHING",
+		"PHOTO_FINISHED"
 	};
 
 	vector<string> sensorModes = {
@@ -75,6 +77,13 @@ protected:
 
 	double timeSinceLastSensor;
 	int lastSensorTimeout;
+
+	////Audio
+	ofSoundPlayer soundPlayerCountdown;
+	ofSoundPlayer soundPlayerShutter;
+
+	void playCountdownSound();
+	void playShutterSound();
 
 	void changeMode();
 

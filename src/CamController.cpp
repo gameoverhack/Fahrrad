@@ -39,6 +39,10 @@ void CamController::setup() {
 	cam.setPixelFormat(OF_PIXELS_NATIVE);
 	cam.initGrabber(w, h);
 
+	//setup Audio
+	soundPlayerCountdown.load(ofToDataPath("audio/countdown.wav"));
+	soundPlayerShutter.load(ofToDataPath("audio/shutter.wav"));
+
 	// setup shader
 #ifdef TARGET_WIN32
 	bool didLoadShader = shader.load(ofToDataPath("shader/passWIN.vert"), ofToDataPath("shader/colorWIN.frag"), "");
@@ -89,7 +93,7 @@ void CamController::setDefaults() {
 	ofLogNotice() << className << ": setDefaults";
 
 #ifdef TARGET_WIN32
-	imgStorePath = "C:/Users/gameover8/Desktop";
+	imgStorePath = "C:/Users/JB/Desktop/img";
 #else
 	imgStorePath = "/home/pi/Desktop/img";
 #endif
@@ -257,12 +261,57 @@ void CamController::threadedFunction() {
             lock();
 
 			// grab the current photo state
-
+			int thisCurrentPhotoState = currentPhotoState;
 
 			unlock();
 
 
-            // handle the current photo state and lock and unklck only when changing state
+            // handle the current photo state and lock and unlock only when changing state
+
+			switch (thisCurrentPhotoState) {
+			case PHOTO_NONE:
+			{
+
+			}
+			break;
+			case PHOTO_REQUESTED:
+			{
+				playCountdownSound();
+			}
+			break;
+			case PHOTO_COUNTDOWN:
+			{
+				if (!soundPlayerCountdown.isPlaying()) {
+					lock();
+					if (currentPhotoState == PHOTO_COUNTDOWN) {
+						currentPhotoState = PHOTO_SAVEIMAGE;
+					}
+					unlock();
+				}
+			}
+			break;
+			case PHOTO_SAVEIMAGE:
+			{
+				saveIMG();
+			}
+			break;
+			case PHOTO_FINISHING:
+			{
+				playShutterSound();
+			}
+			break;
+			case PHOTO_FINISHED:
+			{
+				if (!soundPlayerShutter.isPlaying()) {
+					lock();
+					if (currentPhotoState == PHOTO_FINISHED) {
+						currentPhotoState = PHOTO_NONE;
+					}
+					unlock();
+				}
+			}
+			break;
+			}
 
 
 		}
@@ -275,7 +324,6 @@ void CamController::threadedFunction() {
 
 //--------------------------------------------------------------
 void CamController::triggerSensor(SensorMode sensorMode) {
-
 	lock();
 
 	if (sensorMode == currentSensorMode) {
@@ -289,7 +337,34 @@ void CamController::triggerSensor(SensorMode sensorMode) {
 }
 
 //--------------------------------------------------------------
+void CamController::playCountdownSound() {
+	lock();
+	if (currentPhotoState == PHOTO_REQUESTED) {
+		currentPhotoState = PHOTO_COUNTDOWN;
+	}
+	unlock();
+
+	soundPlayerCountdown.play();
+}
+
+//--------------------------------------------------------------
+void CamController::playShutterSound() {
+	lock();
+	if (currentPhotoState == PHOTO_FINISHING) {
+		currentPhotoState = PHOTO_FINISHED;
+	}
+	unlock();
+
+	soundPlayerShutter.play();
+}
+
+//--------------------------------------------------------------
 void CamController::saveIMG() {
+
+	if (currentPhotoState == PHOTO_SAVEIMAGE) {
+		currentPhotoState = PHOTO_FINISHING;
+	}
+
 	//get img name from timestamp
 	string savename = ofGetTimestampString();
 
@@ -301,6 +376,8 @@ void CamController::saveIMG() {
 
 	//save
 	ofSaveImage(pixels, imgStorePath + "/" + savename + ".jpg", OF_IMAGE_QUALITY_BEST);
+
+	//toDo check if Image was saved
 
 	unlock();
 

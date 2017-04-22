@@ -175,6 +175,7 @@
   <ItemGroup>
     <ClCompile Include="src\BicycleController.cpp" />
     <ClCompile Include="src\CamController.cpp" />
+    <ClCompile Include="src\ImageLoadController.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
     <ClCompile Include="..\..\..\addons\ofxImGui\src\BaseEngine.cpp" />
@@ -200,12 +201,14 @@
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.cpp" />
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlerror.cpp" />
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp" />
+    <ClCompile Include="src\RenderController.cpp" />
     <ClCompile Include="src\VideoController.h.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BicycleController.h" />
     <ClInclude Include="src\CamController.h" />
     <ClInclude Include="src\IGuiBase.h" />
+    <ClInclude Include="src\ImageLoadController.h" />
     <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="..\..\..\addons\ofxImGui\src\BaseEngine.h" />
     <ClInclude Include="..\..\..\addons\ofxImGui\src\BaseTheme.h" />
@@ -396,6 +399,7 @@
     <ClInclude Include="..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\videostab\videostab.hpp" />
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.h" />
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.h" />
+    <ClInclude Include="src\RenderController.h" />
     <ClInclude Include="src\SerializationUtils.h" />
     <ClInclude Include="src\Utils.h" />
     <ClInclude Include="src\VideoController.h" />

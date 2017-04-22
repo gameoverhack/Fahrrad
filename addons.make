@@ -5,3 +5,4 @@ ofxXmlSettings
 ofxBoost
 ofxOMXPlayer
 ofxGPIO
+ofxHomography

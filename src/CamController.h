@@ -17,7 +17,7 @@ public:
 		SENSOR_GPIO
 	} SensorMode;
 
-    typedef enum {
+	typedef enum {
 		PHOTO_NONE = 0,
 		PHOTO_REQUESTED,
 		PHOTO_COUNTDOWN,
@@ -35,15 +35,12 @@ public:
 
 	ofTexture& getCameraTexture();
 
-
-
 protected:
 
 	float brightness, contrast, saturation;
 
 	bool bSetImageStorePath;
 
-	ofDirectory dir;
 	string imgStorePath;
 
 	ofVideoGrabber cam;
@@ -70,7 +67,7 @@ protected:
 		"SENSOR_GPIO"
 	};
 
-    PhotoState currentPhotoState;
+	PhotoState currentPhotoState;
 
 	SensorMode nextSensorMode;
 	SensorMode currentSensorMode;
@@ -84,6 +81,7 @@ protected:
 
 	void playCountdownSound();
 	void playShutterSound();
+
 
 	void changeMode();
 

@@ -25,7 +25,7 @@ void CamController::setup() {
 
 	bSetImageStorePath = false;
 
-    currentPhotoState = PHOTO_NONE;
+	currentPhotoState = PHOTO_NONE;
 
 	currentSensorMode = SENSOR_NONE; // so we force sensor mode change in update
 	timeSinceLastSensor = 0;
@@ -42,6 +42,8 @@ void CamController::setup() {
 	//setup Audio
 	soundPlayerCountdown.load(ofToDataPath("audio/countdown.wav"));
 	soundPlayerShutter.load(ofToDataPath("audio/shutter.wav"));
+
+
 
 	// setup shader
 #ifdef TARGET_WIN32
@@ -85,7 +87,6 @@ void CamController::setup() {
 	mesh.addIndex(2);
 
 	startThread();
-
 }
 
 //--------------------------------------------------------------
@@ -110,14 +111,14 @@ void CamController::update() {
 
 	if (bSetImageStorePath) {
 #ifndef TARGET_WIN32
-    ofSetWindowShape(10, 10);
+		ofSetWindowShape(10, 10);
 #endif
 		ofFileDialogResult result = ofSystemLoadDialog("Select Save Folder", true);
 		if (result.getPath() != "") {
 			imgStorePath = result.getPath();
 		}
 #ifndef TARGET_WIN32
-    ofSetWindowShape(1920, 1080);
+		ofSetWindowShape(1920, 1080);
 #endif
 	}
 
@@ -166,7 +167,7 @@ void CamController::update() {
 				shader.setUniform1f("saturation", saturation);
 
 				mesh.draw();
-				
+
 			}
 			shader.end();
 			//cam.draw(0, 0); // thanks openGL we need to fix the shader
@@ -239,7 +240,7 @@ void CamController::threadedFunction() {
 			switch (thisCurrentMode) {
 			case SENSOR_SIMULATE:
 			{
-				double simulateTimeout =  10000.0; // mm / mm/s * 1000.0 = milliseconds
+				double simulateTimeout = 10000.0; // mm / mm/s * 1000.0 = milliseconds
 				if (timeSinceLastSensor >= simulateTimeout) {
 					triggerSensor(SENSOR_SIMULATE);
 				}
@@ -258,7 +259,7 @@ void CamController::threadedFunction() {
 			}
 
 
-            lock();
+			lock();
 
 			// grab the current photo state
 			int thisCurrentPhotoState = currentPhotoState;
@@ -266,7 +267,7 @@ void CamController::threadedFunction() {
 			unlock();
 
 
-            // handle the current photo state and lock and unlock only when changing state
+			// handle the current photo state and lock and unlock only when changing state
 
 			switch (thisCurrentPhotoState) {
 			case PHOTO_NONE:
@@ -327,8 +328,8 @@ void CamController::triggerSensor(SensorMode sensorMode) {
 	lock();
 
 	if (sensorMode == currentSensorMode) {
-		if(currentPhotoState == PHOTO_NONE){
-            currentPhotoState = PHOTO_REQUESTED;
+		if (currentPhotoState == PHOTO_NONE) {
+			currentPhotoState = PHOTO_REQUESTED;
 		}
 	}
 
@@ -375,6 +376,7 @@ void CamController::saveIMG() {
 	fbo.readToPixels(pixels);
 
 	//save
+	//toDO still no image saved 
 	ofSaveImage(pixels, imgStorePath + "/" + savename + ".jpg", OF_IMAGE_QUALITY_BEST);
 
 	//toDo check if Image was saved
@@ -393,6 +395,7 @@ void CamController::drawGUI() {
 
 			if (ImGui::CollapsingHeader("Render Settings"))
 			{
+
 				ImGui::SliderFloat("Image brightness", &brightness, 0.0, 1.0);
 				if (ImGui::Button("reset brightness")) brightness = 0.15;
 				ImGui::Spacing();

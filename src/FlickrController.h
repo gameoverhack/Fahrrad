@@ -38,6 +38,7 @@ protected:
 
 	bool bIsSearching;
 	bool bIsDownloading;
+	bool bIsDirectoryListed;
 
 	vector<ofxFlickr::Media> downloadQueue;
 
@@ -56,8 +57,6 @@ protected:
 	void threadedFunction();
 
 	void onFlickrEvent(ofxFlickr::APIEvent & evt);
-
-	void listDirectory();
 
 	void changeMode();
 

@@ -147,10 +147,21 @@ void FlickrController::threadedFunction() {
 			break;
 			case FLICKR_DOWNLOAD:
 			{
+
 				lock();
 				if (bIsDownloading) {
 					if (downloadQueue.size() > 0) {
 						
+						if (!bIsDirectoryListed) {
+							unlock();
+							ofDirectory dir;
+							dir.allowExt("jpg");
+							dir.listDir(flickrDownloadPath);
+							lock();
+							downloadDir = dir;
+							bIsDirectoryListed = true;
+						}
+
 						ofxFlickr::Media media = downloadQueue.front();
 						string title = media.title + ".jpg";
 						bool bDoDownload = true;
@@ -233,8 +244,8 @@ void FlickrController::onFlickrEvent(ofxFlickr::APIEvent & evt) {
 			lock();
 			bIsSearching = false;
 			bIsDownloading = true;
+			bIsDirectoryListed = false;
 			downloadQueue = evt.results;
-			listDirectory();
 			if (evt.results.size() == 100) {
 				flickrSearchPage++;
 			}else{
@@ -286,22 +297,13 @@ void FlickrController::changeMode() {
 	break;
 	case FLICKR_DOWNLOAD:
 	{
-		listDirectory();
+
 	}
 	break;
 	}
 
 	// set current to next mode
 	currentFlickrMode = nextFlickrMode;
-
-}
-
-//--------------------------------------------------------------
-void FlickrController::listDirectory() {
-
-	downloadDir.reset();
-	downloadDir.allowExt("jpg");
-	downloadDir.listDir(flickrDownloadPath);
 
 }
 

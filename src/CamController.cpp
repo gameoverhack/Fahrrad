@@ -387,8 +387,14 @@ void CamController::takeImage() {
 //--------------------------------------------------------------
 void CamController::saveImage() {
 	//get img name from timestamp
-	string savename = ofGetTimestampString();
-	ofSaveImage(pixels, imgStorePath + "/" + savename + ".jpg", OF_IMAGE_QUALITY_BEST);
+	string fileName = imgStorePath + "/" + ofGetTimestampString() + ".jpg";
+	bool ok = ofSaveImage(pixels, fileName, OF_IMAGE_QUALITY_BEST);
+	if (ok) {
+		ofLogNotice() << "Image: " << fileName << " save SUCCESS";
+	}
+	else {
+		ofLogError() << "Image: " << fileName << " save FAILED";
+	}
 	lock();
 	if (currentPhotoState == PHOTO_SAVEIMAGE) {
 		currentPhotoState = PHOTO_FINISHING;

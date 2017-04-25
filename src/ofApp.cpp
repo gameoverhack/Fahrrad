@@ -62,7 +62,7 @@ void ofApp::draw() {
 	videoController.getVideoTexture().draw(0, 0, ofGetWidth(), ofGetHeight());
 	font.drawString(os.str(), 1000, 400);
 #elif USE_CAM
-	cameraController.getCameraTexture().draw(0, 0, ofGetWidth() / 3, ofGetHeight() / 3);
+	cameraController.getCameraTexture().draw(0, 0, ofGetWidth(), ofGetHeight());
 #else
 	renderController.begin();
 	{

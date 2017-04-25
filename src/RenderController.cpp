@@ -9,7 +9,6 @@ RenderController::RenderController() {
 //--------------------------------------------------------------
 RenderController::~RenderController() {
 	ofLogNotice() << className << ": destructor";
-
 	this->IGuiBase::~IGuiBase(); // call base destructor
 }
 
@@ -91,7 +90,6 @@ void RenderController::drawGUI() {
 void RenderController::mouseDragged(int x, int y) {
 	
 	if (currentPointIndex != -1) {
-		
 		distortedCorners[currentPointIndex] = ofPoint(x, y);
 		homography = ofxHomography::findHomography(originalCorners, distortedCorners);
 	}

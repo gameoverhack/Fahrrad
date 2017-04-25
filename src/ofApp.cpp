@@ -1,6 +1,6 @@
 #include "ofApp.h"
-//#define USE_BIKE
-//#define USE_CAM
+//#define USE_BIKE 1
+#define USE_CAM 1
 
 //--------------------------------------------------------------
 void ofApp::setup() {

@@ -102,6 +102,8 @@ void CamController::setDefaults() {
 	brightness = 0.15;
 	contrast = 1.0;
 	saturation = 1.0;
+
+	simulateTimeout = 2000;
 }
 
 //--------------------------------------------------------------
@@ -137,12 +139,6 @@ void CamController::update() {
 
 	unlock();
 
-	// doing all velocity updates in threadedUpdate for now
-
-	// lock the model
-	// copy to the appModel
-	// unlock the model
-
 	cam.update();
 
 	if (cam.isFrameNew()) {
@@ -174,6 +170,19 @@ void CamController::update() {
 		}
 		fbo.end();
 	}
+
+
+	lock();
+
+	// grab the current photo state
+	int thisCurrentPhotoState = currentPhotoState;
+
+	unlock();
+
+	if (thisCurrentPhotoState == PHOTO_TAKEIMAGE) {
+		takeImage();
+	}
+
 }
 
 //--------------------------------------------------------------
@@ -240,9 +249,9 @@ void CamController::threadedFunction() {
 			switch (thisCurrentMode) {
 			case SENSOR_SIMULATE:
 			{
-				double simulateTimeout = 10000.0; // mm / mm/s * 1000.0 = milliseconds
 				if (timeSinceLastSensor >= simulateTimeout) {
 					triggerSensor(SENSOR_SIMULATE);
+					lastSensorTimeout = ofGetElapsedTimeMillis();
 				}
 			}
 			break;
@@ -285,15 +294,20 @@ void CamController::threadedFunction() {
 				if (!soundPlayerCountdown.isPlaying()) {
 					lock();
 					if (currentPhotoState == PHOTO_COUNTDOWN) {
-						currentPhotoState = PHOTO_SAVEIMAGE;
+						currentPhotoState = PHOTO_TAKEIMAGE;
 					}
 					unlock();
 				}
 			}
 			break;
+			case PHOTO_TAKEIMAGE:
+			{
+				// happens in update as fbo.readPixels can't happen in a thread
+			}
+			break;
 			case PHOTO_SAVEIMAGE:
 			{
-				saveIMG();
+				saveImage();
 			}
 			break;
 			case PHOTO_FINISHING:
@@ -339,50 +353,47 @@ void CamController::triggerSensor(SensorMode sensorMode) {
 
 //--------------------------------------------------------------
 void CamController::playCountdownSound() {
+	soundPlayerCountdown.play();
 	lock();
 	if (currentPhotoState == PHOTO_REQUESTED) {
 		currentPhotoState = PHOTO_COUNTDOWN;
 	}
 	unlock();
-
-	soundPlayerCountdown.play();
 }
 
 //--------------------------------------------------------------
 void CamController::playShutterSound() {
+	soundPlayerShutter.play();
 	lock();
 	if (currentPhotoState == PHOTO_FINISHING) {
 		currentPhotoState = PHOTO_FINISHED;
 	}
 	unlock();
-
-	soundPlayerShutter.play();
 }
 
 //--------------------------------------------------------------
-void CamController::saveIMG() {
+void CamController::takeImage() {
+	//clear pixels
+	pixels.clear();
+	//get frame buffer pixels
+	fbo.readToPixels(pixels);
+	lock();
+	if (currentPhotoState == PHOTO_TAKEIMAGE) {
+		currentPhotoState = PHOTO_SAVEIMAGE;
+	}
+	unlock();
+}
 
+//--------------------------------------------------------------
+void CamController::saveImage() {
+	//get img name from timestamp
+	string savename = ofGetTimestampString();
+	ofSaveImage(pixels, imgStorePath + "/" + savename + ".jpg", OF_IMAGE_QUALITY_BEST);
+	lock();
 	if (currentPhotoState == PHOTO_SAVEIMAGE) {
 		currentPhotoState = PHOTO_FINISHING;
 	}
-
-	//get img name from timestamp
-	string savename = ofGetTimestampString();
-
-	lock();
-	pixels.clear();
-
-	//get frame buffer pixels
-	fbo.readToPixels(pixels);
-
-	//save
-	//toDO still no image saved 
-	ofSaveImage(pixels, imgStorePath + "/" + savename + ".jpg", OF_IMAGE_QUALITY_BEST);
-
-	//toDo check if Image was saved
-
 	unlock();
-
 }
 
 //--------------------------------------------------------------
@@ -393,7 +404,7 @@ void CamController::drawGUI() {
 		{
 			bSetImageStorePath = ImGui::Button("Set Image Save Path");
 
-			if (ImGui::CollapsingHeader("Render Settings"))
+			if (ImGui::CollapsingHeader("Shader Settings"))
 			{
 
 				ImGui::SliderFloat("Image brightness", &brightness, 0.0, 1.0);
@@ -415,7 +426,7 @@ void CamController::drawGUI() {
 			switch (nextSensorMode) {
 			case SENSOR_SIMULATE:
 			{
-
+				ImGui::SliderInt("Simulate Timeout", &simulateTimeout, 1, 60000);
 			}
 			break;
 			case SENSOR_TEENSY:

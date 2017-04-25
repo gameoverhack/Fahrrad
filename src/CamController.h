@@ -21,6 +21,7 @@ public:
 		PHOTO_NONE = 0,
 		PHOTO_REQUESTED,
 		PHOTO_COUNTDOWN,
+		PHOTO_TAKEIMAGE,
 		PHOTO_SAVEIMAGE,
 		PHOTO_FINISHING,
 		PHOTO_FINISHED
@@ -31,7 +32,7 @@ public:
 	void drawGUI();
 
 	void triggerSensor(SensorMode sensorMode);
-	void saveIMG();
+	
 
 	ofTexture& getCameraTexture();
 
@@ -54,6 +55,7 @@ protected:
 		"PHOTO_NONE",
 		"PHOTO_REQUESTED",
 		"PHOTO_COUNTDOWN",
+		"PHOTO_TAKEIMAGE",
 		"PHOTO_SAVEIMAGE",
 		"PHOTO_FINISHING",
 		"PHOTO_FINISHED"
@@ -74,6 +76,7 @@ protected:
 
 	double timeSinceLastSensor;
 	int lastSensorTimeout;
+	int simulateTimeout;
 
 	////Audio
 	ofSoundPlayer soundPlayerCountdown;
@@ -82,6 +85,8 @@ protected:
 	void playCountdownSound();
 	void playShutterSound();
 
+	void takeImage();
+	void saveImage();
 
 	void changeMode();
 
@@ -96,10 +101,10 @@ protected:
 	template<class Archive>
 	void serialize(Archive & ar, const unsigned int version) {
 		ar & BOOST_SERIALIZATION_NVP(nextSensorMode);
-		// save image vars
 		ar & BOOST_SERIALIZATION_NVP(imgStorePath);
 		ar & BOOST_SERIALIZATION_NVP(brightness);
 		ar & BOOST_SERIALIZATION_NVP(contrast);
 		ar & BOOST_SERIALIZATION_NVP(saturation);
+		ar & BOOST_SERIALIZATION_NVP(simulateTimeout);	
 	}
 };

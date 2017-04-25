@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 #include "IGuiBase.h"
-#include "ofxHomography\src\ofxHomography.h"
+#include "ofxHomography.h"
 
 class RenderController : public IGuiBase{
 public:

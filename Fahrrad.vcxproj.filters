@@ -219,6 +219,12 @@
     <Filter Include="addons\ofxXmlSettings\libs">
       <UniqueIdentifier>{687714A8-1662-FA1C-261F-50F0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="addons\ofxHomography">
+      <UniqueIdentifier>{bfafd9d7-12d8-4aa6-a934-6254c2b9af1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxHomography\src">
+      <UniqueIdentifier>{4dd41aaa-d16c-4721-b38e-ebf7c9cb3e3b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofApp.h">
@@ -817,6 +823,9 @@
     </ClInclude>
     <ClInclude Include="src\RenderController.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxHomography\src\ofxHomography.h">
+      <Filter>addons\ofxHomography\src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

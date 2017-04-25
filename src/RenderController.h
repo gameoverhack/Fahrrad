@@ -27,14 +27,12 @@ protected:
 	ofFbo fbo;
 	
 	bool bSetDistortion;
-	ofPoint v_0, v_1, v_2, v_3;
-	vector<ofPoint> distortionPoints;
+
 	ofPoint originalCorners[4];
 	ofPoint distortedCorners[4];
 	ofMatrix4x4 homography;
 
-	bool movingPoint;
-	ofPoint* curPoint;
+	int currentPointIndex;
 
 	void setDefaults();
 	bool loadParameters();
@@ -44,11 +42,7 @@ protected:
 	
 	template<class Archive>
 	void serialize(Archive & ar, const unsigned int version) {
-		// distortion vars
-		ar & BOOST_SERIALIZATION_NVP(v_0);
-		ar & BOOST_SERIALIZATION_NVP(v_1);
-		ar & BOOST_SERIALIZATION_NVP(v_2);
-		ar & BOOST_SERIALIZATION_NVP(v_3);
+		ar & BOOST_SERIALIZATION_NVP(distortedCorners);
 	}
 	
 };

@@ -11,9 +11,8 @@ public:
 
 	void setup();
 	void update();
+	void draw();
 	void drawGUI();
-
-	ofTexture& getLoadedImageTexture();
 
 protected:
 	void threadedFunction();

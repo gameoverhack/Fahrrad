@@ -28,6 +28,7 @@ void ofApp::setup() {
 	cameraController.setup();
 #else
 	renderController.setup();
+	imageLoadController.setup();
 #endif
 	font.load(ofToDataPath("fonts/verdana.ttf"), 96, true);
 #
@@ -41,7 +42,8 @@ void ofApp::update() {
 #elif USE_CAM
 	cameraController.update();
 #else
-	renderController.update();
+	//renderController.update();
+	imageLoadController.update();
 #endif
 }
 
@@ -62,10 +64,14 @@ void ofApp::draw() {
 #elif USE_CAM
 	cameraController.getCameraTexture().draw(0, 0, ofGetWidth() / 3, ofGetHeight() / 3);
 #else
-	renderController.getTexture().draw(0, 0, ofGetWidth(), ofGetHeight());
+	renderController.begin();
+	//imageLoadController.draw();
+	ofDrawRectangle(0, 0, 100, 100);
+	renderController.end();
 #endif
 
 	if (bShowDebug) {
+		renderController.draw();
 
 		gui.begin();
 		{
@@ -76,6 +82,7 @@ void ofApp::draw() {
 			cameraController.drawGUI();
 #else
 			renderController.drawGUI();
+			imageLoadController.drawGUI();
 #endif
 			ImGui::Spacing(); ImGui::Spacing();
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

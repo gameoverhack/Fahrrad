@@ -7,6 +7,7 @@
 #include "VideoController.h"
 #include "CamController.h"
 #include "RenderController.h"
+#include "ImageLoadController.h"
 
 class ofApp : public ofBaseApp {
 
@@ -39,6 +40,7 @@ public:
 	VideoController videoController;
 	CamController cameraController;
 	RenderController renderController;
+	ImageLoadController imageLoadController;
 	ofTrueTypeFont font;
 
 };

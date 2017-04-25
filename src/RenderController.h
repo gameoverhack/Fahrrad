@@ -3,9 +3,8 @@
 #include "ofMain.h"
 #include "IGuiBase.h"
 #include "ofxHomography\src\ofxHomography.h"
-#include "ImageLoadController.h"
 
-class RenderController : public IGuiBase, public ofThread {
+class RenderController : public IGuiBase{
 public:
 
 	RenderController();
@@ -13,14 +12,15 @@ public:
 
 	void setup();
 	void update();
+	void draw();
 	void drawGUI();
+
+	void begin();
+	void end();
 
 	void mouseDragged(int x, int y);
 	void mousePressed(int x, int y);
 	void mouseReleased(int x, int y);
-
-	ofTexture& getTexture();
-	ImageLoadController imageLoadController;
 
 protected:
 

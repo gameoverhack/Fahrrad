@@ -117,6 +117,11 @@ void ImageLoadController::update() {
 }
 
 //--------------------------------------------------------------
+void ImageLoadController::draw() {
+	fbos[currentFboIndex].draw(0, 0, ofGetWidth(), ofGetHeight());
+}
+
+//--------------------------------------------------------------
 void ImageLoadController::threadedFunction() {
 
 	while (isThreadRunning()) {
@@ -133,6 +138,7 @@ void ImageLoadController::threadedFunction() {
 			lock();
 			if (bImagesLoaded && !bImagesReady) {
 				bImagesReady = true;
+				bImagesLoaded = false;
 			}
 			unlock();
 		}
@@ -195,11 +201,6 @@ void ImageLoadController::drawGUI() {
 		}
 		endGUI();
 	}
-}
-
-//--------------------------------------------------------------
-ofTexture & ImageLoadController::getLoadedImageTexture() {
-	return fbos[currentFboIndex].getTextureReference(0);
 }
 
 //--------------------------------------------------------------

@@ -10,9 +10,6 @@ RenderController::RenderController() {
 RenderController::~RenderController() {
 	ofLogNotice() << className << ": destructor";
 
-	// kill the thread
-	waitForThread();
-
 	this->IGuiBase::~IGuiBase(); // call base destructor
 }
 
@@ -24,7 +21,7 @@ void RenderController::setup() {
 	IGuiBase::setup();
 
 	//setup homography
-	bSetDistortion = false;
+	bSetDistortion = true;
 
 	originalCorners[0].set(0);
 	originalCorners[1].set(ofGetWidth(), 0);
@@ -44,8 +41,6 @@ void RenderController::setup() {
 	homography = ofxHomography::findHomography(originalCorners, distortedCorners);
 
 	fbo.allocate(ofGetWidth(), ofGetHeight(), GL_RGB);
-
-	imageLoadController.setup();
 }
 
 //--------------------------------------------------------------
@@ -60,33 +55,29 @@ void RenderController::setDefaults() {
 
 //--------------------------------------------------------------
 void RenderController::update() {
+	
+}
 
-	for (int i = 0; i < distortionPoints.size(); i++) {
-		//if (distortedCorners[i] != distortionPoints[i]) {
-		distortedCorners[i].set(distortionPoints[i]);
-		homography = ofxHomography::findHomography(originalCorners, distortedCorners);
-		//}
-	}
-
-	fbo.begin();
-	{
-		ofClear(0);
-		ofPushMatrix();
-		ofMultMatrix(homography);
-
-		imageLoadController.getLoadedImageTexture().draw(0, 0, ofGetWidth(), ofGetHeight());
-
-		ofPopMatrix();
-
-		if (bSetDistortion) {
-			for (int i = 0; i < distortionPoints.size(); i++) {
-				ofDrawCircle(distortedCorners[i], 10);
-			}
+void RenderController::draw() {
+	if (bSetDistortion) {
+		for (int i = 0; i < distortionPoints.size(); i++) {
+			ofDrawCircle(distortedCorners[i], 10);
 		}
 	}
-	fbo.end();
+}
 
-	imageLoadController.update();
+void RenderController::begin() {
+	fbo.begin();
+
+	//ofClear(0);
+	//ofPushMatrix();
+	//ofMultMatrix(homography);
+}
+
+ void RenderController::end() {
+	//ofPopMatrix();
+	
+	fbo.end();
 }
 
 //--------------------------------------------------------------
@@ -99,13 +90,19 @@ void RenderController::drawGUI() {
 		}
 		endGUI();
 	}
-	imageLoadController.drawGUI();
 }
 
 //--------------------------------------------------------------
 void RenderController::mouseDragged(int x, int y) {
 	if (movingPoint) {
 		curPoint->set(x, y);
+
+		for (int i = 0; i < distortionPoints.size(); i++) {
+			//if (distortedCorners[i] != distortionPoints[i]) {
+			distortedCorners[i].set(distortionPoints[i]);
+			homography = ofxHomography::findHomography(originalCorners, distortedCorners);
+			//}
+		}
 	}
 }
 
@@ -126,11 +123,6 @@ void RenderController::mousePressed(int x, int y) {
 //--------------------------------------------------------------
 void RenderController::mouseReleased(int x, int y) {
 	movingPoint = false;
-}
-
-//--------------------------------------------------------------
-ofTexture & RenderController::getTexture() {
-	return fbo.getTextureReference(0);
 }
 
 //--------------------------------------------------------------

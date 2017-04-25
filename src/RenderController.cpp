@@ -41,6 +41,7 @@ void RenderController::setup() {
 	homography = ofxHomography::findHomography(originalCorners, distortedCorners);
 
 	fbo.allocate(ofGetWidth(), ofGetHeight(), GL_RGB);
+
 }
 
 //--------------------------------------------------------------
@@ -59,6 +60,7 @@ void RenderController::update() {
 }
 
 void RenderController::draw() {
+	fbo.draw(0, 0);
 	if (bSetDistortion) {
 		for (int i = 0; i < distortionPoints.size(); i++) {
 			ofDrawCircle(distortedCorners[i], 10);
@@ -68,15 +70,13 @@ void RenderController::draw() {
 
 void RenderController::begin() {
 	fbo.begin();
-
-	//ofClear(0);
-	//ofPushMatrix();
-	//ofMultMatrix(homography);
+	ofClear(0);
+	ofPushMatrix();
+	ofMultMatrix(homography);
 }
 
- void RenderController::end() {
-	//ofPopMatrix();
-	
+void RenderController::end() {
+	ofPopMatrix();
 	fbo.end();
 }
 

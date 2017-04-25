@@ -65,13 +65,15 @@ void ofApp::draw() {
 	cameraController.getCameraTexture().draw(0, 0, ofGetWidth() / 3, ofGetHeight() / 3);
 #else
 	renderController.begin();
-	//imageLoadController.draw();
-	ofDrawRectangle(0, 0, 100, 100);
+	{
+		imageLoadController.draw();
+	}
 	renderController.end();
+
+	renderController.draw();
 #endif
 
 	if (bShowDebug) {
-		renderController.draw();
 
 		gui.begin();
 		{

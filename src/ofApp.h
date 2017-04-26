@@ -5,8 +5,13 @@
 
 #include "BicycleController.h"
 #include "VideoController.h"
+#include "RenderController.h"
+#include "ImageCaptureController.h"
+#include "ImageDisplayController.h"
 
-class ofApp : public ofBaseApp{
+#include "ImageLoadController.h"
+
+class ofApp : public ofBaseApp {
 
 public:
 
@@ -17,7 +22,7 @@ public:
 
 	void keyPressed(int key);
 	void keyReleased(int key);
-	void mouseMoved(int x, int y );
+	void mouseMoved(int x, int y);
 	void mouseDragged(int x, int y, int button);
 	void mousePressed(int x, int y, int button);
 	void mouseReleased(int x, int y, int button);
@@ -35,6 +40,10 @@ public:
 
 	BicycleController bicycleController;
 	VideoController videoController;
+	ImageCaptureController imageCaptureController;
+	RenderController renderController;
+	ImageLoadController imageLoadController;
+	ImageDisplayController imageDisplayController;
 
 	ofTrueTypeFont font;
 

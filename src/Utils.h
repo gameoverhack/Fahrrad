@@ -3,23 +3,26 @@
 #include "SerializationUtils.h"
 #include "ofxImGui.h"
 
+const static string API_KEY = "8eae23d79b1fa5153426d0c5b966ac2b";
+const static string API_SECRET = "db2d65d186157c1e";
+
 #ifdef TARGET_WIN32
 #define CONFIG_TYPE ".winconf"
 #else
 #define CONFIG_TYPE ".lnxconf"
 #endif
 
-static string fixPath(string path) {
-#ifdef TARGET_WIN32
-	vector<string> pathParts = ofSplitString(path, "/");
-	path = "";
-	for (int i = 0; i < pathParts.size() - 1; i++) {
-		path += pathParts[i] + "\\";
-	}
-	path += pathParts[pathParts.size() - 1];
-#endif
-	return ofToDataPath(path);
-}
+//static string fixPath(string path) {
+//#ifdef TARGET_WIN32
+//	vector<string> pathParts = ofSplitString(path, "/");
+//	path = "";
+//	for (int i = 0; i < pathParts.size() - 1; i++) {
+//		path += pathParts[i] + "\\";
+//	}
+//	path += pathParts[pathParts.size() - 1];
+//#endif
+//	return ofToDataPath(path);
+//}
 
 //from: https://eliasdaler.github.io/using-imgui-with-sfml-pt2
 

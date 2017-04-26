@@ -64,6 +64,8 @@ void VideoController::update() {
 
 	if (nextVideoIndex != currentVideoIndex) {
 
+		if (nextVideoIndex >= videoFilePaths.size()) nextVideoIndex = 0;
+
 		if (nextVideoIndex != 0 && videoFilePaths[nextVideoIndex] != "") {
 			ofLogVerbose() << "Loading video: " << videoFilePaths[nextVideoIndex];
 
@@ -95,6 +97,7 @@ void VideoController::update() {
 void VideoController::listDirectory() {
 
 	dir.allowExt("mov");
+	dir.allowExt("mp4");
 	dir.listDir(videoPath);
 
 	videoFilePaths.clear();
@@ -157,10 +160,10 @@ ofTexture & VideoController::getVideoTexture() {
 
 //--------------------------------------------------------------
 bool VideoController::loadParameters() {
-	return Serializer.loadClass(fixPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
+	return Serializer.loadClass(ofToDataPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }
 
 //--------------------------------------------------------------
 bool VideoController::saveParameters() {
-	return Serializer.saveClass(fixPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
+	return Serializer.saveClass(ofToDataPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }

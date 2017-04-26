@@ -85,7 +85,25 @@
     <ClCompile Include="src\BicycleController.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\VideoController.h.cpp">
+    <ClCompile Include="..\..\..\addons\ofxFlickr\src\md5.cpp">
+      <Filter>addons\ofxFlickr\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxFlickr\src\ofxFlickr.cpp">
+      <Filter>addons\ofxFlickr\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VideoController.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImageLoadController.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderController.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImageCaptureController.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImageDisplayController.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -209,6 +227,18 @@
     </Filter>
     <Filter Include="addons\ofxXmlSettings\libs">
       <UniqueIdentifier>{687714A8-1662-FA1C-261F-50F0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxFlickr">
+      <UniqueIdentifier>{f415e00e-c08e-46fa-939c-7559e79bd527}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxFlickr\src">
+      <UniqueIdentifier>{c23300ad-9fed-401a-9980-5e226de9cb8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxHomography">
+      <UniqueIdentifier>{3b1918b7-62f0-48d6-aa27-162afb417173}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxHomography\src">
+      <UniqueIdentifier>{c495f5a3-60d3-4ec9-a862-93cd98820049}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -798,6 +828,27 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\VideoController.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFlickr\src\md5.h">
+      <Filter>addons\ofxFlickr\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFlickr\src\ofxFlickr.h">
+      <Filter>addons\ofxFlickr\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxHomography\src\ofxHomography.h">
+      <Filter>addons\ofxHomography\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImageLoadController.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RenderController.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImageCaptureController.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImageDisplayController.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

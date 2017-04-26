@@ -178,7 +178,6 @@
     <ClCompile Include="src\BicycleController.cpp" />
     <ClCompile Include="src\ImageCaptureController.cpp" />
     <ClCompile Include="src\ImageDisplayController.cpp" />
-    <ClCompile Include="src\ImageLoadController.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
     <ClCompile Include="..\..\..\addons\ofxImGui\src\BaseEngine.cpp" />
@@ -215,7 +214,6 @@
     <ClInclude Include="src\ImageCaptureController.h" />
     <ClInclude Include="src\ImageDisplayController.h" />
     <ClInclude Include="src\IGuiBase.h" />
-    <ClInclude Include="src\ImageLoadController.h" />
     <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="..\..\..\addons\ofxImGui\src\BaseEngine.h" />
     <ClInclude Include="..\..\..\addons\ofxImGui\src\BaseTheme.h" />

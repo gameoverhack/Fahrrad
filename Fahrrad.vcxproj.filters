@@ -94,9 +94,6 @@
     <ClCompile Include="src\VideoController.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ImageLoadController.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\RenderController.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -838,9 +835,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxHomography\src\ofxHomography.h">
       <Filter>addons\ofxHomography\src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ImageLoadController.h">
-      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\RenderController.h">
       <Filter>src</Filter>

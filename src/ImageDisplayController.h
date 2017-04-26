@@ -14,7 +14,17 @@ public:
 	void update();
 	void drawGUI();
 
+	const ofTexture& getDisplayFBO();
+
 protected:
+
+	ofFbo fbo;
+	vector<ofImage> images;
+
+	int loadImagesTimeout;
+	int lastLoadImagesTimeout;
+
+	bool bRenderImages;
 
 	ofxFlickr::API flickr;
 
@@ -51,5 +61,6 @@ protected:
 		ar & BOOST_SERIALIZATION_NVP(imageDownloadPath);
 		ar & BOOST_SERIALIZATION_NVP(flickrAuthenticateTimeout);
 		ar & BOOST_SERIALIZATION_NVP(flickrSearchTimeout);
+		ar & BOOST_SERIALIZATION_NVP(loadImagesTimeout);
 	}
 };

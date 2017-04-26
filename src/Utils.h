@@ -12,17 +12,23 @@ const static string API_SECRET = "db2d65d186157c1e";
 #define CONFIG_TYPE ".lnxconf"
 #endif
 
-//static string fixPath(string path) {
-//#ifdef TARGET_WIN32
-//	vector<string> pathParts = ofSplitString(path, "/");
-//	path = "";
-//	for (int i = 0; i < pathParts.size() - 1; i++) {
-//		path += pathParts[i] + "\\";
-//	}
-//	path += pathParts[pathParts.size() - 1];
-//#endif
-//	return ofToDataPath(path);
-//}
+inline void uniqueRandomIndex(vector<int> & vec, int start, int end, int size) {
+
+	int r = (int)ofRandom(start, end);
+	bool bInVec = false;
+
+	for (int i = 0; i < vec.size(); i++) {
+		if (vec[i] == r) {
+			bInVec = true;
+			break;
+		}
+	}
+
+	if (!bInVec) vec.push_back(r);
+
+	if (vec.size() != size && end - start >= size) uniqueRandomIndex(vec, start, end, size);
+
+}
 
 //from: https://eliasdaler.github.io/using-imgui-with-sfml-pt2
 

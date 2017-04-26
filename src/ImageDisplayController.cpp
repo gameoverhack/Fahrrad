@@ -27,6 +27,13 @@ void ImageDisplayController::setup() {
 
 	bSetImageDownloadPath = false;
 
+	fbo.allocate(ofGetWidth(), ofGetHeight(), GL_RGB);
+	images.resize(6);
+
+	lastLoadImagesTimeout = ofGetElapsedTimeMillis() - loadImagesTimeout;
+
+	bRenderImages = false;
+
 	bIsSearching = false;
 	bIsDownloading = false;
 	flickrSearchPage = 0;
@@ -46,14 +53,15 @@ void ImageDisplayController::setDefaults() {
 	ofLogNotice() << className << ": setDefaults";
 
 #ifdef TARGET_WIN32
-	imageDownloadPath = "C:/Users/gameover8/Desktop/flickr2";
+	imageDownloadPath = "C:/Users/gameover8/Desktop/img/download";
 #else
-	imageDownloadPath = "/home/pi/Desktop/flickr";
+	imageDownloadPath = "~/Desktop/img/download";
 #endif
 
 	flickrAuthenticateTimeout = 10000;
 	flickrSearchTimeout = 10000;
 
+	loadImagesTimeout = 10000;
 }
 
 //--------------------------------------------------------------
@@ -75,36 +83,30 @@ void ImageDisplayController::update() {
 #endif
 	}
 
-	// check if we are authenticated app with flickr
-	if (!flickr.getIsAuthenticated()) {
+	lock();
+	if (bRenderImages) {
+		fbo.begin();
+		{
+			ofClear(0);
+			//ofDrawRectangle(400, 400, 400, 400);
+			int xCounter = 0, yCounter = 0;
+			for (int i = 0; i < images.size(); i++) {
 
-		// try to authorize everz XX millis if we're not authenticated (assume our credentials are correct)
-		if (ofGetElapsedTimeMillis() - lastFlickrAuthenticateTime >= flickrAuthenticateTimeout) {
-			ofLogNotice() << "Authenticating Flickr application";
-			flickr.authenticate(API_KEY, API_SECRET, ofxFlickr::FLICKR_WRITE, true);
-			lastFlickrAuthenticateTime = ofGetElapsedTimeMillis();
-		}
-		//return;
+				images[i].setUseTexture(true);
+				images[i].update(); // actually upload to textures
 
-	}
-	else {
+				if (xCounter == images.size() / 2) xCounter = 0;
+				if (i >= images.size() / 2) yCounter = 1;
 
-		if (ofGetElapsedTimeMillis() - lastFlickrSearchTime >= flickrSearchTimeout) {
-			if (!bIsSearching && !bIsDownloading) {
-				// need to have strategy for getting the latest images from today???!!! etc random how do we store etc???
-				flickr.searchThreaded("", "149397704@N05", flickrSearchPage);
-				lock();
-				bIsSearching = true;
-				unlock();
+				images[i].draw((ofGetWidth() / 3)*xCounter, (ofGetHeight() / 2) * yCounter, ofGetWidth() / 3, ofGetHeight() / 2);
+				xCounter++;
+
 			}
-			else {
-				ofLogNotice() << "Trying to search when we already have a search/download in progress";
-				// handle this!
-			}
-			lastFlickrSearchTime = ofGetElapsedTimeMillis();
 		}
-
+		fbo.end();
+		bRenderImages = false;
 	}
+	unlock();
 
 }
 
@@ -114,6 +116,74 @@ void ImageDisplayController::threadedFunction() {
 	while (isThreadRunning()) {
 
 		if (bUse) {
+
+			lock();
+			bool bCanLoadNewImages = !bRenderImages; // we shouldn't load images if we're rendering them
+			unlock();
+
+			if (ofGetElapsedTimeMillis() - lastLoadImagesTimeout >= loadImagesTimeout && bCanLoadNewImages) {
+
+				ofDirectory dir;
+				dir.allowExt("jpg");
+				dir.listDir(imageDownloadPath);
+				
+				vector<ofImage> tempImages;
+				vector<int> randomDirectoryIndexes;
+				tempImages.resize(images.size());
+
+				if (dir.size() > 0) {
+					uniqueRandomIndex(randomDirectoryIndexes, 0, dir.size(), MIN(dir.size(), tempImages.size())); // see Utils.h
+				}
+
+				for (int i = 0; i < tempImages.size(); i++) {
+					tempImages[i].setUseTexture(false);
+					images[i].setUseTexture(false);
+					if (i < dir.size()) {
+						tempImages[i].load(dir.getPath(randomDirectoryIndexes[i]));
+					}else{
+						tempImages[i].load(ofToDataPath("images/tmpImage.jpg"));
+					}
+				}
+
+				lock();
+				images = tempImages; // swapping the buffers (so to speak) happens here
+				bRenderImages = true;
+				unlock();
+
+				lastLoadImagesTimeout = ofGetElapsedTimeMillis();
+
+			}
+			
+			// check if we are authenticated app with flickr
+			if (!flickr.getIsAuthenticated()) {
+
+				// try to authorize everz XX millis if we're not authenticated (assume our credentials are correct)
+				if (ofGetElapsedTimeMillis() - lastFlickrAuthenticateTime >= flickrAuthenticateTimeout) {
+					ofLogNotice() << "Authenticating Flickr application";
+					flickr.authenticate(API_KEY, API_SECRET, ofxFlickr::FLICKR_WRITE, true);
+					lastFlickrAuthenticateTime = ofGetElapsedTimeMillis();
+				}
+				//return;
+
+			}
+			else {
+
+				if (ofGetElapsedTimeMillis() - lastFlickrSearchTime >= flickrSearchTimeout) {
+					if (!bIsSearching && !bIsDownloading) {
+						// need to have strategy for getting the latest images from today???!!! etc random how do we store etc???
+						flickr.searchThreaded("", "149397704@N05", flickrSearchPage);
+						lock();
+						bIsSearching = true;
+						unlock();
+					}
+					else {
+						ofLogNotice() << "Trying to search when we already have a search/download in progress";
+						// handle this!
+					}
+					lastFlickrSearchTime = ofGetElapsedTimeMillis();
+				}
+
+			}
 
 			lock();
 			if (bIsDownloading) {
@@ -233,10 +303,17 @@ void ImageDisplayController::drawGUI() {
 			
 			ImGui::SliderInt("Flickr Authorize Timeout (millis)", &flickrAuthenticateTimeout, 1000, 20000);
 			ImGui::SliderInt("Flickr Download Timeout (millis)", &flickrSearchTimeout, 1000, 60000);
-
+			ImGui::SliderInt("Load Image Timeout (millis)", &loadImagesTimeout, 1000, 240000);
+			
 		}
 		endGUI();
 	}
+}
+
+//--------------------------------------------------------------
+const ofTexture & ImageDisplayController::getDisplayFBO(){
+	ofScopedLock lock(mutex);
+	return fbo.getTexture();
 }
 
 //--------------------------------------------------------------

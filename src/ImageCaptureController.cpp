@@ -99,9 +99,9 @@ void ImageCaptureController::setDefaults() {
 	ofLogNotice() << className << ": setDefaults";
 
 #ifdef TARGET_WIN32
-	imageStorePath = "C:/Users/JB/Desktop/img";
+	imageStorePath = "C:/Users/gameover8/Desktop/img/capture";
 #else
-	imageStorePath = "/home/pi/Desktop/img";
+	imageStorePath = "~/Desktop/img/download";
 #endif
 
 	brightness = 0.15;
@@ -140,28 +140,6 @@ void ImageCaptureController::update() {
 	}
 
 	unlock();
-
-	// check if we are authenticated app with flickr
-	if (!flickr.getIsAuthenticated()) {
-
-		// try to authorize everz XX millis if we're not authenticated (assume our credentials are correct)
-		if (ofGetElapsedTimeMillis() - lastFlickrAuthenticateTime >= flickrAuthenticateTimeout) {
-			ofLogNotice() << "Authenticating Flickr application";
-			if (flickr.authenticate(API_KEY, API_SECRET, ofxFlickr::FLICKR_WRITE, true)) {
-				ofLogNotice() << "Requeue any un-uploaded files";
-				lock();
-				Serializer.loadClass(ofToDataPath("configs/UploadQueue" + string(CONFIG_TYPE)), (uploadQueue), ARCHIVE_BINARY);
-				for (int i = 0; i < uploadQueue.size(); i++) {
-					ofLogNotice() << "Requeue: " << uploadQueue[i];
-					flickr.uploadThreaded(uploadQueue[i]);
-				}
-				unlock();
-			}
-			lastFlickrAuthenticateTime = ofGetElapsedTimeMillis();
-		}
-		//return;
-
-	}
 
 	cam.update();
 
@@ -260,6 +238,28 @@ void ImageCaptureController::threadedFunction() {
 	while (isThreadRunning()) {
 
 		if (bUse) {
+
+			// check if we are authenticated app with flickr
+			if (!flickr.getIsAuthenticated()) {
+
+				// try to authorize everz XX millis if we're not authenticated (assume our credentials are correct)
+				if (ofGetElapsedTimeMillis() - lastFlickrAuthenticateTime >= flickrAuthenticateTimeout) {
+					ofLogNotice() << "Authenticating Flickr application";
+					if (flickr.authenticate(API_KEY, API_SECRET, ofxFlickr::FLICKR_WRITE, true)) {
+						ofLogNotice() << "Requeue any un-uploaded files";
+						lock();
+						Serializer.loadClass(ofToDataPath("configs/UploadQueue" + string(CONFIG_TYPE)), (uploadQueue), ARCHIVE_BINARY);
+						for (int i = 0; i < uploadQueue.size(); i++) {
+							ofLogNotice() << "Requeue: " << uploadQueue[i];
+							flickr.uploadThreaded(uploadQueue[i]);
+						}
+						unlock();
+					}
+					lastFlickrAuthenticateTime = ofGetElapsedTimeMillis();
+				}
+				//return;
+
+			}
 
 			lock();
 
@@ -518,7 +518,7 @@ void ImageCaptureController::drawGUI() {
 			switch (nextSensorMode) {
 			case SENSOR_SIMULATE:
 			{
-				ImGui::SliderInt("Simulate Timeout", &simulateTimeout, 1, 60000);
+				ImGui::SliderInt("Simulate Timeout", &simulateTimeout, 1, 600000);
 			}
 			break;
 			case SENSOR_TEENSY:

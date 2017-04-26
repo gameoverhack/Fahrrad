@@ -117,6 +117,5 @@ protected:
 		ar & BOOST_SERIALIZATION_NVP(saturation);
 		ar & BOOST_SERIALIZATION_NVP(simulateTimeout);
 		ar & BOOST_SERIALIZATION_NVP(flickrAuthenticateTimeout);
-		ar & BOOST_SERIALIZATION_NVP(uploadQueue);
 	}
 };

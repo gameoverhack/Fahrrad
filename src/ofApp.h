@@ -9,8 +9,6 @@
 #include "ImageCaptureController.h"
 #include "ImageDisplayController.h"
 
-#include "ImageLoadController.h"
-
 class ofApp : public ofBaseApp {
 
 public:
@@ -41,9 +39,8 @@ public:
 	BicycleController bicycleController;
 	VideoController videoController;
 	ImageCaptureController imageCaptureController;
-	RenderController renderController;
-	ImageLoadController imageLoadController;
 	ImageDisplayController imageDisplayController;
+	RenderController renderController;
 
 	ofTrueTypeFont font;
 

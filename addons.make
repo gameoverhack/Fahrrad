@@ -1,3 +1,4 @@
+ofxFlickr
 ofxImGui
 ofxNetwork
 ofxOpenCv

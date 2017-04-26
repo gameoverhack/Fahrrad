@@ -8,6 +8,7 @@
 #include "CamController.h"
 #include "RenderController.h"
 #include "ImageLoadController.h"
+#include "FlickrController.h"
 
 class ofApp : public ofBaseApp {
 
@@ -41,6 +42,8 @@ public:
 	CamController cameraController;
 	RenderController renderController;
 	ImageLoadController imageLoadController;
+	FlickrController flickrController;
+
 	ofTrueTypeFont font;
 
 };

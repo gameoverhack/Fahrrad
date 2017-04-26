@@ -64,12 +64,7 @@ void BicycleController::update() {
 
 	// check what mode we're in
 	if (nextSensorMode != currentSensorMode) {
-
-		// change sensor mode
 		changeMode();
-
-		// set current to next mode
-		currentSensorMode = nextSensorMode;
 	}
 
 	unlock();
@@ -127,10 +122,13 @@ void BicycleController::changeMode() {
 	break;
 	}
 
+	// reset timeouts
 	lastSensorTimeout = ofGetElapsedTimeMillis();
 	lastVelocityTimeout = ofGetElapsedTimeMillis();
 	lastMeasuredVelocity = 0;
 
+	// set current to next mode
+	currentSensorMode = nextSensorMode;
 }
 
 //--------------------------------------------------------------
@@ -317,10 +315,10 @@ void BicycleController::drawGUI() {
 
 //--------------------------------------------------------------
 bool BicycleController::loadParameters() {
-	return Serializer.loadClass(fixPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
+	return Serializer.loadClass(ofToDataPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }
 
 //--------------------------------------------------------------
 bool BicycleController::saveParameters() {
-	return Serializer.saveClass(fixPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
+	return Serializer.saveClass(ofToDataPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }

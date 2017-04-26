@@ -4,11 +4,11 @@
 #include "IGuiBase.h"
 #include "ofxFlickr.h"
 
-class FlickrController : public IGuiBase, public ofThread {
+class ImageDisplayController : public IGuiBase, public ofThread {
 public:
 
-	FlickrController();
-	~FlickrController();
+	ImageDisplayController();
+	~ImageDisplayController();
 
 	typedef enum {
 		FLICKR_NONE = 0,

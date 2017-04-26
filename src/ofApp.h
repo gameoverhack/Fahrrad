@@ -5,10 +5,11 @@
 
 #include "BicycleController.h"
 #include "VideoController.h"
-#include "ImageCaptureController.h"
 #include "RenderController.h"
+#include "ImageCaptureController.h"
+#include "ImageDisplayController.h"
+
 #include "ImageLoadController.h"
-#include "FlickrController.h"
 
 class ofApp : public ofBaseApp {
 
@@ -42,7 +43,7 @@ public:
 	ImageCaptureController imageCaptureController;
 	RenderController renderController;
 	ImageLoadController imageLoadController;
-	FlickrController flickrController;
+	ImageDisplayController imageDisplayController;
 
 	ofTrueTypeFont font;
 

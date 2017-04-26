@@ -177,7 +177,7 @@
     <ClCompile Include="..\..\..\addons\ofxFlickr\src\ofxFlickr.cpp" />
     <ClCompile Include="src\BicycleController.cpp" />
     <ClCompile Include="src\ImageCaptureController.cpp" />
-    <ClCompile Include="src\FlickrController.cpp" />
+    <ClCompile Include="src\ImageDisplayController.cpp" />
     <ClCompile Include="src\ImageLoadController.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
@@ -213,7 +213,7 @@
     <ClInclude Include="..\..\..\addons\ofxHomography\src\ofxHomography.h" />
     <ClInclude Include="src\BicycleController.h" />
     <ClInclude Include="src\ImageCaptureController.h" />
-    <ClInclude Include="src\FlickrController.h" />
+    <ClInclude Include="src\ImageDisplayController.h" />
     <ClInclude Include="src\IGuiBase.h" />
     <ClInclude Include="src\ImageLoadController.h" />
     <ClInclude Include="src\ofApp.h" />

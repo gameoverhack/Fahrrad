@@ -26,7 +26,7 @@ void ofApp::setup() {
 	videoController.setup();
 #elif USE_CAM
 	imageCaptureController.setup();
-	//flickrController.setup();
+	imageDisplayController.setup();
 #else
 	renderController.setup();
 	imageLoadController.setup();
@@ -42,7 +42,7 @@ void ofApp::update() {
 	videoController.update();
 #elif USE_CAM
 	imageCaptureController.update();
-	//flickrController.update();
+	imageDisplayController.update();
 #else
 	//renderController.update();
 	imageLoadController.update();
@@ -84,7 +84,7 @@ void ofApp::draw() {
 			videoController.drawGUI();
 #elif USE_CAM
 			imageCaptureController.drawGUI();
-			flickrController.drawGUI();
+			imageDisplayController.drawGUI();
 #else
 			renderController.drawGUI();
 			imageLoadController.drawGUI();

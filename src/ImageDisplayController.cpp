@@ -1,15 +1,15 @@
-#include "FlickrController.h"
+#include "ImageDisplayController.h"
 
 //--------------------------------------------------------------
-FlickrController::FlickrController() {
+ImageDisplayController::ImageDisplayController() {
 
-	className = "FlickrController";
+	className = "ImageDisplayController";
 	ofLogNotice() << className << ": constructor";
 
 }
 
 //--------------------------------------------------------------
-FlickrController::~FlickrController() {
+ImageDisplayController::~ImageDisplayController() {
 
 	ofLogNotice() << className << ": destructor";
 	waitForThread();
@@ -18,7 +18,7 @@ FlickrController::~FlickrController() {
 }
 
 //--------------------------------------------------------------
-void FlickrController::setup() {
+void ImageDisplayController::setup() {
 
 	ofLogNotice() << className << ": setup";
 
@@ -35,14 +35,14 @@ void FlickrController::setup() {
 	lastFlickrAuthenticateTime = ofGetElapsedTimeMillis() - flickrAuthenticateTimeout;
 	lastFlickrDownloadTime = ofGetElapsedTimeMillis() - flickrDownloadTimeout;
 
-	ofAddListener(ofxFlickr::APIEvent::events, this, &FlickrController::onFlickrEvent);
+	ofAddListener(ofxFlickr::APIEvent::events, this, &ImageDisplayController::onFlickrEvent);
 
 	flickr.start();
 	startThread();
 }
 
 //--------------------------------------------------------------
-void FlickrController::setDefaults() {
+void ImageDisplayController::setDefaults() {
 
 	ofLogNotice() << className << ": setDefaults";
 
@@ -58,7 +58,7 @@ void FlickrController::setDefaults() {
 }
 
 //--------------------------------------------------------------
-void FlickrController::update() {
+void ImageDisplayController::update() {
 
 	if (!bUse) return;
 
@@ -129,7 +129,7 @@ void FlickrController::update() {
 }
 
 //--------------------------------------------------------------
-void FlickrController::threadedFunction() {
+void ImageDisplayController::threadedFunction() {
 
 	while (isThreadRunning()) {
 
@@ -216,7 +216,7 @@ void FlickrController::threadedFunction() {
 }
 
 //--------------------------------------------------------------
-void FlickrController::onFlickrEvent(ofxFlickr::APIEvent & evt) {
+void ImageDisplayController::onFlickrEvent(ofxFlickr::APIEvent & evt) {
 
 	ostringstream os;
 	os << flickr.getCallTypeAsString(evt.callType)
@@ -266,7 +266,7 @@ void FlickrController::onFlickrEvent(ofxFlickr::APIEvent & evt) {
 }
 
 //--------------------------------------------------------------
-void FlickrController::changeMode() {
+void ImageDisplayController::changeMode() {
 
 	// shutdown the current mode
 
@@ -308,7 +308,7 @@ void FlickrController::changeMode() {
 }
 
 //--------------------------------------------------------------
-void FlickrController::drawGUI() {
+void ImageDisplayController::drawGUI() {
 
 	if (ImGui::CollapsingHeader(className.c_str())) {
 		beginGUI();
@@ -338,11 +338,11 @@ void FlickrController::drawGUI() {
 }
 
 //--------------------------------------------------------------
-bool FlickrController::loadParameters() {
+bool ImageDisplayController::loadParameters() {
 	return Serializer.loadClass(ofToDataPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }
 
 //--------------------------------------------------------------
-bool FlickrController::saveParameters() {
+bool ImageDisplayController::saveParameters() {
 	return Serializer.saveClass(ofToDataPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }

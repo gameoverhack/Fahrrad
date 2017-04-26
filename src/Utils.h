@@ -3,6 +3,9 @@
 #include "SerializationUtils.h"
 #include "ofxImGui.h"
 
+const static string API_KEY = "8eae23d79b1fa5153426d0c5b966ac2b";
+const static string API_SECRET = "db2d65d186157c1e";
+
 #ifdef TARGET_WIN32
 #define CONFIG_TYPE ".winconf"
 #else

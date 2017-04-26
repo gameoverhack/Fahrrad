@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "IGuiBase.h"
+#include "ofxFlickr.h"
 
 class ImageCaptureController : public IGuiBase, public ofThread {
 public:
@@ -33,22 +34,31 @@ public:
 
 	void triggerSensor(SensorMode sensorMode);
 	
-
 	ofTexture& getCameraTexture();
 
 protected:
 
-	float brightness, contrast, saturation;
+	ofxFlickr::API flickr;
+	
+	int flickrAuthenticateTimeout;
+	int lastFlickrAuthenticateTime;
+
+	void onFlickrEvent(ofxFlickr::APIEvent & evt);
 
 	bool bSetImageStorePath;
+	string imageStorePath;
 
-	string imgStorePath;
+	string currentImageFilePath;
+	vector<string> uploadQueue;
 
 	ofVideoGrabber cam;
-	ofImage ofSaveIMG;
+
+	float brightness, contrast, saturation;
+
 	ofShader shader;
-	ofFbo fbo;
 	ofMesh mesh;
+
+	ofFbo fbo;
 	ofPixels pixels;
 
 	vector<string> photoStates = {
@@ -101,10 +111,12 @@ protected:
 	template<class Archive>
 	void serialize(Archive & ar, const unsigned int version) {
 		ar & BOOST_SERIALIZATION_NVP(nextSensorMode);
-		ar & BOOST_SERIALIZATION_NVP(imgStorePath);
+		ar & BOOST_SERIALIZATION_NVP(imageStorePath);
 		ar & BOOST_SERIALIZATION_NVP(brightness);
 		ar & BOOST_SERIALIZATION_NVP(contrast);
 		ar & BOOST_SERIALIZATION_NVP(saturation);
-		ar & BOOST_SERIALIZATION_NVP(simulateTimeout);	
+		ar & BOOST_SERIALIZATION_NVP(simulateTimeout);
+		ar & BOOST_SERIALIZATION_NVP(flickrAuthenticateTimeout);
+		ar & BOOST_SERIALIZATION_NVP(uploadQueue);
 	}
 };

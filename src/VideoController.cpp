@@ -97,6 +97,7 @@ void VideoController::update() {
 void VideoController::listDirectory() {
 
 	dir.allowExt("mov");
+	dir.allowExt("mp4");
 	dir.listDir(videoPath);
 
 	videoFilePaths.clear();

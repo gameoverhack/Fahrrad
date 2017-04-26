@@ -25,15 +25,14 @@ void ImageDisplayController::setup() {
 	// call base clase setup for now
 	IGuiBase::setup();
 
-	currentFlickrMode = FLICKR_NONE;
-	bSetFlickrDownloadPath = false;
+	bSetImageDownloadPath = false;
 
 	bIsSearching = false;
 	bIsDownloading = false;
 	flickrSearchPage = 0;
 
 	lastFlickrAuthenticateTime = ofGetElapsedTimeMillis() - flickrAuthenticateTimeout;
-	lastFlickrDownloadTime = ofGetElapsedTimeMillis() - flickrDownloadTimeout;
+	lastFlickrSearchTime = ofGetElapsedTimeMillis() - flickrSearchTimeout;
 
 	ofAddListener(ofxFlickr::APIEvent::events, this, &ImageDisplayController::onFlickrEvent);
 
@@ -47,13 +46,13 @@ void ImageDisplayController::setDefaults() {
 	ofLogNotice() << className << ": setDefaults";
 
 #ifdef TARGET_WIN32
-	flickrDownloadPath = "C:/Users/gameover8/Desktop/flickr2";
+	imageDownloadPath = "C:/Users/gameover8/Desktop/flickr2";
 #else
-	flickrDownloadPath = "/home/pi/Desktop/flickr";
+	imageDownloadPath = "/home/pi/Desktop/flickr";
 #endif
 
 	flickrAuthenticateTimeout = 10000;
-	flickrDownloadTimeout = 10000;
+	flickrSearchTimeout = 10000;
 
 }
 
@@ -62,23 +61,14 @@ void ImageDisplayController::update() {
 
 	if (!bUse) return;
 
-	lock();
-
-	// check what mode we're in
-	if (nextFlickrMode != currentFlickrMode) {
-		changeMode();
-	}
-
-	unlock();
-
 	// check and set the folder we want to download to
-	if (bSetFlickrDownloadPath) {
+	if (bSetImageDownloadPath) {
 #ifndef TARGET_WIN32
 		ofSetWindowShape(10, 10);
 #endif
 		ofFileDialogResult result = ofSystemLoadDialog("Select Download Folder", true);
 		if (result.getPath() != "") {
-			flickrDownloadPath = result.getPath();
+			imageDownloadPath = result.getPath();
 		}
 #ifndef TARGET_WIN32
 		ofSetWindowShape(1920, 1080);
@@ -87,44 +77,34 @@ void ImageDisplayController::update() {
 
 	// check if we are authenticated app with flickr
 	if (!flickr.getIsAuthenticated()) {
+
 		// try to authorize everz XX millis if we're not authenticated (assume our credentials are correct)
 		if (ofGetElapsedTimeMillis() - lastFlickrAuthenticateTime >= flickrAuthenticateTimeout) {
 			ofLogNotice() << "Authenticating Flickr application";
 			flickr.authenticate(API_KEY, API_SECRET, ofxFlickr::FLICKR_WRITE, true);
 			lastFlickrAuthenticateTime = ofGetElapsedTimeMillis();
 		}
-		return;
+		//return;
+
 	}
 	else {
 
-		switch (currentFlickrMode) {
-		case FLICKR_UPLOAD:
-		{
-			
-		}
-		break;
-		case FLICKR_DOWNLOAD:
-		{
-			if (ofGetElapsedTimeMillis() - lastFlickrDownloadTime >= flickrDownloadTimeout) {
-				if (!bIsSearching && !bIsDownloading) {
-					// need to have strategy for getting the latest images from today???!!! etc random how do we store etc???
-					flickr.searchThreaded("", "149397704@N05", flickrSearchPage);
-					lock();
-					bIsSearching = true;
-					unlock();
-				}else{
-					ofLogNotice() << "Trying to search when we already have a search/download in progress";
-					// handle this!
-				}
-				lastFlickrDownloadTime = ofGetElapsedTimeMillis();
+		if (ofGetElapsedTimeMillis() - lastFlickrSearchTime >= flickrSearchTimeout) {
+			if (!bIsSearching && !bIsDownloading) {
+				// need to have strategy for getting the latest images from today???!!! etc random how do we store etc???
+				flickr.searchThreaded("", "149397704@N05", flickrSearchPage);
+				lock();
+				bIsSearching = true;
+				unlock();
 			}
-		}
-		break;
+			else {
+				ofLogNotice() << "Trying to search when we already have a search/download in progress";
+				// handle this!
+			}
+			lastFlickrSearchTime = ofGetElapsedTimeMillis();
 		}
 
 	}
-
-
 
 }
 
@@ -136,76 +116,60 @@ void ImageDisplayController::threadedFunction() {
 		if (bUse) {
 
 			lock();
-			int thisCurrentMode = currentFlickrMode;
-			unlock();
+			if (bIsDownloading) {
+				if (downloadQueue.size() > 0) {
 
-			switch (thisCurrentMode) {
-			case FLICKR_UPLOAD:
-			{
-
-			}
-			break;
-			case FLICKR_DOWNLOAD:
-			{
-
-				lock();
-				if (bIsDownloading) {
-					if (downloadQueue.size() > 0) {
-						
-						if (!bIsDirectoryListed) {
-							unlock();
-							ofDirectory dir;
-							dir.allowExt("jpg");
-							dir.listDir(flickrDownloadPath);
-							lock();
-							downloadDir = dir;
-							bIsDirectoryListed = true;
-						}
-
-						ofxFlickr::Media media = downloadQueue.front();
-						string title = media.title + ".jpg";
-						bool bDoDownload = true;
-						for (int i = 0; i < downloadDir.size(); i++) {
-
-							if (title == downloadDir.getName(i)) {
-								ofLogVerbose() << "Not downloading...already have: " + title;
-								bDoDownload = false;
-								break;
-							}
-
-						}
-
+					if (!bIsDirectoryListed) {
 						unlock();
+						ofDirectory dir;
+						dir.allowExt("jpg");
+						dir.listDir(imageDownloadPath);
+						lock();
+						imageDownloadDir = dir;
+						bIsDirectoryListed = true;
+					}
 
-						if (bDoDownload) {
-							
-							ofImage image;
-							ofLogNotice() << "Loading image url: " << media.getURL();
-							
-							bool bGotImage = image.load(media.getURL());
-							
-							if (bGotImage) {
-								ofLogNotice() << "Saving image locally: " << title;
-								image.save(flickrDownloadPath + "/" + title);
-							}
-							
+					ofxFlickr::Media media = downloadQueue.front();
+					string title = media.title + ".jpg";
+					bool bDoDownload = true;
+					for (int i = 0; i < imageDownloadDir.size(); i++) {
+
+						if (title == imageDownloadDir.getName(i)) {
+							ofLogVerbose() << "Not downloading...already have: " + title;
+							bDoDownload = false;
+							break;
 						}
 
-						
-						lock();
+					}
 
-						downloadQueue.erase(downloadQueue.begin());
-						
+					unlock();
+
+					if (bDoDownload) {
+
+						ofImage image;
+						ofLogNotice() << "Loading image url: " << media.getURL();
+
+						bool bGotImage = image.load(media.getURL());
+
+						if (bGotImage) {
+							ofLogNotice() << "Saving image locally: " << title;
+							image.save(imageDownloadPath + "/" + title);
+						}
+
 					}
-					else {
-						bIsDownloading = false;
-					}
-					
+
+
+					lock();
+
+					downloadQueue.erase(downloadQueue.begin());
+
 				}
-				unlock();
+				else {
+					bIsDownloading = false;
+				}
+
 			}
-			break;
-			}
+			unlock();
 
 		}
 
@@ -224,21 +188,15 @@ void ImageDisplayController::onFlickrEvent(ofxFlickr::APIEvent & evt) {
 		<< " with " << evt.results.size() << " and "
 		<< evt.resultString;
 
-	ofLogNotice() << os.str() << endl;
-
 	switch (evt.callType) {
 	case ofxFlickr::FLICKR_UPLOAD:
 	{
-		if (evt.success) {
-
-		}
-		else {
-		
-		}
+		// ignore
 	}
 	break;
 	case ofxFlickr::FLICKR_SEARCH:
 	{
+		ofLogNotice() << os.str() << endl;
 		if (evt.success) {
 			ofLogNotice() << "Search succeeded";
 			lock();
@@ -266,71 +224,15 @@ void ImageDisplayController::onFlickrEvent(ofxFlickr::APIEvent & evt) {
 }
 
 //--------------------------------------------------------------
-void ImageDisplayController::changeMode() {
-
-	// shutdown the current mode
-
-	ofLogNotice() << "Shutting down: " << flickrModes[currentFlickrMode];
-
-	switch (currentFlickrMode) {
-	case FLICKR_UPLOAD:
-	{
-		
-	}
-	break;
-	case FLICKR_DOWNLOAD:
-	{
-		
-	}
-	break;
-	}
-
-	// setup for the next mode
-
-	ofLogNotice() << "Setting up: " << flickrModes[nextFlickrMode];
-
-	switch (nextFlickrMode) {
-	case FLICKR_UPLOAD:
-	{
-		
-	}
-	break;
-	case FLICKR_DOWNLOAD:
-	{
-
-	}
-	break;
-	}
-
-	// set current to next mode
-	currentFlickrMode = nextFlickrMode;
-
-}
-
-//--------------------------------------------------------------
 void ImageDisplayController::drawGUI() {
 
 	if (ImGui::CollapsingHeader(className.c_str())) {
 		beginGUI();
 		{
-			bSetFlickrDownloadPath = ImGui::Button("Set Flickr Download Path");
+			bSetImageDownloadPath = ImGui::Button("Set Image Download Path");
 			
 			ImGui::SliderInt("Flickr Authorize Timeout (millis)", &flickrAuthenticateTimeout, 1000, 20000);
-			
-			ImGui::Combo("Flickr Mode", (int*)&nextFlickrMode, flickrModes);
-			
-			switch (nextFlickrMode) {
-			case FLICKR_UPLOAD:
-			{
-				//ImGui::SliderInt("Flickr Download Timeout (millis)", &flickrUploadTimeout, 1000, 60000);
-			}
-			break;
-			case FLICKR_DOWNLOAD:
-			{
-				ImGui::SliderInt("Flickr Download Timeout (millis)", &flickrDownloadTimeout, 1000, 60000);
-			}
-			break;
-			}
+			ImGui::SliderInt("Flickr Download Timeout (millis)", &flickrSearchTimeout, 1000, 60000);
 
 		}
 		endGUI();

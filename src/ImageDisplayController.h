@@ -10,31 +10,19 @@ public:
 	ImageDisplayController();
 	~ImageDisplayController();
 
-	typedef enum {
-		FLICKR_NONE = 0,
-		FLICKR_UPLOAD,
-		FLICKR_DOWNLOAD
-	} FlickrMode;
-
 	void setup();
 	void update();
 	void drawGUI();
 
 protected:
 
-	vector<string> flickrModes = {
-		"FLICKR_NONE",
-		"FLICKR_UPLOAD",
-		"FLICKR_DOWNLOAD"
-	};
-
 	ofxFlickr::API flickr;
 
 	int flickrAuthenticateTimeout;
 	int lastFlickrAuthenticateTime;
 
-	int flickrDownloadTimeout;
-	int lastFlickrDownloadTime;
+	int flickrSearchTimeout;
+	int lastFlickrSearchTime;
 
 	bool bIsSearching;
 	bool bIsDownloading;
@@ -42,23 +30,15 @@ protected:
 
 	vector<ofxFlickr::Media> downloadQueue;
 
-	string API_KEY = "8eae23d79b1fa5153426d0c5b966ac2b";
-	string API_SECRET = "db2d65d186157c1e";
+	bool bSetImageDownloadPath;
+	string imageDownloadPath;
 
-	bool bSetFlickrDownloadPath;
-	string flickrDownloadPath;
-
-	FlickrMode nextFlickrMode;
-	FlickrMode currentFlickrMode;
-
-	ofDirectory downloadDir;
+	ofDirectory imageDownloadDir;
 	int flickrSearchPage;
 
 	void threadedFunction();
 
 	void onFlickrEvent(ofxFlickr::APIEvent & evt);
-
-	void changeMode();
 
 	void setDefaults();
 	bool loadParameters();
@@ -68,9 +48,8 @@ protected:
 
 	template<class Archive>
 	void serialize(Archive & ar, const unsigned int version) {
-		ar & BOOST_SERIALIZATION_NVP(nextFlickrMode);
-		ar & BOOST_SERIALIZATION_NVP(flickrDownloadPath);
+		ar & BOOST_SERIALIZATION_NVP(imageDownloadPath);
 		ar & BOOST_SERIALIZATION_NVP(flickrAuthenticateTimeout);
-		ar & BOOST_SERIALIZATION_NVP(flickrDownloadTimeout);
+		ar & BOOST_SERIALIZATION_NVP(flickrSearchTimeout);
 	}
 };

@@ -25,7 +25,7 @@ void ofApp::setup() {
 	bicycleController.setup();
 	videoController.setup();
 #elif USE_CAM
-	cameraController.setup();
+	imageCaptureController.setup();
 	//flickrController.setup();
 #else
 	renderController.setup();
@@ -41,7 +41,7 @@ void ofApp::update() {
 	bicycleController.update();
 	videoController.update();
 #elif USE_CAM
-	cameraController.update();
+	imageCaptureController.update();
 	//flickrController.update();
 #else
 	//renderController.update();
@@ -64,7 +64,7 @@ void ofApp::draw() {
 	videoController.getVideoTexture().draw(0, 0, ofGetWidth(), ofGetHeight());
 	font.drawString(os.str(), 1000, 400);
 #elif USE_CAM
-	cameraController.getCameraTexture().draw(0, 0, ofGetWidth(), ofGetHeight());
+	imageCaptureController.getCameraTexture().draw(0, 0, ofGetWidth(), ofGetHeight());
 #else
 	renderController.begin();
 	{
@@ -83,7 +83,7 @@ void ofApp::draw() {
 			bicycleController.drawGUI();
 			videoController.drawGUI();
 #elif USE_CAM
-			cameraController.drawGUI();
+			imageCaptureController.drawGUI();
 			flickrController.drawGUI();
 #else
 			renderController.drawGUI();
@@ -133,7 +133,7 @@ void ofApp::keyPressed(int key) {
 #ifdef USE_BIKE
 		bicycleController.triggerSensor(BicycleController::SENSOR_KEYBOARD);
 #else
-		cameraController.triggerSensor(CamController::SENSOR_KEYBOARD);
+		imageCaptureController.triggerSensor(ImageCaptureController::SENSOR_KEYBOARD);
 #endif
 
 	}

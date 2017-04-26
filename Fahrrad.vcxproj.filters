@@ -85,9 +85,6 @@
     <ClCompile Include="src\BicycleController.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\CamController.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxFlickr\src\md5.cpp">
       <Filter>addons\ofxFlickr\src</Filter>
     </ClCompile>
@@ -104,6 +101,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\RenderController.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImageCaptureController.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -830,9 +830,6 @@
     <ClInclude Include="src\VideoController.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\CamController.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxFlickr\src\md5.h">
       <Filter>addons\ofxFlickr\src</Filter>
     </ClInclude>
@@ -849,6 +846,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\RenderController.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImageCaptureController.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

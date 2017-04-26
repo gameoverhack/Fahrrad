@@ -5,7 +5,7 @@
 
 #include "BicycleController.h"
 #include "VideoController.h"
-#include "CamController.h"
+#include "ImageCaptureController.h"
 #include "RenderController.h"
 #include "ImageLoadController.h"
 #include "FlickrController.h"
@@ -39,7 +39,7 @@ public:
 
 	BicycleController bicycleController;
 	VideoController videoController;
-	CamController cameraController;
+	ImageCaptureController imageCaptureController;
 	RenderController renderController;
 	ImageLoadController imageLoadController;
 	FlickrController flickrController;

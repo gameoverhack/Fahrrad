@@ -55,7 +55,7 @@ void ImageDisplayController::setDefaults() {
 #ifdef TARGET_WIN32
 	imageDownloadPath = "C:/Users/gameover8/Desktop/img/download";
 #else
-	imageDownloadPath = "/home/pi/Desktop/img/capture";
+	imageDownloadPath = "/home/pi/Desktop/img/download";
 #endif
 
 	flickrAuthenticateTimeout = 10000;

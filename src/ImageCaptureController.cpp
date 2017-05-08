@@ -101,7 +101,7 @@ void ImageCaptureController::setDefaults() {
 #ifdef TARGET_WIN32
 	imageStorePath = "C:/Users/gameover8/Desktop/img/capture";
 #else
-	imageStorePath = "/home/pi/Desktop/img/download";
+	imageStorePath = "/home/pi/Desktop/img/capture";
 #endif
 
 	brightness = 0.15;

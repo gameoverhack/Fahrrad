@@ -9,6 +9,7 @@ VideoController::VideoController() {
 //--------------------------------------------------------------
 VideoController::~VideoController() {
 	ofLogNotice() << className << ": destructor";
+	vid.close();
 	this->IGuiBase::~IGuiBase(); // call base destructor
 }
 

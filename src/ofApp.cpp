@@ -33,7 +33,7 @@ void ofApp::setup() {
 //--------------------------------------------------------------
 void ofApp::setDefaults() {
 	ofLogNotice() << className << ": setDefaults";
-	nextApplicationMode = APPLICATION_BIKE;
+	nextApplicationMode = APPLICATION_NONE;
 }
 
 //--------------------------------------------------------------

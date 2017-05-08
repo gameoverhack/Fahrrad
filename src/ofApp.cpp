@@ -121,7 +121,6 @@ void ofApp::draw() {
 	break;
 	case APPLICATION_DEBUG:
 	{
-		imageCaptureController->getCameraTexture().draw(0, 0, ofGetWidth() / 4, ofGetHeight() / 4);
 
 		renderController->begin();
 		{
@@ -130,6 +129,8 @@ void ofApp::draw() {
 		renderController->end();
 
 		renderController->draw();
+
+		imageCaptureController->getCameraTexture().draw(0, 0, ofGetWidth() / 4, ofGetHeight() / 4);
 	}
 	break;
 	}

@@ -76,7 +76,9 @@ void ImageDisplayController::update() {
 #endif
 		ofFileDialogResult result = ofSystemLoadDialog("Select Download Folder", true);
 		if (result.getPath() != "") {
+			lock();
 			imageDownloadPath = result.getPath();
+			unlock();
 		}
 #ifndef TARGET_WIN32
 		ofSetWindowShape(1920, 1080);

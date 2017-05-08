@@ -122,9 +122,11 @@ void ImageCaptureController::update() {
 #ifndef TARGET_WIN32
 		ofSetWindowShape(10, 10);
 #endif
-		ofFileDialogResult result = ofSystemLoadDialog("Select Save Folder", true);
+		ofFileDialogResult result = ofSystemLoadDialog("Select Capture Folder", true);
 		if (result.getPath() != "") {
+			lock();
 			imageStorePath = result.getPath();
+			unlock();
 		}
 #ifndef TARGET_WIN32
 		ofSetWindowShape(1920, 1080);

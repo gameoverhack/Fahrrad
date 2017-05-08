@@ -123,7 +123,7 @@ void ImageCaptureController::update() {
 		ofSetWindowShape(10, 10);
 #endif
 		ofFileDialogResult result = ofSystemLoadDialog("Select Capture Folder", true);
-		if (result.getPath() != "") {
+		if (result.bSuccess) {
 			lock();
 			imageStorePath = result.getPath();
 			unlock();

@@ -75,7 +75,7 @@ void ImageDisplayController::update() {
 		ofSetWindowShape(10, 10);
 #endif
 		ofFileDialogResult result = ofSystemLoadDialog("Select Download Folder", true);
-		if (result.getPath() != "") {
+		if (result.bSuccess) {
 			lock();
 			imageDownloadPath = result.getPath();
 			unlock();

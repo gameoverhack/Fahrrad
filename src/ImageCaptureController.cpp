@@ -8,10 +8,17 @@ ImageCaptureController::ImageCaptureController() {
 
 //--------------------------------------------------------------
 ImageCaptureController::~ImageCaptureController() {
+
 	ofLogNotice() << className << ": destructor";
+
+	lock();
+	ofRemoveListener(ofxFlickr::APIEvent::events, this, &ImageCaptureController::onFlickrEvent);
+	flickr->stop();
+	unlock();
 
 	// kill the thread
 	waitForThread();
+	delete flickr;
 
 	this->IGuiBase::~IGuiBase(); // call base destructor
 }
@@ -88,9 +95,11 @@ void ImageCaptureController::setup() {
 
 	lastFlickrAuthenticateTime = ofGetElapsedTimeMillis() - flickrAuthenticateTimeout;
 
+	flickr = new ofxFlickr::API;
+
 	ofAddListener(ofxFlickr::APIEvent::events, this, &ImageCaptureController::onFlickrEvent);
 
-	flickr.start();
+	flickr->start();
 	startThread();
 }
 
@@ -242,18 +251,18 @@ void ImageCaptureController::threadedFunction() {
 		if (bUse) {
 
 			// check if we are authenticated app with flickr
-			if (!flickr.getIsAuthenticated()) {
+			if (!flickr->getIsAuthenticated()) {
 
 				// try to authorize everz XX millis if we're not authenticated (assume our credentials are correct)
 				if (ofGetElapsedTimeMillis() - lastFlickrAuthenticateTime >= flickrAuthenticateTimeout) {
 					ofLogNotice() << "Authenticating Flickr application";
-					if (flickr.authenticate(API_KEY, API_SECRET, ofxFlickr::FLICKR_WRITE, true)) {
+					if (flickr->authenticate(API_KEY, API_SECRET, ofxFlickr::FLICKR_WRITE, true)) {
 						ofLogNotice() << "Requeue any un-uploaded files";
 						lock();
 						Serializer.loadClass(ofToDataPath("configs/UploadQueue" + string(CONFIG_TYPE)), (uploadQueue), ARCHIVE_BINARY);
 						for (int i = 0; i < uploadQueue.size(); i++) {
 							ofLogNotice() << "Requeue: " << uploadQueue[i];
-							flickr.uploadThreaded(uploadQueue[i]);
+							flickr->uploadThreaded(uploadQueue[i]);
 						}
 						unlock();
 					}
@@ -429,7 +438,7 @@ void ImageCaptureController::saveImage() {
 		ofLogNotice() << "Image: " << currentImageFilePath << " save SUCCESS";
 		uploadQueue.push_back(currentImageFilePath);
 		Serializer.saveClass(ofToDataPath("configs/UploadQueue" + string(CONFIG_TYPE)), (uploadQueue), ARCHIVE_BINARY);
-		flickr.uploadThreaded(currentImageFilePath);
+		flickr->uploadThreaded(currentImageFilePath);
 	}
 	else {
 		ofLogError() << "Image: " << currentImageFilePath << " save FAILED";
@@ -444,7 +453,7 @@ void ImageCaptureController::saveImage() {
 void ImageCaptureController::onFlickrEvent(ofxFlickr::APIEvent & evt) {
 
 	ostringstream os;
-	os << flickr.getCallTypeAsString(evt.callType)
+	os << flickr->getCallTypeAsString(evt.callType)
 		<< " event: " << string(evt.success ? "OK" : "ERROR")
 		<< " with " << evt.results.size() << " and "
 		<< evt.resultString;
@@ -476,7 +485,7 @@ void ImageCaptureController::onFlickrEvent(ofxFlickr::APIEvent & evt) {
 		}
 		else {
 			ofLogWarning() << "Upload failed! Re-upload: " << evt.resultString;
-			flickr.uploadThreaded(evt.resultString);
+			flickr->uploadThreaded(evt.resultString);
 		}
 	}
 	break;

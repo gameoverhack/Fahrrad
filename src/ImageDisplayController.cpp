@@ -12,7 +12,16 @@ ImageDisplayController::ImageDisplayController() {
 ImageDisplayController::~ImageDisplayController() {
 
 	ofLogNotice() << className << ": destructor";
+
+	lock();
+	ofRemoveListener(ofxFlickr::APIEvent::events, this, &ImageDisplayController::onFlickrEvent);
+	flickr->stop();
+	unlock();
+
+	// kill the thread
 	waitForThread();
+	delete flickr;
+
 	this->IGuiBase::~IGuiBase(); // call base destructor
 
 }
@@ -41,9 +50,11 @@ void ImageDisplayController::setup() {
 	lastFlickrAuthenticateTime = ofGetElapsedTimeMillis() - flickrAuthenticateTimeout;
 	lastFlickrSearchTime = ofGetElapsedTimeMillis() - flickrSearchTimeout;
 
+	flickr = new ofxFlickr::API;
+
 	ofAddListener(ofxFlickr::APIEvent::events, this, &ImageDisplayController::onFlickrEvent);
 
-	flickr.start();
+	flickr->start();
 	startThread();
 }
 
@@ -157,12 +168,12 @@ void ImageDisplayController::threadedFunction() {
 			}
 			
 			// check if we are authenticated app with flickr
-			if (!flickr.getIsAuthenticated()) {
+			if (!flickr->getIsAuthenticated()) {
 
 				// try to authorize everz XX millis if we're not authenticated (assume our credentials are correct)
 				if (ofGetElapsedTimeMillis() - lastFlickrAuthenticateTime >= flickrAuthenticateTimeout) {
 					ofLogNotice() << "Authenticating Flickr application";
-					flickr.authenticate(API_KEY, API_SECRET, ofxFlickr::FLICKR_WRITE, true);
+					flickr->authenticate(API_KEY, API_SECRET, ofxFlickr::FLICKR_WRITE, true);
 					lastFlickrAuthenticateTime = ofGetElapsedTimeMillis();
 				}
 				//return;
@@ -173,7 +184,7 @@ void ImageDisplayController::threadedFunction() {
 				if (ofGetElapsedTimeMillis() - lastFlickrSearchTime >= flickrSearchTimeout) {
 					if (!bIsSearching && !bIsDownloading) {
 						// need to have strategy for getting the latest images from today???!!! etc random how do we store etc???
-						flickr.searchThreaded("", "149397704@N05", flickrSearchPage);
+						flickr->searchThreaded("", "149397704@N05", flickrSearchPage);
 						lock();
 						bIsSearching = true;
 						unlock();
@@ -255,7 +266,7 @@ void ImageDisplayController::threadedFunction() {
 void ImageDisplayController::onFlickrEvent(ofxFlickr::APIEvent & evt) {
 
 	ostringstream os;
-	os << flickr.getCallTypeAsString(evt.callType)
+	os << flickr->getCallTypeAsString(evt.callType)
 		<< " event: " << string(evt.success ? "OK" : "ERROR")
 		<< " with " << evt.results.size() << " and "
 		<< evt.resultString;

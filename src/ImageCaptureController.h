@@ -38,7 +38,7 @@ public:
 
 protected:
 
-	ofxFlickr::API flickr;
+	ofxFlickr::API * flickr;
 	
 	int flickrAuthenticateTimeout;
 	int lastFlickrAuthenticateTime;

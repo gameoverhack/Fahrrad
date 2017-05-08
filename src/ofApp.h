@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxImGui.h"
+#include "IGuiBase.h"
 
 #include "BicycleController.h"
 #include "VideoController.h"
@@ -9,7 +10,7 @@
 #include "ImageCaptureController.h"
 #include "ImageDisplayController.h"
 
-class ofApp : public ofBaseApp {
+class ofApp : public ofBaseApp, public IGuiBase {
 
 public:
 
@@ -30,17 +31,50 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 
+	// IGuiBase methods
+	void drawGUI();
+	void changeMode();
+	void setDefaults();
+	bool loadParameters();
+	bool saveParameters();
+
+	typedef enum {
+		APPLICATION_NONE = 0,
+		APPLICATION_BIKE,
+		APPLICATION_CAMERA,
+		APPLICATION_DISPLAY,
+		APPLICATION_DEBUG
+	} ApplicationMode;
+
+	vector<string> applicationModes = {
+		"APPLICATION_NONE",
+		"APPLICATION_BIKE",
+		"APPLICATION_CAMERA",
+		"APPLICATION_DISPLAY",
+		"APPLICATION_DEBUG"
+	};
+
+	ApplicationMode nextApplicationMode;
+	ApplicationMode currentApplicationMode;
+
+	friend class boost::serialization::access;
+
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & BOOST_SERIALIZATION_NVP(nextApplicationMode);
+	}
+
 	bool bShowDebug;
 	bool bShowFullScreen;
 	bool bShowCursor;
 
 	ofxImGui gui;
 
-	BicycleController bicycleController;
-	VideoController videoController;
-	ImageCaptureController imageCaptureController;
-	ImageDisplayController imageDisplayController;
-	RenderController renderController;
+	BicycleController * bicycleController;
+	VideoController * videoController;
+	ImageCaptureController * imageCaptureController;
+	ImageDisplayController * imageDisplayController;
+	RenderController * renderController;
 
 	ofTrueTypeFont font;
 

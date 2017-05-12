@@ -37,7 +37,9 @@ void ImageDisplayController::setup() {
 	bSetImageDownloadPath = false;
 
 	fbo.allocate(ofGetWidth(), ofGetHeight(), GL_RGB);
-	images.resize(6);
+
+	imagePixels.resize(6);
+	imageTextures.resize(6);
 
 	lastLoadImagesTimeout = ofGetElapsedTimeMillis() - loadImagesTimeout;
 
@@ -103,15 +105,14 @@ void ImageDisplayController::update() {
 			ofClear(0);
 			//ofDrawRectangle(400, 400, 400, 400);
 			int xCounter = 0, yCounter = 0;
-			for (int i = 0; i < images.size(); i++) {
+			for (int i = 0; i < imageTextures.size(); i++) {
 
-				images[i].setUseTexture(true);
-				images[i].update(); // actually upload to textures
+				imageTextures[i].loadData(imagePixels[i]);
 
-				if (xCounter == images.size() / 2) xCounter = 0;
-				if (i >= images.size() / 2) yCounter = 1;
+				if (xCounter == imageTextures.size() / 2) xCounter = 0;
+				if (i >= imageTextures.size() / 2) yCounter = 1;
 
-				images[i].draw((ofGetWidth() / 3)*xCounter, (ofGetHeight() / 2) * yCounter, ofGetWidth() / 3, ofGetHeight() / 2);
+				imageTextures[i].draw((ofGetWidth() / 3)*xCounter, (ofGetHeight() / 2) * yCounter, ofGetWidth() / 3, ofGetHeight() / 2);
 				xCounter++;
 
 			}
@@ -140,26 +141,28 @@ void ImageDisplayController::threadedFunction() {
 				dir.allowExt("jpg");
 				dir.listDir(imageDownloadPath);
 				
-				vector<ofImage> tempImages;
 				vector<int> randomDirectoryIndexes;
-				tempImages.resize(images.size());
 
 				if (dir.size() > 0) {
-					uniqueRandomIndex(randomDirectoryIndexes, 0, dir.size(), MIN(dir.size(), tempImages.size())); // see Utils.h
+					uniqueRandomIndex(randomDirectoryIndexes, 0, dir.size(), MIN(dir.size(), imagePixels.size())); // see Utils.h
 				}
 
-				for (int i = 0; i < tempImages.size(); i++) {
-					tempImages[i].setUseTexture(false);
-					images[i].setUseTexture(false);
+				for (int i = 0; i < imagePixels.size(); i++) {
+					string filePath = "";
 					if (i < dir.size()) {
-						tempImages[i].load(dir.getPath(randomDirectoryIndexes[i]));
+						filePath = dir.getPath(randomDirectoryIndexes[i]);
 					}else{
-						tempImages[i].load(ofToDataPath("images/tmpImage.jpg"));
+						filePath = ofToDataPath("images/tmpImage.jpg");
+					}
+					bool ok = ofLoadImage(imagePixels[i], filePath);
+					if (ok) {
+						ofLogNotice() << "Loading random image: " << filePath;
+					}else{
+						ofLogError() << "Error loading random image: " << filePath;
 					}
 				}
 
 				lock();
-				images = tempImages; // swapping the buffers (so to speak) happens here
 				bRenderImages = true;
 				unlock();
 

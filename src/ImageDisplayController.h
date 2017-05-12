@@ -19,7 +19,8 @@ public:
 protected:
 
 	ofFbo fbo;
-	vector<ofImage> images;
+	vector<ofPixels> imagePixels;
+	vector<ofTexture> imageTextures;
 
 	int loadImagesTimeout;
 	int lastLoadImagesTimeout;

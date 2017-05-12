@@ -329,6 +329,13 @@ void ofApp::keyPressed(int key) {
 	{
 		bShowFullScreen ^= true;
 		ofSetFullscreen(bShowFullScreen);
+#ifndef TARGET_WIN32
+		if (!bShowFullScreen) {
+			ofSetWindowShape(10, 10);
+		}else{
+			ofSetWindowShape(1920, 1080);
+		}
+#endif
 	}
 	break;
 	case 'm':

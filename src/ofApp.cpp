@@ -89,17 +89,25 @@ void ofApp::draw() {
 	break;
 	case APPLICATION_BIKE:
 	{
-		double avgVelocity = bicycleController->getAverageVelocity();
-		double normalisedVelocity = bicycleController->getNormalisedVelocity();
-		double dstTravelled = bicycleController->getDistanceTravelled();
+		const RiderInfo& riderInfo = bicycleController->getCurrentRiderInfo();
+		
+		int ranking = riderInfo.ranking + 1; // 0 ordered adjustment
+		float currentSpeed = riderInfo.currentSpeed;
+		float normalisedSpeed = riderInfo.normalisedSpeed;
+		float distanceTravelled = riderInfo.distanceTravelled;
+		string currentAnimal = riderInfo.currentAnimal;
+		string topAnimal = riderInfo.topAnimal;
 
 		ostringstream os;
-		os << std::setprecision(1) << std::fixed << avgVelocity << " km/h" << endl << dstTravelled << " m";
+		os << std::setprecision(1) << std::fixed << currentSpeed << " km/h" << endl << distanceTravelled << " m" << endl << ranking << " " << currentAnimal << endl << topAnimal;
 
-		videoController->setSpeed(normalisedVelocity);
+		videoController->setSpeed(normalisedSpeed);
 
 		videoController->getVideoTexture().draw(0, 0, ofGetWidth(), ofGetHeight());
-		font.drawString(os.str(), 1000, 400);
+		if (riderInfo.isActive) {
+			font.drawString(os.str(), 1000, 400);
+		}
+		
 
 	}
 	break;

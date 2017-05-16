@@ -1,5 +1,7 @@
 #include "BicycleController.h"
 
+bool RiderRankFunction(const RiderInfo& a, const RiderInfo& b) { return (a.topSpeed > b.topSpeed); }
+
 //--------------------------------------------------------------
 BicycleController::BicycleController() {
 	className = "BicycleController";
@@ -32,6 +34,53 @@ void BicycleController::setup() {
 	distanceTravelled = 0; // neters
 
 	bIsRiderActive = false;
+
+	// load milestones
+	ofxXmlSettings XML;
+	if (XML.loadFile("xml/milestonesSpeed.xml")) {
+		ofLogNotice() << "XML milestonesSpeed loaded";
+		XML.pushTag("milestonesSpeed", 0);
+		int numMilestones = XML.getNumTags("milestone");
+		for (int i = 0; i < numMilestones; i++) {
+			MileStone m;
+			m.value = XML.getValue("milestone:speed", 0., i);
+			m.type  = XML.getValue("milestone:name", "", i);
+			ofLogNotice() << "Milestone: " << i << " = (" << m.value << ", " << m.type << ")";
+			milestonesSpeed.push_back(m);
+		}
+	} else {
+		ofLogError() << "XML milestonesSpeed could not be loaded";
+	}
+
+	if (XML.loadFile("xml/milestonesWatts.xml")) {
+		ofLogNotice() << "XML milestonesWatt loaded";
+		XML.pushTag("milestonesWatt", 0);
+		int numMilestones = XML.getNumTags("milestone");
+		for (int i = 0; i < numMilestones; i++) {
+			MileStone m;
+			m.value = XML.getValue("milestone:watt", 0., i);
+			m.type = XML.getValue("milestone:name", "", i);
+			ofLogNotice() << "Milestone: " << i << " = (" << m.value << ", " << m.type << ")";
+			milestonesWatts.push_back(m);
+		}
+	}
+	else {
+		ofLogError() << "XML milestonesWatt could not be loaded";
+	}
+
+	// generate random riders
+	//for (int i = 0; i < 100000; i++) {
+	//	currentRider = RiderInfo();
+	//	currentRider.currentSpeed = ofRandom(1, 45);
+	//	currentRider.distanceTravelled = ofRandom(20, 10000);
+	//	updateRiderInfo();
+	//	allRiderInfo.push_back(currentRider);
+	//}
+	//
+	///// sort and save rider info
+	//std::sort(allRiderInfo.begin(), allRiderInfo.end(), RiderRankFunction);
+
+	Serializer.loadClass(ofToDataPath("configs/AllRiderInfo" + string(CONFIG_TYPE)), (allRiderInfo), ARCHIVE_BINARY);
 
 	startThread();
 
@@ -192,6 +241,12 @@ void BicycleController::threadedFunction() {
 				currentAverageVelocity = currentAverageVelocity * (1.0 - velocityEase) + lastMeasuredVelocity * velocityEase;
 				currentNormalisedVelocity = currentAverageVelocity / velocityNormalSpeed;
 				lastMeasuredVelocity = lastMeasuredVelocity - velocityDecay; // do we need this?
+				
+				// update rider info
+				currentRider.currentSpeed = currentAverageVelocity;
+				currentRider.normalisedSpeed = currentNormalisedVelocity;
+				updateRiderInfo();
+
 				if (lastMeasuredVelocity < 0.0) lastMeasuredVelocity = 0;
 				lastVelocityTimeout = ofGetElapsedTimeMillis();
 			}
@@ -201,6 +256,20 @@ void BicycleController::threadedFunction() {
 				if (bIsRiderActive) {
 					bIsRiderActive = false;
 					currentAverageVelocity = lastMeasuredVelocity = 0.0;
+					allRiderInfo.push_back(currentRider);
+
+					/// sort and save rider info
+					std::sort(allRiderInfo.begin(), allRiderInfo.end(), RiderRankFunction);
+
+					for (int i = 0; i < allRiderInfo.size(); i++) {
+						allRiderInfo[i].ranking = i;
+						//cout << allRiderInfo[i].ranking << " " << allRiderInfo[i].topSpeed << " " << allRiderInfo[i].distanceTravelled << endl;
+					}
+
+					currentRider = RiderInfo(); // reset current rider
+
+					Serializer.saveClass(ofToDataPath("configs/AllRiderInfo" + string(CONFIG_TYPE)), (allRiderInfo), ARCHIVE_BINARY);
+
 					ofLogVerbose() << "Rider Inactive";
 				}
 			}
@@ -216,6 +285,49 @@ void BicycleController::threadedFunction() {
 }
 
 //--------------------------------------------------------------
+void BicycleController::updateRiderInfo() {
+	bool bUpdateTop = false;
+	if (currentRider.currentSpeed > currentRider.topSpeed) {
+		bUpdateTop = true;
+		currentRider.topSpeed = currentRider.currentSpeed;
+	}
+
+	currentRider.ranking = allRiderInfo.size();
+	for (int i = 0; i < allRiderInfo.size(); i++) {
+		if (currentRider.topSpeed > allRiderInfo[i].topSpeed) {
+			currentRider.ranking = i;
+			break;
+		}
+	}
+
+	currentRider.currentAnimal = "";
+	for (int i = 0; i < milestonesSpeed.size(); i++) {
+		if (currentRider.currentSpeed < milestonesSpeed[i].value) {
+			if (i > 0) {
+				currentRider.currentAnimal = milestonesSpeed[i].type;
+			}
+			break;
+		}
+	}
+
+	currentRider.currentDevice = "";
+	for (int i = 0; i < milestonesWatts.size(); i++) {
+		if (currentRider.currentKiloWatts < milestonesSpeed[i].value) {
+			if (i > 0) {
+				currentRider.currentDevice = milestonesSpeed[i].type;
+			}
+			break;
+		}
+	}
+
+	if (bUpdateTop) {
+		currentRider.topAnimal = currentRider.currentAnimal;
+		currentRider.topDevice = currentRider.currentDevice;
+	}
+
+}
+
+//--------------------------------------------------------------
 void BicycleController::triggerSensor(SensorMode sensorMode) {
 
 	lock();
@@ -225,39 +337,46 @@ void BicycleController::triggerSensor(SensorMode sensorMode) {
 		if (!bIsRiderActive) {
 			bIsRiderActive = true;
 			distanceTravelled = 0;
+			currentRider.isActive = bIsRiderActive;
 			ofLogVerbose() << "Rider Active";
 		}
 
 		lastSensorTimeout = ofGetElapsedTimeMillis();
 		lastMeasuredVelocity = (wheelDiameter * PI / 1000.0 / 1000.0) / (timeSinceLastSensor / 1000.0 / 60.0 / 60.0);
 		distanceTravelled += (wheelDiameter * PI / 1000.0);
+		currentRider.distanceTravelled += distanceTravelled;
 	}
 
 	unlock();
 
 }
 
-//--------------------------------------------------------------
-bool BicycleController::getIsRiderActive() {
-	ofScopedLock lock(mutex);
-	return bIsRiderActive;
-}
+////--------------------------------------------------------------
+//bool BicycleController::getIsRiderActive() {
+//	ofScopedLock lock(mutex);
+//	return bIsRiderActive;
+//}
+//
+////--------------------------------------------------------------
+//double BicycleController::getAverageVelocity() {
+//	ofScopedLock lock(mutex);
+//	return currentAverageVelocity;
+//}
+//
+////--------------------------------------------------------------
+//double BicycleController::getNormalisedVelocity() {
+//	ofScopedLock lock(mutex);
+//	return currentNormalisedVelocity;
+//}
+//
+////--------------------------------------------------------------
+//double BicycleController::getDistanceTravelled() {
+//	return distanceTravelled;
+//}
 
-//--------------------------------------------------------------
-double BicycleController::getAverageVelocity() {
+const RiderInfo & BicycleController::getCurrentRiderInfo(){
 	ofScopedLock lock(mutex);
-	return currentAverageVelocity;
-}
-
-//--------------------------------------------------------------
-double BicycleController::getNormalisedVelocity() {
-	ofScopedLock lock(mutex);
-	return currentNormalisedVelocity;
-}
-
-//--------------------------------------------------------------
-double BicycleController::getDistanceTravelled() {
-	return distanceTravelled;
+	return currentRider;
 }
 
 //--------------------------------------------------------------

@@ -12,6 +12,31 @@ const static string API_SECRET = "db2d65d186157c1e";
 #define CONFIG_TYPE ".lnxconf"
 #endif
 
+typedef struct {
+	bool isActive = false;
+	int ranking = INFINITY;
+	float currentSpeed = 0.0f;
+	float normalisedSpeed = 0.0f;
+	float topSpeed = 0.0f;;
+	float currentKiloWatts = 0.0f;;
+	float topKiloWatts = 0.0f;;
+	float distanceTravelled = 0.0f;;
+	string currentAnimal = "";
+	string currentDevice = "";
+	string topAnimal = "";
+	string topDevice = "";
+
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & BOOST_SERIALIZATION_NVP(ranking);
+		ar & BOOST_SERIALIZATION_NVP(topSpeed);
+		ar & BOOST_SERIALIZATION_NVP(topKiloWatts);
+		ar & BOOST_SERIALIZATION_NVP(topAnimal);
+		ar & BOOST_SERIALIZATION_NVP(topDevice);
+	}
+
+} RiderInfo;
+
 inline void uniqueRandomIndex(vector<int> & vec, int start, int end, int size) {
 
 	int r = (int)ofRandom(start, end);

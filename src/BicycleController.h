@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxXmlSettings.h"
 #include "IGuiBase.h"
 
 #ifndef TARGET_WIN32
@@ -28,12 +29,26 @@ public:
 
 	void triggerSensor(SensorMode sensorMode);
 
-	bool getIsRiderActive();
-	double getAverageVelocity();   // km/hour
-	double getNormalisedVelocity(); // 0.0 -> 1.0 -> x.0
-	double getDistanceTravelled(); // metres
+	//bool getIsRiderActive();
+	//double getAverageVelocity();   // km/hour
+	//double getNormalisedVelocity(); // 0.0 -> 1.0 -> x.0
+	//double getDistanceTravelled(); // metres
+	const RiderInfo& getCurrentRiderInfo();
 
 protected:
+
+	void updateRiderInfo();
+
+	typedef struct {
+		float value;
+		string type;
+	} MileStone;
+
+	vector<MileStone> milestonesSpeed;
+	vector<MileStone> milestonesWatts;
+
+	vector<RiderInfo> allRiderInfo;
+	RiderInfo currentRider;
 
 	vector<string> sensorModes = {
 		"SENSOR_NONE",

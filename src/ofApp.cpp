@@ -50,18 +50,27 @@ void ofApp::update() {
 		// nothing for now
 }
 	break;
-	case APPLICATION_BIKE:
+	case APPLICATION_STATSLOCAL:
+	{
+		bicycleController->update();
+	}
+	break;
+	case APPLICATION_STATSREMOTE:
+	{
+		//to do
+	}
+	case APPLICATION_BIKEVIDEO:
 	{
 		bicycleController->update();
 		videoController->update();
 	}
 	break;
-	case APPLICATION_CAMERA:
+	case APPLICATION_CAMERALOCAL:
 	{
 		imageCaptureController->update();
 	}
 	break;
-	case APPLICATION_DISPLAY:
+	case APPLICATION_CAMERAREMOTE:
 	{
 		imageDisplayController->update();
 		renderController->update();
@@ -87,10 +96,10 @@ void ofApp::draw() {
 		// nothing for now
 	}
 	break;
-	case APPLICATION_BIKE:
+	case APPLICATION_STATSLOCAL:
 	{
 		const RiderInfo& riderInfo = bicycleController->getCurrentRiderInfo();
-		
+
 		int ranking = riderInfo.ranking + 1; // 0 ordered adjustment
 		float currentSpeed = riderInfo.currentSpeed;
 		float normalisedSpeed = riderInfo.normalisedSpeed;
@@ -101,22 +110,38 @@ void ofApp::draw() {
 		ostringstream os;
 		os << std::setprecision(1) << std::fixed << currentSpeed << " km/h" << endl << distanceTravelled << " m" << endl << ranking << " " << currentAnimal << endl << topAnimal;
 
-		videoController->setSpeed(normalisedSpeed);
-
-		videoController->getVideoTexture().draw(0, 0, ofGetWidth(), ofGetHeight());
 		if (riderInfo.isActive) {
 			font.drawString(os.str(), 1000, 400);
 		}
+	}
+	break;
+	case APPLICATION_STATSREMOTE:
+	{
+		//to do
+	}
+	break;
+	case APPLICATION_BIKEVIDEO:
+	{
+		const RiderInfo& riderInfo = bicycleController->getCurrentRiderInfo();
 		
+		int ranking = riderInfo.ranking + 1; // 0 ordered adjustment
+		float currentSpeed = riderInfo.currentSpeed;
+		float normalisedSpeed = riderInfo.normalisedSpeed;
+		float distanceTravelled = riderInfo.distanceTravelled;
+		string currentAnimal = riderInfo.currentAnimal;
+		string topAnimal = riderInfo.topAnimal;
+
+		videoController->setSpeed(normalisedSpeed);
+		videoController->getVideoTexture().draw(0, 0, ofGetWidth(), ofGetHeight());
 
 	}
 	break;
-	case APPLICATION_CAMERA:
+	case APPLICATION_CAMERALOCAL:
 	{
 		imageCaptureController->getCameraTexture().draw(0, 0, ofGetWidth() / 4, ofGetHeight() / 4);
 	}
 	break;
-	case APPLICATION_DISPLAY:
+	case APPLICATION_CAMERAREMOTE:
 	{
 		renderController->begin();
 		{
@@ -168,18 +193,28 @@ void ofApp::drawGUI() {
 				// nothing for now
 			}
 			break;
-			case APPLICATION_BIKE:
+			case APPLICATION_STATSLOCAL:
+			{
+				bicycleController->drawGUI();
+			}
+			break;
+			case APPLICATION_STATSREMOTE:
+			{
+				//to do
+			}
+			break;
+			case APPLICATION_BIKEVIDEO:
 			{
 				bicycleController->drawGUI();
 				videoController->drawGUI();
 			}
 			break;
-			case APPLICATION_CAMERA:
+			case APPLICATION_CAMERALOCAL:
 			{
 				imageCaptureController->drawGUI();
 			}
 			break;
-			case APPLICATION_DISPLAY:
+			case APPLICATION_CAMERAREMOTE:
 			{
 				imageDisplayController->drawGUI();
 				renderController->drawGUI();
@@ -216,7 +251,18 @@ void ofApp::changeMode() {
 		// nothing for now
 	}
 	break;
-	case APPLICATION_BIKE:
+	case APPLICATION_STATSLOCAL:
+	{
+		if (bicycleController != nullptr) delete bicycleController;
+		bicycleController = nullptr;
+	}
+	break;
+	case APPLICATION_STATSREMOTE:
+	{
+		//to do
+	}
+	break;
+	case APPLICATION_BIKEVIDEO:
 	{
 		if (bicycleController != nullptr) delete bicycleController;
 		if (videoController != nullptr) delete videoController;
@@ -224,13 +270,13 @@ void ofApp::changeMode() {
 		videoController = nullptr;
 	}
 	break;
-	case APPLICATION_CAMERA:
+	case APPLICATION_CAMERALOCAL:
 	{
 		if (imageCaptureController != nullptr) delete imageCaptureController;
 		imageCaptureController = nullptr;
 	}
 	break;
-	case APPLICATION_DISPLAY:
+	case APPLICATION_CAMERAREMOTE:
 	{
 		if (imageDisplayController != nullptr) delete imageDisplayController;
 		if (renderController != nullptr) delete renderController;
@@ -264,21 +310,34 @@ void ofApp::changeMode() {
 		if (renderController != nullptr) delete renderController;
 	}
 	break;
-	case APPLICATION_BIKE:
+	case APPLICATION_STATSLOCAL:
 	{
 		bicycleController = new BicycleController;
+		bicycleController->setRecordRiders(true);
+		bicycleController->setup();
+	}
+	break;
+	case APPLICATION_STATSREMOTE:
+	{
+		//to do
+	}
+	break;
+	case APPLICATION_BIKEVIDEO:
+	{
+		bicycleController = new BicycleController;
+		bicycleController->setRecordRiders(false);
 		bicycleController->setup();
 		videoController = new VideoController;
 		videoController->setup();
 	}
 	break;
-	case APPLICATION_CAMERA:
+	case APPLICATION_CAMERALOCAL:
 	{
 		imageCaptureController = new ImageCaptureController;
 		imageCaptureController->setup();
 	}
 	break;
-	case APPLICATION_DISPLAY:
+	case APPLICATION_CAMERAREMOTE:
 	{
 		imageDisplayController = new ImageDisplayController;
 		imageDisplayController->setup();
@@ -360,9 +419,9 @@ void ofApp::keyPressed(int key) {
 	case ' ':
 	{
 
-		if(currentApplicationMode == APPLICATION_BIKE) bicycleController->triggerSensor(BicycleController::SENSOR_KEYBOARD);
+		if(currentApplicationMode == APPLICATION_BIKEVIDEO || currentApplicationMode == APPLICATION_STATSLOCAL) bicycleController->triggerSensor(BicycleController::SENSOR_KEYBOARD);
 
-		if (currentApplicationMode == APPLICATION_CAMERA || 
+		if (currentApplicationMode == APPLICATION_CAMERALOCAL || 
 			currentApplicationMode == APPLICATION_DEBUG) imageCaptureController->triggerSensor(ImageCaptureController::SENSOR_KEYBOARD);
 
 	}
@@ -385,19 +444,19 @@ void ofApp::mouseMoved(int x, int y) {
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button) {
-	if (currentApplicationMode == APPLICATION_DISPLAY ||
+	if (currentApplicationMode == APPLICATION_CAMERAREMOTE ||
 		currentApplicationMode == APPLICATION_DEBUG) renderController->mouseDragged(x, y);
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button) {
-	if (currentApplicationMode == APPLICATION_DISPLAY ||
+	if (currentApplicationMode == APPLICATION_CAMERAREMOTE ||
 		currentApplicationMode == APPLICATION_DEBUG) renderController->mousePressed(x, y);
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button) {
-	if (currentApplicationMode == APPLICATION_DISPLAY ||
+	if (currentApplicationMode == APPLICATION_CAMERAREMOTE ||
 		currentApplicationMode == APPLICATION_DEBUG) renderController->mouseReleased(x, y);
 }
 

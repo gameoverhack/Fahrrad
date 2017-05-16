@@ -31,6 +31,7 @@ typedef struct {
 		ar & BOOST_SERIALIZATION_NVP(ranking);
 		ar & BOOST_SERIALIZATION_NVP(topSpeed);
 		ar & BOOST_SERIALIZATION_NVP(topKiloWatts);
+		ar & BOOST_SERIALIZATION_NVP(distanceTravelled);
 		ar & BOOST_SERIALIZATION_NVP(topAnimal);
 		ar & BOOST_SERIALIZATION_NVP(topDevice);
 	}

@@ -28,11 +28,7 @@ public:
 	void drawGUI();
 
 	void triggerSensor(SensorMode sensorMode);
-
-	//bool getIsRiderActive();
-	//double getAverageVelocity();   // km/hour
-	//double getNormalisedVelocity(); // 0.0 -> 1.0 -> x.0
-	//double getDistanceTravelled(); // metres
+	void setRecordRiders(bool b);
 	const RiderInfo& getCurrentRiderInfo();
 
 protected:
@@ -49,6 +45,8 @@ protected:
 
 	vector<RiderInfo> allRiderInfo;
 	RiderInfo currentRider;
+
+	bool bRecordRiders;
 
 	vector<string> sensorModes = {
 		"SENSOR_NONE",

@@ -109,7 +109,7 @@ void ofApp::draw() {
 			float normalisedSpeed = riderInfo.normalisedSpeed;
 			float distanceTravelled = riderInfo.distanceTravelled;
 			string currentAnimal = bicycleController->getAnimalFromIndex(riderInfo.currentAnimal);
-			string topAnimal = bicycleController->getDeviceFromIndex(riderInfo.topAnimal);
+			string topAnimal = bicycleController->getDeviceFromIndex(riderInfo.currentDevice);
 
 
 			os << std::setprecision(1) << std::fixed << currentSpeed << " km/h" << endl << distanceTravelled << " m" << endl << ranking << " " << currentAnimal << endl << topAnimal;

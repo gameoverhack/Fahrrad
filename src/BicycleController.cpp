@@ -1,6 +1,10 @@
 #include "BicycleController.h"
 
-bool RiderRankFunction(const RiderInfo& a, const RiderInfo& b) { return (a.topSpeed > b.topSpeed); }
+bool RiderRankFunction(const RiderInfo& a, const RiderInfo& b) { 
+	return	a.month > b.month ||
+			a.month == b.month && a.day > b.day ||
+			a.month == b.month && a.day == b.day && a.topSpeed > b.topSpeed;
+}
 
 //--------------------------------------------------------------
 BicycleController::BicycleController() {
@@ -71,19 +75,23 @@ void BicycleController::setup() {
 			ofLogError() << "XML milestonesWatt could not be loaded";
 		}
 
-		// generate random riders
-		//for (int i = 0; i < 100000; i++) {
-		//	currentRider = RiderInfo();
-		//	currentRider.currentSpeed = ofRandom(1, 45);
-		//	currentRider.distanceTravelled = ofRandom(20, 10000);
-		//	updateRiderInfo();
-		//	allRiderInfo.push_back(currentRider);
-		//}
-		//
-		///// sort and save rider info
-		//std::sort(allRiderInfo.begin(), allRiderInfo.end(), RiderRankFunction);
+		totalDistanceTravelled = 0;
 
-		Serializer.loadClass(ofToDataPath("configs/AllRiderInfo" + string(CONFIG_TYPE)), (allRiderInfo), ARCHIVE_BINARY);
+		startDay = 17;
+		startMonth = 5 - 1;
+		startYear = 2017;
+
+		endDay = 1;
+		endMonth = 5 - 1;
+		endYear = 2018;
+
+		//int totalDays = days_between(startDay, startMonth, startYear, endDay, endMonth, endYear);
+		
+		bIsDataLoaded = false;
+		bDay = startDay;
+		bMonth = startMonth;
+		bYear = startYear;
+
 	}
 
 	startThread();
@@ -121,12 +129,6 @@ void BicycleController::update() {
 	}
 
 	unlock();
-
-	// doing all velocity updates in threadedUpdate for now
-
-	// lock the model
-	// copy to the appModel
-	// unlock the model
 
 }
 
@@ -240,6 +242,95 @@ void BicycleController::threadedFunction() {
 
 			lock();
 
+			if (bRecordRiders) {
+
+				if (!bIsDataLoaded) {
+
+					bool bDone = false;
+					int nMonth = bMonth + 1;
+					int nYear = bYear;
+					if (nMonth > 11) {
+						nMonth = 0;
+						nYear = bYear + 1;
+					}
+					int nDay = 1;
+					if (nYear == endYear && bMonth == endMonth) {
+						nDay = endDay;
+					}
+					if (nYear == endYear && bMonth == endMonth && nDay == endDay) {
+						nMonth = bMonth;
+						bDone = true;
+					}
+
+					int daysInMonth = days_between(bDay, bMonth, bYear, nDay, nMonth, nYear);
+
+					if (daysInMonth > 0) {
+						ofLogNotice() << "Adding blank rider info: " << daysInMonth << " " << bDay << " " << bMonth << " " << bYear << " " << nDay << " " << nMonth << " " << nYear << endl;
+						int month = bMonth + 1;
+						int year = bYear;
+						for (int day = bDay; day < bDay + daysInMonth; day++) {
+
+							vector<RiderInfo> todaysRiderInfo;
+
+							ostringstream os;
+							os << bYear << "_" << std::setfill('0') << std::setw(2) << month << "_" << std::setfill('0') << std::setw(2) << day;
+
+
+							//for (int i = 0; i < 1000; i++) {
+							//	// generate random riders
+							//	currentRider = RiderInfo();
+							//	currentRider.currentSpeed = ofRandom(1, 60);
+							//	currentRider.time = ofRandom(0.5 * 60 * 1000, 10 * 60 * 1000);
+							//	currentRider.distanceTravelled = currentRider.currentSpeed / 60.0 / 60.0 / 1000.0 * currentRider.time;
+							//	currentRider.day = day;
+							//	currentRider.month = month;
+							//	currentRider.year = year;
+							//	updateRiderInfo();
+							//	todaysRiderInfo.push_back(currentRider);
+							//}
+							//Serializer.saveClass(ofToDataPath("configs/stats/dailyRiderInfo_" + os.str() + string(CONFIG_TYPE)), (todaysRiderInfo), ARCHIVE_BINARY);
+
+
+							ofLogNotice() << "Loading day: " << os.str();
+							Serializer.loadClass(ofToDataPath("configs/stats/dailyRiderInfo_" + os.str() + string(CONFIG_TYPE)), (todaysRiderInfo), ARCHIVE_BINARY);
+
+							for (int rider = 0; rider < todaysRiderInfo.size(); rider++) {
+								totalDistanceTravelled += todaysRiderInfo[rider].distanceTravelled;
+							}
+
+							monthlyRiderInfo[os.str()] = todaysRiderInfo;
+
+						}
+
+					}
+
+					bDay = 1;
+					bMonth = nMonth;
+					bYear = nYear;
+
+					if (bDone) {
+						for (unordered_map< string, vector<RiderInfo> >::iterator it = monthlyRiderInfo.begin(); it != monthlyRiderInfo.end(); ++it) {
+							ofLogNotice() << "Check: " << it->first << " with " << it->second.size() << " riders";
+						}
+
+						// sort todays rider info
+
+						vector<RiderInfo>& todaysRiderInfo = getTodaysRiderInfo();
+						std::sort(todaysRiderInfo.begin(), todaysRiderInfo.end(), RiderRankFunction);
+
+						int rank = 0;
+						int currentDay = ofGetDay();
+						int currentMonth = ofGetMonth();
+						int currentYear = ofGetYear();
+						for (int i = 0; i < todaysRiderInfo.size(); i++) {
+							todaysRiderInfo[i].ranking = rank;
+							rank++;
+						}
+						bIsDataLoaded = true;
+					}
+				}
+			}
+
 			// ease currentVelocity - both ease toward zero AND ease toward last measured velocity
 			if (ofGetElapsedTimeMillis() - lastVelocityTimeout > updateVelocityTime) {
 				currentAverageVelocity = currentAverageVelocity * (1.0 - velocityEase) + lastMeasuredVelocity * velocityEase;
@@ -262,19 +353,32 @@ void BicycleController::threadedFunction() {
 					currentAverageVelocity = lastMeasuredVelocity = 0.0;
 
 					if (bRecordRiders) {
-						allRiderInfo.push_back(currentRider);
 
-						/// sort and save rider info
-						std::sort(allRiderInfo.begin(), allRiderInfo.end(), RiderRankFunction);
+						vector<RiderInfo>& todaysRiderInfo = getTodaysRiderInfo();
 
-						for (int i = 0; i < allRiderInfo.size(); i++) {
-							allRiderInfo[i].ranking = i;
-							//cout << allRiderInfo[i].ranking << " " << allRiderInfo[i].topSpeed << " " << allRiderInfo[i].distanceTravelled << endl;
-						}
+						currentRider.month = ofGetMonth();
+						currentRider.day = ofGetDay();
+						currentRider.hour = ofGetHours();
+						currentRider.minute = ofGetMinutes();
+						currentRider.isActive = false;
 
+						todaysRiderInfo.push_back(currentRider);
 						currentRider = RiderInfo(); // reset current rider
 
-						Serializer.saveClass(ofToDataPath("configs/AllRiderInfo" + string(CONFIG_TYPE)), (allRiderInfo), ARCHIVE_BINARY);
+						// sort and save rider info
+						std::sort(todaysRiderInfo.begin(), todaysRiderInfo.end(), RiderRankFunction);
+
+						int rank = 0;
+						int currentDay = ofGetDay();
+						int currentMonth = ofGetMonth();
+						int currentYear = ofGetYear();
+						for (int i = 0; i < todaysRiderInfo.size(); i++) {
+							todaysRiderInfo[i].ranking = rank;
+							rank++;
+						}
+						ostringstream os;
+						os << "configs/stats/dailyRiderInfo_" << ofGetYear() << "_" << std::setfill('0') << std::setw(2) << ofGetMonth() << "_" << std::setfill('0') << std::setw(2) << ofGetDay() << string(CONFIG_TYPE);
+						Serializer.saveClass(ofToDataPath(os.str()), (todaysRiderInfo), ARCHIVE_BINARY);
 					}
 					
 
@@ -292,37 +396,52 @@ void BicycleController::threadedFunction() {
 
 }
 
+vector<RiderInfo>& BicycleController::getTodaysRiderInfo(){
+	ostringstream os;
+	os << ofGetYear() << "_" << std::setfill('0') << std::setw(2) << ofGetMonth() << "_" << std::setfill('0') << std::setw(2) << ofGetDay();
+	return monthlyRiderInfo[os.str()];
+}
+
 //--------------------------------------------------------------
 void BicycleController::updateRiderInfo() {
+
 	bool bUpdateTop = false;
+
 	if (currentRider.currentSpeed > currentRider.topSpeed) {
 		bUpdateTop = true;
 		currentRider.topSpeed = currentRider.currentSpeed;
 	}
 
-	currentRider.ranking = allRiderInfo.size();
-	for (int i = 0; i < allRiderInfo.size(); i++) {
-		if (currentRider.topSpeed > allRiderInfo[i].topSpeed) {
-			currentRider.ranking = i;
+	currentRider.ranking = 0;
+	int currentDay = ofGetDay();
+	int currentMonth = ofGetMonth();
+
+	vector<RiderInfo>& todaysRiderInfo = getTodaysRiderInfo();
+
+	for (int i = 0; i < todaysRiderInfo.size(); i++) {
+		if (currentRider.topSpeed > todaysRiderInfo[i].topSpeed) {
 			break;
+		}
+		else {
+			currentRider.ranking++;
 		}
 	}
 
-	currentRider.currentAnimal = "";
+	currentRider.currentAnimal = -1;
 	for (int i = 0; i < milestonesSpeed.size(); i++) {
 		if (currentRider.currentSpeed < milestonesSpeed[i].value) {
 			if (i > 0) {
-				currentRider.currentAnimal = milestonesSpeed[i].type;
+				currentRider.currentAnimal = i;//milestonesSpeed[i].type;
 			}
 			break;
 		}
 	}
 
-	currentRider.currentDevice = "";
+	currentRider.currentDevice = -1;
 	for (int i = 0; i < milestonesWatts.size(); i++) {
-		if (currentRider.currentKiloWatts < milestonesSpeed[i].value) {
+		if (currentRider.currentKiloWatts < milestonesWatts[i].value) {
 			if (i > 0) {
-				currentRider.currentDevice = milestonesSpeed[i].type;
+				currentRider.currentDevice = i;//milestonesSpeed[i].type;
 			}
 			break;
 		}
@@ -333,6 +452,8 @@ void BicycleController::updateRiderInfo() {
 		currentRider.topDevice = currentRider.currentDevice;
 	}
 
+	currentRider.time = ofGetElapsedTimeMillis() - riderStartTimeMillis;
+
 }
 
 //--------------------------------------------------------------
@@ -340,19 +461,26 @@ void BicycleController::triggerSensor(SensorMode sensorMode) {
 
 	lock();
 
+	if (bRecordRiders && !bIsDataLoaded) {
+		unlock();
+		return;
+	}
+
 	if (sensorMode == currentSensorMode) {
 
 		if (!bIsRiderActive) {
 			bIsRiderActive = true;
 			distanceTravelled = 0;
 			currentRider.isActive = bIsRiderActive;
+			riderStartTimeMillis = ofGetElapsedTimeMillis();
 			ofLogVerbose() << "Rider Active";
 		}
 
 		lastSensorTimeout = ofGetElapsedTimeMillis();
 		lastMeasuredVelocity = (wheelDiameter * PI / 1000.0 / 1000.0) / (timeSinceLastSensor / 1000.0 / 60.0 / 60.0);
 		distanceTravelled += (wheelDiameter * PI / 1000.0);
-		currentRider.distanceTravelled += distanceTravelled;
+		currentRider.distanceTravelled += (wheelDiameter * PI / 1000.0);;
+		totalDistanceTravelled += (wheelDiameter * PI / 1000.0);;
 	}
 
 	unlock();
@@ -369,6 +497,30 @@ void BicycleController::setRecordRiders(bool b) {
 const RiderInfo & BicycleController::getCurrentRiderInfo(){
 	ofScopedLock lock(mutex);
 	return currentRider;
+}
+
+bool BicycleController::isDataLoaded() {
+	ofScopedLock lock(mutex);
+	return bIsDataLoaded;
+}
+
+//--------------------------------------------------------------
+string BicycleController::getAnimalFromIndex(const int & index) {
+	if (index >= 0 && index < milestonesSpeed.size()) {
+		return milestonesSpeed[index].type;
+	} else {
+		return "";
+	}
+}
+
+//--------------------------------------------------------------
+string BicycleController::getDeviceFromIndex(const int & index) {
+	if (index >= 0 && index < milestonesWatts.size()) {
+		return milestonesWatts[index].type;
+	}
+	else {
+		return "";
+	}
 }
 
 //--------------------------------------------------------------
@@ -420,8 +572,22 @@ void BicycleController::drawGUI() {
 
 			if (bRecordRiders) {
 				ImGui::NewLine();
-				for (int i = 0; i < MIN(allRiderInfo.size(), 5); i++) {
-					ImGui::Text("%i  %.3f km/hr  %.3f m  %s  %s", allRiderInfo[i].ranking + 1, allRiderInfo[i].topSpeed, allRiderInfo[i].distanceTravelled, allRiderInfo[i].topAnimal, allRiderInfo[i].topDevice);
+				ImGui::Text("Total distanc travelled: %.3f m", totalDistanceTravelled);
+				ImGui::NewLine();
+				int numRequested = 5;
+				int numFound = 0;
+				int currentDay = ofGetDay();
+				int currentMonth = ofGetMonth();
+				vector<RiderInfo>& todaysRiderInfo = getTodaysRiderInfo();
+				for (int i = 0; i < todaysRiderInfo.size(); i++) {
+					if (numFound < numRequested) {
+						ImGui::Text("%i  %.3f km/hr  %.3f m  %s  %s %i / %i - %i:%i", todaysRiderInfo[i].ranking + 1,
+							todaysRiderInfo[i].topSpeed, todaysRiderInfo[i].distanceTravelled,
+							getAnimalFromIndex(todaysRiderInfo[i].topAnimal).c_str(), getDeviceFromIndex(todaysRiderInfo[i].topDevice).c_str(),
+							todaysRiderInfo[i].day, todaysRiderInfo[i].month, todaysRiderInfo[i].hour, todaysRiderInfo[i].minute);
+						numFound++;
+					}
+					
 				}
 			}
 

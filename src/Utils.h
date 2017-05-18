@@ -12,19 +12,57 @@ const static string API_SECRET = "db2d65d186157c1e";
 #define CONFIG_TYPE ".lnxconf"
 #endif
 
+static int days_between( struct tm &tsa,  struct tm &tsb) {
+	time_t a = mktime(&tsa);
+	time_t b = mktime(&tsb);
+	//cout << difftime(b, a) / (60 * 60 * 24) << endl;
+	return difftime(b, a) / (60 * 60 * 24);
+}
+
+static int days_between(const int& d1, const int& m1, const int& y1, const int& d2, const int& m2, const int& y2) {
+	
+	struct tm tsa = { 0 };
+	struct tm tsb = { 0 };
+
+	//cout << "d: " << d1 << " " << m1 << " " << y1 << " " << d2 << " " << m2 << " " << y2 << " " << endl;
+
+	tsa.tm_hour = 0;
+	tsa.tm_sec = 0;
+	tsa.tm_mday = d1;
+	tsa.tm_mon = m1;
+	tsa.tm_year = y1 - 1900;
+
+	tsb.tm_hour = 0;
+	tsb.tm_sec = 0;
+	tsb.tm_mday = d2;
+	tsb.tm_mon = m2;
+	tsb.tm_year = y2 - 1900;
+
+	return days_between(tsa, tsb);
+}
+
 typedef struct {
+
 	bool isActive = false;
 	int ranking = INFINITY;
 	float currentSpeed = 0.0f;
 	float normalisedSpeed = 0.0f;
-	float topSpeed = 0.0f;;
-	float currentKiloWatts = 0.0f;;
-	float topKiloWatts = 0.0f;;
-	float distanceTravelled = 0.0f;;
-	string currentAnimal = "";
-	string currentDevice = "";
-	string topAnimal = "";
-	string topDevice = "";
+	float topSpeed = 0.0f;
+	float currentKiloWatts = 0.0f;
+	float topKiloWatts = 0.0f;
+	float distanceTravelled = 0.0f;
+	
+	int currentAnimal = -1;
+	int currentDevice = -1;
+	int topAnimal = -1;
+	int topDevice = -1;
+
+	int year = 0;
+	int month = 0;
+	int day = 0;
+	int hour = 0;
+	int minute = 0;
+	int time = 0; // millis
 
 	template<class Archive>
 	void serialize(Archive & ar, const unsigned int version) {
@@ -34,6 +72,11 @@ typedef struct {
 		ar & BOOST_SERIALIZATION_NVP(distanceTravelled);
 		ar & BOOST_SERIALIZATION_NVP(topAnimal);
 		ar & BOOST_SERIALIZATION_NVP(topDevice);
+		ar & BOOST_SERIALIZATION_NVP(month);
+		ar & BOOST_SERIALIZATION_NVP(day);
+		ar & BOOST_SERIALIZATION_NVP(hour);
+		ar & BOOST_SERIALIZATION_NVP(minute);
+		ar & BOOST_SERIALIZATION_NVP(time);
 	}
 
 } RiderInfo;

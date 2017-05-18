@@ -138,29 +138,29 @@ public:
         ofLogNotice() << "Loading class data: " << filePath << endl;
         std::ifstream ifs(ofToDataPath(filePath).c_str(), std::fstream::binary | std::fstream::in);
         if(ifs.fail()){
-            ofLogError() << "Could not open file stream for loading: " << filePath << endl;
+            ofLogError() << "Could not open file stream for loading: " << filePath;
             return false;
         }
         try {
-            ofLogNotice() << "Loading from...";
+            ofLogVerbose() << "Loading from...";
             switch (archiveType) {
                 case ARCHIVE_TEXT:
                 {
-                    ofLogNotice() << "ARCHIVE_TEXT" << endl;
+					ofLogVerbose() << "ARCHIVE_TEXT";
                     boost::archive::text_iarchive ia(ifs);
                     ia >> BOOST_SERIALIZATION_NVP(someClass);
                     break;
                 }
                 case ARCHIVE_BINARY:
                 {
-                    ofLogNotice() << "ARCHIVE_BINARY" << endl;
+					ofLogVerbose() << "ARCHIVE_BINARY";
                     boost::archive::binary_iarchive ia(ifs);
                     ia >> BOOST_SERIALIZATION_NVP(someClass);
                     break;
                 }
                 case ARCHIVE_XML:
                 {
-                    ofLogNotice() << "ARCHIVE_XML" << endl;
+					ofLogVerbose() << "ARCHIVE_XML";
                     boost::archive::xml_iarchive ia(ifs);
                     ia >> BOOST_SERIALIZATION_NVP(someClass);
                     break;
@@ -169,7 +169,7 @@ public:
             
             return true;
         } catch (boost::archive::archive_exception e) {
-            ofLogError() << "Error serializing class from file: " << filePath << " - " << e.what() << endl;
+            ofLogError() << "Error serializing class from file: " << filePath << " - " << e.what();
             return false;
         }
         
@@ -177,32 +177,32 @@ public:
     
     template <class C>
     bool saveClass(string filePath, C &someClass, ArchiveType archiveType) {
-        ofLogNotice() << "Saving class data: " << filePath << endl;
+		ofLogVerbose() << "Saving class data: " << filePath;
         std::ofstream ofs(ofToDataPath(filePath).c_str(), std::ostream::binary | std::ostream::out);
         if(ofs.fail()){
-            ofLogError() << "Could not open file stream for saving: " << filePath << endl;
+            ofLogError() << "Could not open file stream for saving: " << filePath;
             return false;
         }
         try {
-            ofLogNotice() << "Saving to...";
+			ofLogVerbose() << "Saving to...";
             switch (archiveType) {
                 case ARCHIVE_TEXT:
                 {
-                    ofLogNotice() << "ARCHIVE_TEXT" << endl;
+					ofLogVerbose() << "ARCHIVE_TEXT";
                     boost::archive::text_oarchive oa(ofs);
                     oa << BOOST_SERIALIZATION_NVP(someClass);
                     break;
                 }
                 case ARCHIVE_BINARY:
                 {
-                    ofLogNotice() << "ARCHIVE_BINARY" << endl;
+					ofLogVerbose() << "ARCHIVE_BINARY";
                     boost::archive::binary_oarchive oa(ofs);
                     oa << BOOST_SERIALIZATION_NVP(someClass);
                     break;
                 }
                 case ARCHIVE_XML:
                 {
-                    ofLogNotice() << "ARCHIVE_XML" << endl;
+					ofLogVerbose() << "ARCHIVE_XML";
                     boost::archive::xml_oarchive oa(ofs);
                     oa << BOOST_SERIALIZATION_NVP(someClass);
                     break;
@@ -210,7 +210,7 @@ public:
             }
             return true;
         } catch (std::exception e) {
-            ofLogError() << "Error serializing class to file: " << filePath << " - " << e.what() << endl;
+            ofLogError() << "Error serializing class to file: " << filePath << " - " << e.what();
             return false;
         }
     }

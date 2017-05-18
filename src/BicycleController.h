@@ -30,9 +30,30 @@ public:
 	void triggerSensor(SensorMode sensorMode);
 	void setRecordRiders(bool b);
 	const RiderInfo& getCurrentRiderInfo();
+	bool isDataLoaded();
+
+	string getAnimalFromIndex(const int& index);
+	string getDeviceFromIndex(const int& index);
 
 protected:
 
+	int startDay;
+	int startMonth;
+	int startYear;
+
+	int endDay;
+	int endMonth;
+	int endYear;
+
+	int bDay;
+	int bMonth;
+	int bYear;
+
+	bool bIsDataLoaded;
+
+	float totalDistanceTravelled;
+
+	vector<RiderInfo>& getTodaysRiderInfo();
 	void updateRiderInfo();
 
 	typedef struct {
@@ -43,8 +64,12 @@ protected:
 	vector<MileStone> milestonesSpeed;
 	vector<MileStone> milestonesWatts;
 
-	vector<RiderInfo> allRiderInfo;
+	unordered_map< string, vector<RiderInfo> > monthlyRiderInfo;
+
+	//vector<RiderInfo> allRiderInfo;
 	RiderInfo currentRider;
+
+	int riderStartTimeMillis;
 
 	bool bRecordRiders;
 

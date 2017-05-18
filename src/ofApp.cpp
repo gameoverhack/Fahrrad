@@ -98,21 +98,34 @@ void ofApp::draw() {
 	break;
 	case APPLICATION_STATSLOCAL:
 	{
-		const RiderInfo& riderInfo = bicycleController->getCurrentRiderInfo();
-
-		int ranking = riderInfo.ranking + 1; // 0 ordered adjustment
-		float currentSpeed = riderInfo.currentSpeed;
-		float normalisedSpeed = riderInfo.normalisedSpeed;
-		float distanceTravelled = riderInfo.distanceTravelled;
-		string currentAnimal = riderInfo.currentAnimal;
-		string topAnimal = riderInfo.topAnimal;
-
 		ostringstream os;
-		os << std::setprecision(1) << std::fixed << currentSpeed << " km/h" << endl << distanceTravelled << " m" << endl << ranking << " " << currentAnimal << endl << topAnimal;
 
-		if (riderInfo.isActive) {
+		if (bicycleController->isDataLoaded()) {
+
+			const RiderInfo& riderInfo = bicycleController->getCurrentRiderInfo();
+
+			int ranking = riderInfo.ranking + 1; // 0 ordered adjustment
+			float currentSpeed = riderInfo.currentSpeed;
+			float normalisedSpeed = riderInfo.normalisedSpeed;
+			float distanceTravelled = riderInfo.distanceTravelled;
+			string currentAnimal = bicycleController->getAnimalFromIndex(riderInfo.currentAnimal);
+			string topAnimal = bicycleController->getDeviceFromIndex(riderInfo.topAnimal);
+
+
+			os << std::setprecision(1) << std::fixed << currentSpeed << " km/h" << endl << distanceTravelled << " m" << endl << ranking << " " << currentAnimal << endl << topAnimal;
+			
+			if (riderInfo.isActive) {
+				font.drawString(os.str(), 1000, 400);
+			}
+
+		}
+		else {
+			os << "LOADING DATA";
 			font.drawString(os.str(), 1000, 400);
 		}
+
+	
+		
 	}
 	break;
 	case APPLICATION_STATSREMOTE:
@@ -123,13 +136,8 @@ void ofApp::draw() {
 	case APPLICATION_BIKEVIDEO:
 	{
 		const RiderInfo& riderInfo = bicycleController->getCurrentRiderInfo();
-		
-		int ranking = riderInfo.ranking + 1; // 0 ordered adjustment
-		float currentSpeed = riderInfo.currentSpeed;
+
 		float normalisedSpeed = riderInfo.normalisedSpeed;
-		float distanceTravelled = riderInfo.distanceTravelled;
-		string currentAnimal = riderInfo.currentAnimal;
-		string topAnimal = riderInfo.topAnimal;
 
 		videoController->setSpeed(normalisedSpeed);
 		videoController->getVideoTexture().draw(0, 0, ofGetWidth(), ofGetHeight());

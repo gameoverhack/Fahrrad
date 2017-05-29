@@ -104,15 +104,17 @@ void ofApp::draw() {
 
 			const RiderInfo& riderInfo = bicycleController->getCurrentRiderInfo();
 
-			int ranking = riderInfo.ranking + 1; // 0 ordered adjustment
+			int dayranking = riderInfo.dayranking + 1; // 0 ordered adjustment
+			int allranking = riderInfo.allranking + 1; // 0 ordered adjustment
 			float currentSpeed = riderInfo.currentSpeed;
+			float currentKiloWatts = riderInfo.currentKiloWatts;
 			float normalisedSpeed = riderInfo.normalisedSpeed;
 			float distanceTravelled = riderInfo.distanceTravelled;
 			string currentAnimal = bicycleController->getAnimalFromIndex(riderInfo.currentAnimal);
-			string topAnimal = bicycleController->getDeviceFromIndex(riderInfo.currentDevice);
+			string currentDevice = bicycleController->getDeviceFromIndex(riderInfo.currentDevice);
 
 
-			os << std::setprecision(1) << std::fixed << currentSpeed << " km/h" << endl << distanceTravelled << " m" << endl << ranking << " " << currentAnimal << endl << topAnimal;
+			os << std::setprecision(1) << std::fixed << currentSpeed << " km/h " << currentKiloWatts << " kW" << endl << distanceTravelled << " m" << endl << dayranking << " // " << allranking << endl << currentAnimal << endl << currentDevice;
 			
 			if (riderInfo.isActive) {
 				font.drawString(os.str(), 1000, 400);

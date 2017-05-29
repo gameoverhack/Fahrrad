@@ -1,3 +1,4 @@
+ï»¿<?xml version="1.0" encoding="utf-8"?>
 <milestonesWatt>
 	<milestone>
 		<name>Nachtlicht</name>
@@ -8,7 +9,7 @@
 		<watt>3.0</watt>
 	</milestone>
 	<milestone>
-		<name>Handyladegerät</name>
+		<name>HandyladegerÃ¤t</name>
 		<watt>5.0</watt>
 	</milestone>
 	<milestone>
@@ -28,7 +29,7 @@
 		<watt>30.0</watt>
 	</milestone>
 	<milestone>
-		<name>Glühbirne</name>
+		<name>GlÃ¼hbirne</name>
 		<watt>40.0</watt>
 	</milestone>
 	<milestone>
@@ -40,7 +41,7 @@
 		<watt>100.0</watt>
 	</milestone>
 	<milestone>
-		<name>Pürierstab</name>
+		<name>PÃ¼rierstab</name>
 		<watt>200.0</watt>
 	</milestone>
 	<milestone>

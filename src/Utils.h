@@ -44,9 +44,12 @@ static int days_between(const int& d1, const int& m1, const int& y1, const int& 
 typedef struct {
 
 	bool isActive = false;
-	int ranking = INFINITY;
-	float currentSpeed = 0.0f;
+
+	int dayranking = INFINITY;
+	int allranking = INFINITY;
+
 	float normalisedSpeed = 0.0f;
+	float currentSpeed = 0.0f;
 	float topSpeed = 0.0f;
 	float currentKiloWatts = 0.0f;
 	float topKiloWatts = 0.0f;
@@ -54,28 +57,23 @@ typedef struct {
 	
 	int currentAnimal = -1;
 	int currentDevice = -1;
-	int topAnimal = -1;
-	int topDevice = -1;
 
-	int year = 0;
-	int month = 0;
 	int day = 0;
-	int hour = 0;
-	int minute = 0;
+	int month = 0;
+	int year = 0;
+	
 	int time = 0; // millis
 
 	template<class Archive>
 	void serialize(Archive & ar, const unsigned int version) {
-		ar & BOOST_SERIALIZATION_NVP(ranking);
+		ar & BOOST_SERIALIZATION_NVP(dayranking);
+		ar & BOOST_SERIALIZATION_NVP(allranking);
 		ar & BOOST_SERIALIZATION_NVP(topSpeed);
 		ar & BOOST_SERIALIZATION_NVP(topKiloWatts);
 		ar & BOOST_SERIALIZATION_NVP(distanceTravelled);
-		ar & BOOST_SERIALIZATION_NVP(topAnimal);
-		ar & BOOST_SERIALIZATION_NVP(topDevice);
-		ar & BOOST_SERIALIZATION_NVP(month);
 		ar & BOOST_SERIALIZATION_NVP(day);
-		ar & BOOST_SERIALIZATION_NVP(hour);
-		ar & BOOST_SERIALIZATION_NVP(minute);
+		ar & BOOST_SERIALIZATION_NVP(month);
+		ar & BOOST_SERIALIZATION_NVP(year);
 		ar & BOOST_SERIALIZATION_NVP(time);
 	}
 

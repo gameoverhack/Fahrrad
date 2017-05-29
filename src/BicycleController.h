@@ -61,9 +61,13 @@ protected:
 		string type;
 	} MileStone;
 
+	int boosterDifficulty;
+	vector<float> maxWatts = { 285.0f / 60.0f, 370.0f / 60.0f, 455.0f / 60.0f, 540.0f / 60.0f, 625.0f / 60.0f, 710.0f / 60.0f, 795.0f / 60.0f, 880.0f / 60.0f, 965.0f / 60.0f, 1050.0f / 60.0f };
+
 	vector<MileStone> milestonesSpeed;
 	vector<MileStone> milestonesWatts;
 
+	vector<RiderInfo> allRiderInfo;
 	unordered_map< string, vector<RiderInfo> > monthlyRiderInfo;
 
 	//vector<RiderInfo> allRiderInfo;
@@ -131,6 +135,7 @@ protected:
 		ar & BOOST_SERIALIZATION_NVP(velocityNormalSpeed);
 		ar & BOOST_SERIALIZATION_NVP(updateVelocityTime);
 		ar & BOOST_SERIALIZATION_NVP(riderInactiveTime);
+		ar & BOOST_SERIALIZATION_NVP(boosterDifficulty);
 	}
 
 };

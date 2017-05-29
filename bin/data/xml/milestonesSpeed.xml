@@ -1,14 +1,15 @@
+ï»¿<?xml version="1.0" encoding="utf-8"?>
 <milestonesSpeed>
 	<milestone>
 		<name>Schnecke</name>
 		<speed>0.027</speed>
 	</milestone>
 	<milestone>
-		<name>Riesen-Schildkröte</name>
+		<name>Riesen-SchildkrÃ¶te</name>
 		<speed>0.37</speed>
 	</milestone>
 	<milestone>
-		<name>Tausendfüßer</name>
+		<name>TausendfÃ¼ÃŸer</name>
 		<speed>1.0</speed>
 	</milestone>
 	<milestone>
@@ -60,7 +61,7 @@
 		<speed>48.0</speed>
 	</milestone>
 	<milestone>
-		<name>Bär</name>
+		<name>BÃ¤r</name>
 		<speed>50.0</speed>
 	</milestone>
 	<milestone>

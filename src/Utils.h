@@ -18,6 +18,16 @@ static int days_between( struct tm &tsa,  struct tm &tsb) {
 	//cout << difftime(b, a) / (60 * 60 * 24) << endl;
 	return difftime(b, a) / (60 * 60 * 24);
 }
+static int day_of_week(const int& d1, const int& m1, const int& y1) {
+	struct tm tsa = { 0 };
+	tsa.tm_hour = 0;
+	tsa.tm_sec = 0;
+	tsa.tm_mday = d1;
+	tsa.tm_mon = m1;
+	tsa.tm_year = y1 - 1900;
+	time_t a = mktime(&tsa);
+	return tsa.tm_wday;
+}
 
 static int days_between(const int& d1, const int& m1, const int& y1, const int& d2, const int& m2, const int& y2) {
 	
@@ -40,6 +50,11 @@ static int days_between(const int& d1, const int& m1, const int& y1, const int& 
 
 	return days_between(tsa, tsb);
 }
+
+typedef union {
+	float*	data;
+	char*	chars;
+} RiderSummaryUnion;
 
 typedef struct {
 

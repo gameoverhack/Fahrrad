@@ -19,6 +19,7 @@ BicycleController::~BicycleController() {
 
 	// kill the thread
 	waitForThread();
+	delete[] riderSummary.data;
 
 	this->IGuiBase::~IGuiBase(); // call base destructor
 }
@@ -78,7 +79,7 @@ void BicycleController::setup() {
 
 		totalDistanceTravelled = 0;
 
-		startDay = 17;
+		startDay = 30;
 		startMonth = 5 - 1;
 		startYear = 2017;
 
@@ -266,7 +267,9 @@ void BicycleController::threadedFunction() {
 					int daysInMonth = days_between(bDay, bMonth, bYear, nDay, nMonth, nYear);
 
 					if (daysInMonth > 0) {
-						ofLogNotice() << "Adding blank rider info: " << daysInMonth << " " << bDay << " " << bMonth << " " << bYear << " " << nDay << " " << nMonth << " " << nYear << endl;
+
+						ofLogNotice() << "Adding rider info: " << daysInMonth << " " << bDay << " " << bMonth << " " << bYear << " " << nDay << " " << nMonth << " " << nYear << endl;
+						
 						int month = bMonth + 1;
 						int year = bYear;
 						for (int day = bDay; day < bDay + daysInMonth; day++) {
@@ -274,33 +277,54 @@ void BicycleController::threadedFunction() {
 							vector<RiderInfo> todaysRiderInfo;
 
 							ostringstream os;
-							os << bYear << "_" << std::setfill('0') << std::setw(2) << month << "_" << std::setfill('0') << std::setw(2) << day;
+							os << year << "_" << std::setfill('0') << std::setw(2) << month << "_" << std::setfill('0') << std::setw(2) << day;
 
 
-							for (int i = 0; i < 1000; i++) {
-								// generate random riders
-								currentRider = RiderInfo();
-								currentRider.currentSpeed = ofRandom(1, 58);
-								currentRider.time = ofRandom(0.5 * 60 * 1000, 10 * 60 * 1000);
-								currentRider.distanceTravelled = currentRider.currentSpeed / 60.0 / 60.0 / 1000.0 * currentRider.time;
-								currentRider.day = day;
-								currentRider.month = month;
-								currentRider.year = year;
-								updateRiderInfo();
-								todaysRiderInfo.push_back(currentRider);
-							}
-							Serializer.saveClass(ofToDataPath("configs/stats/dailyRiderInfo_" + os.str() + string(CONFIG_TYPE)), (todaysRiderInfo), ARCHIVE_BINARY);
+							//for (int i = 0; i < 1000; i++) {
+							//	// generate random riders
+							//	currentRider = RiderInfo();
+							//	currentRider.currentSpeed = ofRandom(1, 58);
+							//	currentRider.time = ofRandom(0.5 * 60 * 1000, 10 * 60 * 1000);
+							//	currentRider.distanceTravelled = currentRider.currentSpeed / 60.0 / 60.0 / 1000.0 * currentRider.time;
+							//	currentRider.day = day;
+							//	currentRider.month = month;
+							//	currentRider.year = year;
+							//	updateRiderInfo();
+							//	todaysRiderInfo.push_back(currentRider);
+							//}
+							//Serializer.saveClass(ofToDataPath("configs/stats/dailyRiderInfo_" + os.str() + string(CONFIG_TYPE)), (todaysRiderInfo), ARCHIVE_BINARY);
 
 
 							ofLogNotice() << "Loading day: " << os.str();
 							Serializer.loadClass(ofToDataPath("configs/stats/dailyRiderInfo_" + os.str() + string(CONFIG_TYPE)), (todaysRiderInfo), ARCHIVE_BINARY);
 
+
+							float dailyDistance = 0;
 							for (int rider = 0; rider < todaysRiderInfo.size(); rider++) {
+								
+								dailyDistance += todaysRiderInfo[rider].distanceTravelled;
+								totalTimeTaken += todaysRiderInfo[rider].time;
 								totalDistanceTravelled += todaysRiderInfo[rider].distanceTravelled;
 								allRiderInfo.push_back(todaysRiderInfo[rider]);
+
 							}
 
-							monthlyRiderInfo[os.str()] = todaysRiderInfo;
+							totalNumberRiders += todaysRiderInfo.size();
+							totalDailyDistances.push_back(dailyDistance);
+
+							int dayOfWeek = day_of_week(day, month, year);
+							daysOfWeek.push_back(dayOfWeek);
+							bool bUseDay = false;
+							for (int i = 0; i < daysOpen.size(); i++) {
+								if (daysOpen[i] == dayOfWeek) {
+									bUseDay = true;
+									activeDaysUsed++;
+									break;
+								}
+							}
+							daysOfWeekToUse.push_back(bUseDay);
+
+							dailyRiderInfo[os.str()] = todaysRiderInfo;
 
 						}
 
@@ -311,9 +335,10 @@ void BicycleController::threadedFunction() {
 					bYear = nYear;
 
 					if (bDone) {
-						for (unordered_map< string, vector<RiderInfo> >::iterator it = monthlyRiderInfo.begin(); it != monthlyRiderInfo.end(); ++it) {
-							ofLogNotice() << "Check: " << it->first << " with " << it->second.size() << " riders";
-						}
+
+						//for (unordered_map< string, vector<RiderInfo> >::iterator it = dailyRiderInfo.begin(); it != dailyRiderInfo.end(); ++it) {
+						//	ofLogNotice() << "Check: " << it->first << " with " << it->second.size() << " riders";
+						//}
 
 						// sort todays rider info
 
@@ -334,6 +359,10 @@ void BicycleController::threadedFunction() {
 						}
 
 						bIsDataLoaded = true;
+
+						//riderSummary.data = new float[4 + totalDailyDistances.size()];
+						riderSummary.data = new float[4 + activeDaysUsed];
+
 					}
 				}
 			}
@@ -348,7 +377,25 @@ void BicycleController::threadedFunction() {
 				currentRider.currentSpeed = currentAverageVelocity;
 				currentRider.normalisedSpeed = currentNormalisedVelocity;
 				currentRider.currentKiloWatts = maxWatts[boosterDifficulty] * currentRider.currentSpeed;
-				if (bRecordRiders) updateRiderInfo();
+				
+				if (bRecordRiders && bIsDataLoaded) {
+
+					updateRiderInfo();
+
+					riderSummary.data[0] = currentRider.currentSpeed;
+					riderSummary.data[1] = totalNumberRiders;
+					riderSummary.data[2] = totalTimeTaken;
+					riderSummary.data[3] = totalDistanceTravelled;
+					int usedDay = 0;
+
+					for (int i = 0; i < totalDailyDistances.size(); i++) {
+						if (daysOfWeekToUse[i]) {
+							riderSummary.data[4 + usedDay] = totalDailyDistances[i];
+							usedDay++;
+						}
+					}
+
+				}
 
 				if (lastMeasuredVelocity < 0.0) lastMeasuredVelocity = 0;
 				lastVelocityTimeout = ofGetElapsedTimeMillis();
@@ -362,7 +409,7 @@ void BicycleController::threadedFunction() {
 					bIsRiderActive = false;
 					currentAverageVelocity = lastMeasuredVelocity = 0.0;
 
-					if (bRecordRiders) {
+					if (bRecordRiders && bIsDataLoaded) {
 
 						vector<RiderInfo>& todaysRiderInfo = getTodaysRiderInfo();
 
@@ -411,11 +458,16 @@ void BicycleController::threadedFunction() {
 	}
 
 }
+//--------------------------------------------------------------
+int BicycleController::getTodaysRiderIndex() {
+	return days_between(startDay, startMonth, startYear, ofGetDay(), ofGetMonth() - 1, ofGetYear());
+}
 
+//--------------------------------------------------------------
 vector<RiderInfo>& BicycleController::getTodaysRiderInfo(){
 	ostringstream os;
 	os << ofGetYear() << "_" << std::setfill('0') << std::setw(2) << ofGetMonth() << "_" << std::setfill('0') << std::setw(2) << ofGetDay();
-	return monthlyRiderInfo[os.str()];
+	return dailyRiderInfo[os.str()];
 }
 
 //--------------------------------------------------------------
@@ -494,10 +546,13 @@ void BicycleController::triggerSensor(SensorMode sensorMode) {
 		}
 
 		lastSensorTimeout = ofGetElapsedTimeMillis();
-		lastMeasuredVelocity = (wheelDiameter * PI / 1000.0 / 1000.0) / (timeSinceLastSensor / 1000.0 / 60.0 / 60.0);
-		distanceTravelled += (wheelDiameter * PI / 1000.0);
-		currentRider.distanceTravelled += (wheelDiameter * PI / 1000.0);;
-		totalDistanceTravelled += (wheelDiameter * PI / 1000.0);;
+		float dist = (wheelDiameter * PI / 1000.0);
+		lastMeasuredVelocity = (dist / 1000.0) / (timeSinceLastSensor / 1000.0 / 60.0 / 60.0);
+		distanceTravelled += dist;
+		currentRider.distanceTravelled += dist;
+		totalDistanceTravelled += dist;
+		totalDailyDistances[getTodaysRiderIndex()] += dist;
+
 	}
 
 	unlock();
@@ -514,6 +569,11 @@ void BicycleController::setRecordRiders(bool b) {
 const RiderInfo & BicycleController::getCurrentRiderInfo(){
 	ofScopedLock lock(mutex);
 	return currentRider;
+}
+
+const RiderSummaryUnion & BicycleController::getAllRiderSummary() {
+	ofScopedLock lock(mutex);
+	return riderSummary;
 }
 
 bool BicycleController::isDataLoaded() {
@@ -616,6 +676,10 @@ void BicycleController::drawGUI() {
 						numFound++;
 					}
 				}
+				ImGui::NewLine();
+				int index = getTodaysRiderIndex();
+				ImGui::Text("todays index: %i distance: %.3f m total days: %i  used days: %i data: %i bytes", index, totalDailyDistances[getTodaysRiderIndex()], totalDailyDistances.size(), activeDaysUsed, (4 + activeDaysUsed)*sizeof(float));
+
 			}
 
 			unlock();

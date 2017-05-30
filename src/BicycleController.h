@@ -30,6 +30,7 @@ public:
 	void triggerSensor(SensorMode sensorMode);
 	void setRecordRiders(bool b);
 	const RiderInfo& getCurrentRiderInfo();
+	const RiderSummaryUnion& getAllRiderSummary();
 	bool isDataLoaded();
 
 	string getAnimalFromIndex(const int& index);
@@ -51,8 +52,7 @@ protected:
 
 	bool bIsDataLoaded;
 
-	float totalDistanceTravelled;
-
+	int getTodaysRiderIndex();
 	vector<RiderInfo>& getTodaysRiderInfo();
 	void updateRiderInfo();
 
@@ -68,10 +68,20 @@ protected:
 	vector<MileStone> milestonesWatts;
 
 	vector<RiderInfo> allRiderInfo;
-	unordered_map< string, vector<RiderInfo> > monthlyRiderInfo;
+	unordered_map< string, vector<RiderInfo> > dailyRiderInfo;
 
-	//vector<RiderInfo> allRiderInfo;
 	RiderInfo currentRider;
+
+	float totalNumberRiders = 0;
+	float totalTimeTaken = 0;
+	float totalDistanceTravelled = 0;
+	vector<float> totalDailyDistances;
+	vector<int> daysOfWeek;
+	vector<bool> daysOfWeekToUse;
+	vector<int> daysOpen = { 2,3,4,5,6 };
+	int activeDaysUsed = 0;
+
+	RiderSummaryUnion riderSummary;
 
 	int riderStartTimeMillis;
 

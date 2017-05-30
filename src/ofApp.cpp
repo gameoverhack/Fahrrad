@@ -13,7 +13,6 @@ void ofApp::setup() {
 	IGuiBase::setup();
 	currentApplicationMode = APPLICATION_NONE; // so we force application mode change in update
 
-
 	bShowDebug = true;
 	bShowFullScreen = false;
 	bShowCursor = true;
@@ -103,6 +102,7 @@ void ofApp::draw() {
 		if (bicycleController->isDataLoaded()) {
 
 			const RiderInfo& riderInfo = bicycleController->getCurrentRiderInfo();
+			const RiderSummaryUnion& riderSummary = bicycleController->getAllRiderSummary();
 
 			int dayranking = riderInfo.dayranking + 1; // 0 ordered adjustment
 			int allranking = riderInfo.allranking + 1; // 0 ordered adjustment
@@ -114,10 +114,13 @@ void ofApp::draw() {
 			string currentDevice = bicycleController->getDeviceFromIndex(riderInfo.currentDevice);
 
 
-			os << std::setprecision(1) << std::fixed << currentSpeed << " km/h " << currentKiloWatts << " kW" << endl << distanceTravelled << " m" << endl << dayranking << " // " << allranking << endl << currentAnimal << endl << currentDevice;
+			os << std::setprecision(1) << std::fixed << riderSummary.data[0] << " " << riderSummary.data[3] << endl 
+				<< std::setprecision(1) << std::fixed << currentSpeed << " km/h " << currentKiloWatts << " kW" << endl 
+				<< distanceTravelled << " m" << endl << dayranking << " // " << allranking << endl 
+				<< currentAnimal << endl << currentDevice;
 			
 			if (riderInfo.isActive) {
-				font.drawString(os.str(), 1000, 400);
+				font.drawString(os.str(), 1000, 300);
 			}
 
 		}

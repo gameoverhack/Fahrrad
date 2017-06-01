@@ -104,7 +104,8 @@ void ofApp::draw() {
 		if (bicycleController->isDataLoaded()) {
 
 			const RiderInfo& riderInfo = bicycleController->getCurrentRiderInfo();
-			const RiderSummaryUnion& riderSummary = bicycleController->getAllRiderSummary();
+			const RiderSummaryUnion& riderSummary = bicycleController->getRiderSummary();
+			networkController->setRiderSummary(riderSummary);
 
 			int dayranking = riderInfo.dayranking + 1; // 0 ordered adjustment
 			int allranking = riderInfo.allranking + 1; // 0 ordered adjustment
@@ -116,8 +117,7 @@ void ofApp::draw() {
 			string currentDevice = bicycleController->getDeviceFromIndex(riderInfo.currentDevice);
 
 
-			os << std::setprecision(1) << std::fixed << riderSummary.data[0] << " " << riderSummary.data[3] << endl 
-				<< std::setprecision(1) << std::fixed << currentSpeed << " km/h " << currentKiloWatts << " kW" << endl 
+			os << std::setprecision(1) << std::fixed << currentSpeed << " km/h " << currentKiloWatts << " kW" << endl 
 				<< distanceTravelled << " m" << endl << dayranking << " // " << allranking << endl 
 				<< currentAnimal << endl << currentDevice;
 			
@@ -130,14 +130,28 @@ void ofApp::draw() {
 			os << "LOADING DATA";
 			font.drawString(os.str(), 1000, 400);
 		}
-
-	
 		
 	}
 	break;
 	case APPLICATION_STATSREMOTE:
 	{
-		//to do
+		const RiderSummaryUnion& riderSummary = networkController->getRiderSummary();
+		
+		if (riderSummary.data != nullptr) {
+			float currentSpeed = riderSummary.data[1];
+			float totalRiders = riderSummary.data[2];
+			float totalTime = riderSummary.data[3];
+			float totalDistance = riderSummary.data[4];
+
+			ostringstream os;
+
+			os << std::setprecision(1) << std::fixed << currentSpeed << " km/h " << endl
+				<< totalDistance << " m" << endl
+				<< totalTime << " millis" << endl
+				<< totalRiders << " riders" << endl;
+
+			font.drawString(os.str(), 1000, 400);
+		}
 	}
 	break;
 	case APPLICATION_BIKEVIDEO:

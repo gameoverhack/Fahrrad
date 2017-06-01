@@ -21,7 +21,21 @@ public:
 	void update();
 	void drawGUI();
 
+	void setRiderSummary(const RiderSummaryUnion& rsu);
+	const RiderSummaryUnion& getRiderSummary();
+
 protected:
+
+	bool connectSender();
+	bool connectReceiver();
+
+	int ipAddress[4];
+	int ipPort;
+	bool bIsConnected;
+	ofxUDPManager udp;
+
+	bool bNetworkNeedsUpdate;
+	RiderSummaryUnion riderSummary;
 
 	vector<string> networkModes = {
 		"NETWORK_NONE",
@@ -47,7 +61,8 @@ protected:
 
 	template<class Archive>
 	void serialize(Archive & ar, const unsigned int version) {
-		ar & BOOST_SERIALIZATION_NVP(nextNetworkMode);
 		ar & BOOST_SERIALIZATION_NVP(networkTimeout);
+		ar & BOOST_SERIALIZATION_NVP(ipAddress);
+		ar & BOOST_SERIALIZATION_NVP(ipPort);
 	}
 };

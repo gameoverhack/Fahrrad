@@ -19,6 +19,7 @@ NetworkController::~NetworkController() {
 
 //--------------------------------------------------------------
 void NetworkController::setup() {
+
 	ofLogNotice() << className << ": setup";
 
 	// call base clase setup for now
@@ -26,6 +27,9 @@ void NetworkController::setup() {
 
 	currentNetworkMode = NETWORK_NONE; // so we force sensor mode change in update
 	lastNetworkTimeout = ofGetElapsedTimeMillis() - networkTimeout;
+
+	bIsConnected = false;
+	bNetworkNeedsUpdate = false;
 
 	startThread();
 }
@@ -39,7 +43,15 @@ void NetworkController::setMode(NetworkMode mode) {
 
 //--------------------------------------------------------------
 void NetworkController::setDefaults() {
+
 	ofLogNotice() << className << ": setDefaults";
+
+	ipAddress[0] = 127;
+	ipAddress[1] = 0;
+	ipAddress[2] = 0;
+	ipAddress[3] = 1;
+	
+	ipPort = 7000;
 
 	nextNetworkMode = NETWORK_NONE;
 	networkTimeout = 2000;
@@ -59,8 +71,52 @@ void NetworkController::update() {
 		changeMode();
 	}
 
-	unlock();
+	//unlock();
+	//lock();
+	if (bIsConnected) {
+		switch (currentNetworkMode) {
+		case NETWORK_NONE:
+		{
+			// nothing
+		}
+		break;
+		case NETWORK_SEND:
+		{
+			if (bNetworkNeedsUpdate) {
+				char c[1] = { '*' };
+				udp.Send(&c[0], 1);
+				ofSleepMillis(1);
+				udp.Send(&riderSummary.chars[0], riderSummary.data[0] * sizeof(float));
+				ofSleepMillis(1);
+				bNetworkNeedsUpdate = false;
+			}
+		}
+		break;
+		case NETWORK_RECV:
+		{
+			if (!bNetworkNeedsUpdate) {
+				char c[1] = { '0' };
+				int recv = udp.Receive(&c[0], 1);
+				if (recv == 1) {
+					if (c[0] == '*') {
+						bNetworkNeedsUpdate = true;
+					}
+				}
+			}else{
+				char c[1400] = { 0 };
+				int recv = udp.Receive(&c[0], 1400);
+				if (riderSummary.data == nullptr) riderSummary.data = new float[recv / sizeof(float)];
+				memcpy(&riderSummary.chars[0], &c[0], recv);
+				bNetworkNeedsUpdate = false;
+			}
+			
+		}
+		break;
+		}
+	}
+	
 
+	unlock();
 }
 
 //--------------------------------------------------------------
@@ -73,17 +129,19 @@ void NetworkController::changeMode() {
 	switch (currentNetworkMode) {
 	case NETWORK_NONE:
 	{
-
+		// nothing
 	}
 	break;
 	case NETWORK_SEND:
 	{
-
+		udp.Close();
+		bIsConnected = false;
 	}
 	break;
 	case NETWORK_RECV:
 	{
-
+		udp.Close();
+		bIsConnected = false;
 	}
 	break;
 	}
@@ -100,12 +158,12 @@ void NetworkController::changeMode() {
 	break;
 	case NETWORK_SEND:
 	{
-
+		connectSender();
 	}
 	break;
 	case NETWORK_RECV:
 	{
-
+		connectReceiver();
 	}
 	break;
 	}
@@ -164,6 +222,16 @@ void NetworkController::drawGUI() {
 		{
 
 			ImGui::SliderInt("Network Timeout (millis)", &networkTimeout, 1000, 20000);
+			ImGui::Combo("Network Mode", (int*)&nextNetworkMode, networkModes);
+			ImGui::InputInt4("IP Address", ipAddress);
+			ImGui::InputInt("IP Port", &ipPort);
+			 bool bReconnect = ImGui::Button("Reconnect");
+			if (bReconnect) {
+				lock();
+				if (currentNetworkMode == NETWORK_SEND) connectSender();
+				if (currentNetworkMode == NETWORK_RECV) connectReceiver();
+				unlock();
+			}
 			ImGui::NewLine();
 			lock();
 			ImGui::Text("Network Mode: %s", networkModes[currentNetworkMode].c_str());
@@ -172,6 +240,46 @@ void NetworkController::drawGUI() {
 		}
 		endGUI();
 	}
+}
+
+//--------------------------------------------------------------
+void NetworkController::setRiderSummary(const RiderSummaryUnion & rsu) {
+	lock();
+	if (riderSummary.data == nullptr) riderSummary.data = new float[rsu.data[0]];
+	memcpy(&riderSummary.data[0], &rsu.data[0], rsu.data[0]);
+	bNetworkNeedsUpdate = true;
+	unlock();
+}
+
+//--------------------------------------------------------------
+const RiderSummaryUnion & NetworkController::getRiderSummary() {
+	ofScopedLock lock(mutex);
+	return riderSummary;
+}
+
+//--------------------------------------------------------------
+bool NetworkController::connectSender() {
+	ofLogNotice() << "Trying to connect sender";
+	udp.Close();
+	udp.Create();
+	ostringstream os;
+	for (int i = 0; i < 4; i++) {
+		os << ipAddress[i];
+		if (i != 3) os << ".";
+	}
+	bIsConnected = udp.Connect(os.str().c_str(), ipPort);
+	udp.SetNonBlocking(true);
+	return bIsConnected;
+}
+
+//--------------------------------------------------------------
+bool NetworkController::connectReceiver() {
+	ofLogNotice() << "Trying to connect receiver";
+	udp.Close();
+	udp.Create();
+	bIsConnected = udp.Bind(ipPort);
+	udp.SetNonBlocking(true);
+	return bIsConnected;
 }
 
 //--------------------------------------------------------------

@@ -361,7 +361,8 @@ void BicycleController::threadedFunction() {
 						bIsDataLoaded = true;
 
 						//riderSummary.data = new float[4 + totalDailyDistances.size()];
-						riderSummary.data = new float[4 + activeDaysUsed];
+						riderSummary.data = new float[5 + activeDaysUsed];
+						riderSummary.data[0] = 5 + activeDaysUsed;
 
 					}
 				}
@@ -380,17 +381,17 @@ void BicycleController::threadedFunction() {
 				
 				if (bRecordRiders && bIsDataLoaded) {
 
-					updateRiderInfo();
+					if (bIsRiderActive) updateRiderInfo();
 
-					riderSummary.data[0] = currentRider.currentSpeed;
-					riderSummary.data[1] = totalNumberRiders;
-					riderSummary.data[2] = totalTimeTaken;
-					riderSummary.data[3] = totalDistanceTravelled;
+					riderSummary.data[1] = currentRider.currentSpeed;
+					riderSummary.data[2] = totalNumberRiders;
+					riderSummary.data[3] = totalTimeTaken + currentRider.time;
+					riderSummary.data[4] = totalDistanceTravelled;
 					int usedDay = 0;
 
 					for (int i = 0; i < totalDailyDistances.size(); i++) {
 						if (daysOfWeekToUse[i]) {
-							riderSummary.data[4 + usedDay] = totalDailyDistances[i];
+							riderSummary.data[5 + usedDay] = totalDailyDistances[i];
 							usedDay++;
 						}
 					}
@@ -418,6 +419,9 @@ void BicycleController::threadedFunction() {
 						currentRider.year = ofGetYear();
 
 						currentRider.isActive = false;
+
+						totalNumberRiders++;
+						totalTimeTaken += currentRider.time;
 
 						todaysRiderInfo.push_back(currentRider);
 						allRiderInfo.push_back(currentRider);
@@ -571,7 +575,7 @@ const RiderInfo & BicycleController::getCurrentRiderInfo(){
 	return currentRider;
 }
 
-const RiderSummaryUnion & BicycleController::getAllRiderSummary() {
+const RiderSummaryUnion & BicycleController::getRiderSummary() {
 	ofScopedLock lock(mutex);
 	return riderSummary;
 }

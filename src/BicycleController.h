@@ -30,7 +30,7 @@ public:
 	void triggerSensor(SensorMode sensorMode);
 	void setRecordRiders(bool b);
 	const RiderInfo& getCurrentRiderInfo();
-	const RiderSummaryUnion& getAllRiderSummary();
+	const RiderSummaryUnion& getRiderSummary();
 	bool isDataLoaded();
 
 	string getAnimalFromIndex(const int& index);

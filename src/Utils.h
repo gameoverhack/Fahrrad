@@ -52,7 +52,7 @@ static int days_between(const int& d1, const int& m1, const int& y1, const int& 
 }
 
 typedef union {
-	float*	data;
+	float*	data = nullptr;
 	char*	chars;
 } RiderSummaryUnion;
 

@@ -52,12 +52,14 @@ void ofApp::update() {
 	case APPLICATION_STATSLOCAL:
 	{
 		bicycleController->update();
+		networkController->update();
 	}
 	break;
 	case APPLICATION_STATSREMOTE:
 	{
-		//to do
+		networkController->update();
 	}
+	break;
 	case APPLICATION_BIKEVIDEO:
 	{
 		bicycleController->update();
@@ -209,11 +211,12 @@ void ofApp::drawGUI() {
 			case APPLICATION_STATSLOCAL:
 			{
 				bicycleController->drawGUI();
+				networkController->drawGUI();
 			}
 			break;
 			case APPLICATION_STATSREMOTE:
 			{
-				//to do
+				networkController->drawGUI();
 			}
 			break;
 			case APPLICATION_BIKEVIDEO:
@@ -267,12 +270,15 @@ void ofApp::changeMode() {
 	case APPLICATION_STATSLOCAL:
 	{
 		if (bicycleController != nullptr) delete bicycleController;
+		if (networkController != nullptr) delete networkController;
 		bicycleController = nullptr;
+		networkController = nullptr;
 	}
 	break;
 	case APPLICATION_STATSREMOTE:
 	{
-		//to do
+		if (networkController != nullptr) delete networkController;
+		networkController = nullptr;
 	}
 	break;
 	case APPLICATION_BIKEVIDEO:
@@ -321,6 +327,13 @@ void ofApp::changeMode() {
 		if (imageCaptureController != nullptr) delete imageCaptureController;
 		if (imageDisplayController != nullptr) delete imageDisplayController;
 		if (renderController != nullptr) delete renderController;
+		if (networkController != nullptr) delete networkController;
+		bicycleController = nullptr;
+		videoController = nullptr;
+		imageCaptureController = nullptr;
+		imageDisplayController = nullptr;
+		renderController = nullptr;
+		networkController = nullptr;
 	}
 	break;
 	case APPLICATION_STATSLOCAL:
@@ -328,11 +341,17 @@ void ofApp::changeMode() {
 		bicycleController = new BicycleController;
 		bicycleController->setRecordRiders(true);
 		bicycleController->setup();
+		networkController = new NetworkController;
+		networkController->setup();
+		networkController->setMode(NetworkController::NETWORK_SEND);
+		
 	}
 	break;
 	case APPLICATION_STATSREMOTE:
 	{
-		//to do
+		networkController = new NetworkController;
+		networkController->setup();
+		networkController->setMode(NetworkController::NETWORK_RECV);
 	}
 	break;
 	case APPLICATION_BIKEVIDEO:
@@ -394,6 +413,13 @@ void ofApp::exit() {
 	if (imageCaptureController != nullptr) delete imageCaptureController;
 	if (imageDisplayController != nullptr) delete imageDisplayController;
 	if (renderController != nullptr) delete renderController;
+	if (networkController != nullptr) delete networkController;
+	bicycleController = nullptr;
+	videoController = nullptr;
+	imageCaptureController = nullptr;
+	imageDisplayController = nullptr;
+	renderController = nullptr;
+	networkController = nullptr;
 }
 
 //--------------------------------------------------------------

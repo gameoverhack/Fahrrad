@@ -103,6 +103,9 @@
     <ClCompile Include="src\ImageDisplayController.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\NetworkController.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -843,6 +846,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\ImageDisplayController.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\NetworkController.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

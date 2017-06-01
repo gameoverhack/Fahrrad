@@ -180,6 +180,7 @@
     <ClCompile Include="src\ImageCaptureController.cpp" />
     <ClCompile Include="src\ImageDisplayController.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\NetworkController.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
     <ClCompile Include="..\..\..\addons\ofxImGui\src\BaseEngine.cpp" />
     <ClCompile Include="..\..\..\addons\ofxImGui\src\BaseTheme.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="src\ImageCaptureController.h" />
     <ClInclude Include="src\ImageDisplayController.h" />
     <ClInclude Include="src\IGuiBase.h" />
+    <ClInclude Include="src\NetworkController.h" />
     <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="..\..\..\addons\ofxImGui\src\BaseEngine.h" />
     <ClInclude Include="..\..\..\addons\ofxImGui\src\BaseTheme.h" />

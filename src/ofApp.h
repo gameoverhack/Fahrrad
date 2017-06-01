@@ -9,6 +9,7 @@
 #include "RenderController.h"
 #include "ImageCaptureController.h"
 #include "ImageDisplayController.h"
+#include "NetworkController.h"
 
 class ofApp : public ofBaseApp, public IGuiBase {
 
@@ -79,6 +80,7 @@ public:
 	ImageCaptureController * imageCaptureController;
 	ImageDisplayController * imageDisplayController;
 	RenderController * renderController;
+	NetworkController * networkController;
 
 	ofTrueTypeFont font;
 

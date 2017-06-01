@@ -105,7 +105,7 @@ void NetworkController::update() {
 			}else{
 				char c[1400] = { 0 };
 				int recv = udp.Receive(&c[0], 1400);
-				if (riderSummary.data == nullptr) riderSummary.data = new float[recv / sizeof(float)];
+				if (riderSummary.data == nullptr) riderSummary.data = new float[(int)(recv / sizeof(float))];
 				memcpy(&riderSummary.chars[0], &c[0], recv);
 				bNetworkNeedsUpdate = false;
 			}
@@ -245,7 +245,7 @@ void NetworkController::drawGUI() {
 //--------------------------------------------------------------
 void NetworkController::setRiderSummary(const RiderSummaryUnion & rsu) {
 	lock();
-	if (riderSummary.data == nullptr) riderSummary.data = new float[rsu.data[0]];
+	if (riderSummary.data == nullptr) riderSummary.data = new float[(int)rsu.data[0]];
 	memcpy(&riderSummary.data[0], &rsu.data[0], rsu.data[0]);
 	bNetworkNeedsUpdate = true;
 	unlock();

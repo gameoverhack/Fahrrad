@@ -54,7 +54,7 @@ void NetworkController::setDefaults() {
 	ipPort = 7000;
 
 	nextNetworkMode = NETWORK_NONE;
-	networkTimeout = 2000;
+	networkTimeout = 50.0f;
 
 }
 
@@ -71,52 +71,8 @@ void NetworkController::update() {
 		changeMode();
 	}
 
-	//unlock();
-	//lock();
-	if (bIsConnected) {
-		switch (currentNetworkMode) {
-		case NETWORK_NONE:
-		{
-			// nothing
-		}
-		break;
-		case NETWORK_SEND:
-		{
-			if (bNetworkNeedsUpdate) {
-				char c[1] = { '*' };
-				udp.Send(&c[0], 1);
-				ofSleepMillis(1);
-				udp.Send(&riderSummary.chars[0], riderSummary.data[0] * sizeof(float));
-				ofSleepMillis(1);
-				bNetworkNeedsUpdate = false;
-			}
-		}
-		break;
-		case NETWORK_RECV:
-		{
-			if (!bNetworkNeedsUpdate) {
-				char c[1] = { '0' };
-				int recv = udp.Receive(&c[0], 1);
-				if (recv == 1) {
-					if (c[0] == '*') {
-						bNetworkNeedsUpdate = true;
-					}
-				}
-			}else{
-				char c[1400] = { 0 };
-				int recv = udp.Receive(&c[0], 1400);
-				if (riderSummary.data == nullptr) riderSummary.data = new float[(int)(recv / sizeof(float))];
-				memcpy(&riderSummary.chars[0], &c[0], recv);
-				bNetworkNeedsUpdate = false;
-			}
-			
-		}
-		break;
-		}
-	}
-	
-
 	unlock();
+
 }
 
 //--------------------------------------------------------------
@@ -182,29 +138,52 @@ void NetworkController::threadedFunction() {
 
 			lock();
 
-			// grab the current mode
-			int thisCurrentMode = currentNetworkMode;
+			if (bIsConnected) {
+				switch (currentNetworkMode) {
+				case NETWORK_NONE:
+				{
+					// nothing
+				}
+				break;
+				case NETWORK_SEND:
+				{
+					if (bNetworkNeedsUpdate) {
+						//char c[1] = { '*' };
+						//udp.Send(&c[0], 1);
+						//ofSleepMillis(1);
+						udp.Send(&riderSummary.chars[0], riderSummary.data[0] * sizeof(float));
+						//ofSleepMillis(1);
+						bNetworkNeedsUpdate = false;
+					}
+				}
+				break;
+				case NETWORK_RECV:
+				{
+					//if (!bNetworkNeedsUpdate) {
+					//	char c[1] = { '0' };
+					//	int recv = udp.Receive(&c[0], 1);
+					//	if (recv == 1) {
+					//		if (c[0] == '*') {
+					//			bNetworkNeedsUpdate = true;
+					//		}
+					//	}
+					//}
+					//else {
+						char c[1400] = { 0 };
+						int recv = udp.Receive(&c[0], 1400);
+						if (recv > 0) {
+							if (riderSummary.data == nullptr) riderSummary.data = new float[(int)(recv / sizeof(float))];
+							memcpy(&riderSummary.chars[0], &c[0], recv);
+						}
+						//bNetworkNeedsUpdate = false;
+					//}
+
+				}
+				break;
+				}
+			}
 
 			unlock();
-
-
-			switch (thisCurrentMode) {
-			case NETWORK_NONE:
-			{
-
-			}
-			break;
-			case NETWORK_SEND:
-			{
-
-			}
-			break;
-			case NETWORK_RECV:
-			{
-
-			}
-			break;
-			}
 
 		}
 
@@ -221,7 +200,7 @@ void NetworkController::drawGUI() {
 		beginGUI();
 		{
 
-			ImGui::SliderInt("Network Timeout (millis)", &networkTimeout, 1000, 20000);
+			ImGui::SliderInt("Network Timeout (millis)", &networkTimeout, 1, 1000);
 			ImGui::Combo("Network Mode", (int*)&nextNetworkMode, networkModes);
 			ImGui::InputInt4("IP Address", ipAddress);
 			ImGui::InputInt("IP Port", &ipPort);
@@ -244,11 +223,16 @@ void NetworkController::drawGUI() {
 
 //--------------------------------------------------------------
 void NetworkController::setRiderSummary(const RiderSummaryUnion & rsu) {
-	lock();
-	if (riderSummary.data == nullptr) riderSummary.data = new float[(int)rsu.data[0]];
-	memcpy(&riderSummary.data[0], &rsu.data[0], rsu.data[0]);
-	bNetworkNeedsUpdate = true;
-	unlock();
+	if (bUse) {
+		lock();
+		if (!bNetworkNeedsUpdate && ofGetElapsedTimeMillis() - lastNetworkTimeout >= networkTimeout) {
+			if (riderSummary.data == nullptr) riderSummary.data = new float[(int)rsu.data[0]];
+			memcpy(&riderSummary.data[0], &rsu.data[0], rsu.data[0]);
+			bNetworkNeedsUpdate = true;
+			lastNetworkTimeout = ofGetElapsedTimeMillis();
+		}
+		unlock();
+	}
 }
 
 //--------------------------------------------------------------

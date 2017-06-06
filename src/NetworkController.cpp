@@ -46,10 +46,10 @@ void NetworkController::setDefaults() {
 
 	ofLogNotice() << className << ": setDefaults";
 
-	ipAddress[0] = 127;
-	ipAddress[1] = 0;
-	ipAddress[2] = 0;
-	ipAddress[3] = 1;
+	ipAddress[0] = 192;
+	ipAddress[1] = 168;
+	ipAddress[2] = 178;
+	ipAddress[3] = 66;
 	
 	ipPort = 7000;
 

@@ -106,7 +106,10 @@ void ImageDisplayController::update() {
 			//ofDrawRectangle(400, 400, 400, 400);
 			int xCounter = 0, yCounter = 0;
 			for (int i = 0; i < imageTextures.size(); i++) {
-
+				if (imageTextures[i].getWidth() != imagePixels[i].getWidth() ||
+					imageTextures[i].getHeight() != imagePixels[i].getHeight()) {
+					imageTextures[i].allocate(imagePixels[i]);
+				}
 				imageTextures[i].loadData(imagePixels[i]);
 
 				if (xCounter == imageTextures.size() / 2) xCounter = 0;
@@ -157,6 +160,12 @@ void ImageDisplayController::threadedFunction() {
 					bool ok = ofLoadImage(imagePixels[i], filePath);
 					if (ok) {
 						ofLogNotice() << "Loading random image: " << filePath;
+						float aspect = (ofGetWidth() / 3.0) / (ofGetHeight() / 2.0);
+						float tWidth = imagePixels[i].getHeight() * aspect;
+						float tOffset = (imagePixels[i].getWidth() - tWidth) / 2.0f;
+						cout << imagePixels[i].getWidth() << " x " << imagePixels[i].getHeight() << endl;
+						imagePixels[i].crop(tOffset, 0, tWidth, imagePixels[i].getHeight());
+						cout << imagePixels[i].getWidth() << " x " << imagePixels[i].getHeight() << endl;
 					}else{
 						ofLogError() << "Error loading random image: " << filePath;
 					}

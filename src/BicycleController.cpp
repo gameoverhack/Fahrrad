@@ -555,7 +555,7 @@ void BicycleController::triggerSensor(SensorMode sensorMode) {
 		distanceTravelled += dist;
 		currentRider.distanceTravelled += dist;
 		totalDistanceTravelled += dist;
-		totalDailyDistances[getTodaysRiderIndex()] += dist;
+		if(bRecordRiders) totalDailyDistances[getTodaysRiderIndex()] += dist;
 
 	}
 

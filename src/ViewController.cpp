@@ -97,6 +97,8 @@ void ViewController::update() {
 //--------------------------------------------------------------
 void ViewController::renderSender() {
 
+	backgroundFbo.draw(0, 0);
+
 	if (topRiderInfo.size() > 0) {
 
 		ostringstream os;
@@ -184,6 +186,7 @@ void ViewController::changeMode() {
 	case VIEW_SEND:
 	{
 		fbo.allocate(1080.0f, 1920.0f, GL_RGB); // vertical layout
+		renderSvgToFbo("images/Erg_Sender.svg", backgroundFbo, 1080.0f, 1920.0f);
 	}
 	break;
 	case VIEW_RECV:
@@ -254,6 +257,20 @@ void ViewController::setData(const RiderSummaryUnion & rsu, const vector<RiderIn
 const ofFbo & ViewController::getFBO() {
 	//ofScopedLock lock(mutex);
 	return fbo;
+}
+
+//--------------------------------------------------------------
+void ViewController::renderSvgToFbo(const string & filePath, ofFbo & svgFbo, float w, float h) {
+	ofxSVG svg;
+	svg.load(filePath);
+	svgFbo.allocate(w, h, GL_RGB, 8);
+	svgFbo.begin();
+	{
+		ofClear(255);
+		ofSetColor(255);
+		svg.draw();
+	}
+	svgFbo.end();
 }
 
 //--------------------------------------------------------------

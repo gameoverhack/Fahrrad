@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "IGuiBase.h"
+#include "ofxSvg.h"
 
 class ViewController : public IGuiBase, public ofThread {
 public:
@@ -26,6 +27,7 @@ public:
 protected:
 
 	ofFbo fbo;
+	ofFbo backgroundFbo;
 
 	bool bViewNeedsUpdate;
 	RiderSummaryUnion riderSummary;
@@ -45,6 +47,8 @@ protected:
 
 	void renderSender();
 	void renderReciever();
+
+	void renderSvgToFbo(const string& filePath, ofFbo& svgFbo, float w, float h);
 
 	void changeMode();
 

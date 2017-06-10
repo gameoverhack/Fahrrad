@@ -7,3 +7,4 @@ ofxBoost
 ofxOMXPlayer
 ofxGPIO
 ofxHomography
+ofxSvg

@@ -372,7 +372,7 @@ void BicycleController::threadedFunction() {
 						bIsDataLoaded = true;
 
 						//riderSummary.data = new float[4 + totalDailyDistances.size()];
-						riderSummary.data = new float[5 + activeDaysUsed];
+						riderSummary.data = new float[RS_DATA_START + activeDaysUsed];
 						riderSummary.data[RS_DATA_SIZE] = RS_DATA_START + activeDaysUsed;
 
 					}
@@ -398,6 +398,7 @@ void BicycleController::threadedFunction() {
 
 					riderSummary.data[RS_SPEED_CURRENT] = currentRider.currentSpeed;
 					riderSummary.data[RS_SPEED_ANIMAL] = currentRider.currentAnimal;
+					riderSummary.data[RS_DISTANCE_DAY] = totalDailyDistances[getTodaysRiderIndex()];
 					riderSummary.data[RS_DISTANCE_TOTAL] = totalDistanceTravelled;
 					riderSummary.data[RS_TIME_TOTAL] = (totalTimeTaken + currentRider.time) / 1000.0f / 60.0f / 60.0f;
 					riderSummary.data[RS_RIDERS_TOTAL] = totalNumberRiders;
@@ -428,10 +429,6 @@ void BicycleController::threadedFunction() {
 					if (bRecordRiders && bIsDataLoaded) {
 
 						vector<RiderInfo>& todaysRiderInfo = getTodaysRiderInfo();
-
-						currentRider.day = ofGetDay();
-						currentRider.month = ofGetMonth();
-						currentRider.year = ofGetYear();
 
 						currentRider.isActive = false;
 
@@ -564,6 +561,9 @@ void BicycleController::triggerSensor(SensorMode sensorMode) {
 			distanceTravelled = 0;
 			currentRider.isActive = bIsRiderActive;
 			riderStartTimeMillis = ofGetElapsedTimeMillis();
+			currentRider.day = ofGetDay();
+			currentRider.month = ofGetMonth();
+			currentRider.year = ofGetYear();
 			ofLogVerbose() << "Rider Active";
 		}
 
@@ -644,7 +644,7 @@ void BicycleController::drawGUI() {
 			ImGui::SliderFloat("Velocity Decay (per/update)", &velocityDecay, 0.0, 20.0);
 			ImGui::SliderFloat("Velocity Ease (per/update)", &velocityEase, 0.01, 1.0);
 
-			ImGui::SliderInt("Rider Inactive Time (millis)", &riderInactiveTime, 5000, 30000);
+			ImGui::SliderInt("Rider Inactive Time (millis)", &riderInactiveTime, 1000, 6000);
 
 			ImGui::SliderFloat("Velocity Normal (km/h)", &velocityNormalSpeed, 0.01, 60.0);
 
@@ -655,7 +655,7 @@ void BicycleController::drawGUI() {
 			switch (nextSensorMode) {
 			case SENSOR_SIMULATE:
 			{
-				ImGui::SliderInt("Target Speed", &simulateVelocity, 0, 60);
+				ImGui::SliderInt("Target Speed", &simulateVelocity, 0, 75);
 			}
 			break;
 			case SENSOR_TEENSY:

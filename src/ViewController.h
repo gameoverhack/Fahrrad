@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "IGuiBase.h"
 #include "ofxSvg.h"
+#include "ofxTextAlignTTF.h"
 
 class ViewController : public IGuiBase, public ofThread {
 public:
@@ -29,6 +30,20 @@ protected:
 	ofFbo fbo;
 	ofFbo backgroundFbo;
 
+	ofFbo dialRedFbo;
+	ofFbo dialMaxFbo;
+	ofFbo dialGreyFbo;
+	ofFbo dialMaskFbo;
+
+	ofxTextAlignTTF fDeviceBold;
+	ofxTextAlignTTF fDeviceItalic;
+	ofxTextAlignTTF fWattsCurrent;
+	ofxTextAlignTTF fSpeedCurrent;
+	ofxTextAlignTTF fSpeedHigh;
+	ofxTextAlignTTF fDistanceTime;
+	ofxTextAlignTTF fHeartRate;
+	ofxTextAlignTTF fHighScores;
+
 	bool bViewNeedsUpdate;
 	RiderSummaryUnion riderSummary;
 	vector<RiderInfo> topRiderInfo;
@@ -48,7 +63,8 @@ protected:
 	void renderSender();
 	void renderReciever();
 
-	void renderSvgToFbo(const string& filePath, ofFbo& svgFbo, float w, float h);
+	void renderSvgToFbo(string filePath, ofFbo& svgFbo, float w, float h, ofColor c);
+	int getTodaysRiderIndex();
 
 	void changeMode();
 

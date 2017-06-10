@@ -124,6 +124,12 @@
     <ClCompile Include="..\..\..\addons\ofxSvg\src\ofxSvg.cpp">
       <Filter>addons\ofxSvg\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxTextAlign\src\ofxTextAlign.cpp">
+      <Filter>addons\ofxTextAlign\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxTextAlign\src\ofxTextAlignTTF.cpp">
+      <Filter>addons\ofxTextAlign\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -272,6 +278,12 @@
     </Filter>
     <Filter Include="addons\ofxSvg\libs\svgTiny\src">
       <UniqueIdentifier>{f1a254a7-4c8d-4f30-a873-27a43a875dc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxTextAlign">
+      <UniqueIdentifier>{fcbe19f5-4373-4523-8334-14c0a8ff5dd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxTextAlign\src">
+      <UniqueIdentifier>{82954caf-3c87-4ba5-a014-30453bce1cb6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -895,6 +907,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxSvg\src\ofxSvg.h">
       <Filter>addons\ofxSvg\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTextAlign\src\ofxTextAlign.h">
+      <Filter>addons\ofxTextAlign\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTextAlign\src\ofxTextAlignTTF.h">
+      <Filter>addons\ofxTextAlign\src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

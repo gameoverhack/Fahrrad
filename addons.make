@@ -8,3 +8,4 @@ ofxOMXPlayer
 ofxGPIO
 ofxHomography
 ofxSvg
+ofxTextAlign

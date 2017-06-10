@@ -57,13 +57,13 @@ protected:
 	vector<RiderInfo>& getTodaysRiderInfo();
 	void updateRiderInfo();
 
+	int boosterDifficulty;
+	vector<float> maxWatts = { 285.0f / 60.0f, 370.0f / 60.0f, 455.0f / 60.0f, 540.0f / 60.0f, 625.0f / 60.0f, 710.0f / 60.0f, 795.0f / 60.0f, 880.0f / 60.0f, 965.0f / 60.0f, 1050.0f / 60.0f };
+
 	typedef struct {
 		float value;
 		string type;
 	} MileStone;
-
-	int boosterDifficulty;
-	vector<float> maxWatts = { 285.0f / 60.0f, 370.0f / 60.0f, 455.0f / 60.0f, 540.0f / 60.0f, 625.0f / 60.0f, 710.0f / 60.0f, 795.0f / 60.0f, 880.0f / 60.0f, 965.0f / 60.0f, 1050.0f / 60.0f };
 
 	vector<MileStone> milestonesSpeed;
 	vector<MileStone> milestonesWatts;

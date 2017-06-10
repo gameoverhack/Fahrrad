@@ -25,7 +25,7 @@ void ofApp::setup() {
 		ofHideCursor();
 	}
 
-	font.load(ofToDataPath("fonts/verdana.ttf"), 96, true);
+	font.load(ofToDataPath("fonts/Roboto-Regular.ttf"), 96, true);
 
 }
 
@@ -116,72 +116,21 @@ void ofApp::draw() {
 	case APPLICATION_STATSLOCAL:
 	{
 		
-		viewController->getFBO().draw(0, 0);
-		
-		//ostringstream os;
+		const ofFbo& viewFbo = viewController->getFBO();
+		ofPushMatrix();
+		ofTranslate(viewFbo.getHeight(), 0.0f);
+		ofRotateZ(90);
+		viewFbo.draw(0, 0);
+		ofPopMatrix();
 
-		//if (bicycleController->isDataLoaded()) {
-
-			//const vector<RiderInfo>& topRiderInfo = bicycleController->getTopRiderInfo();
-			//const RiderSummaryUnion& riderSummary = bicycleController->getRiderSummary();
-			//networkController->setRiderSummary(riderSummary);
-			//viewController->setData(riderSummary, topRiderInfo);
-
-			//const RiderInfo& riderInfo = topRiderInfo[topRiderInfo.size() - 2];//bicycleController->getCurrentRiderInfo();
-			//int dayranking = riderInfo.dayranking + 1; // 0 ordered adjustment
-			//int allranking = riderInfo.allranking + 1; // 0 ordered adjustment
-			//float currentSpeed = riderInfo.currentSpeed;
-			//float currentKiloWatts = riderInfo.currentKiloWatts;
-			//float normalisedSpeed = riderInfo.normalisedSpeed;
-			//float distanceTravelled = riderInfo.distanceTravelled;
-			//string currentAnimal = bicycleController->getAnimalFromIndex(riderInfo.currentAnimal);
-			//string currentDevice = bicycleController->getDeviceFromIndex(riderInfo.currentDevice);
-
-
-			//os << std::setprecision(1) << std::fixed << currentSpeed << " km/h " << currentKiloWatts << " kW" << endl 
-			//	<< distanceTravelled << " m" << endl << dayranking << " // " << allranking << endl 
-			//	<< currentAnimal << endl << currentDevice;
-			//
-			//if (riderInfo.isActive) {
-			//	font.drawString(os.str(), 1000, 300);
-			//}
-
-		//}
-		//else {
-		//	os << "LOADING DATA";
-		//	font.drawString(os.str(), 100, 400);
-		//}
-		
 	}
 	break;
 	case APPLICATION_STATSREMOTE:
 	{
 
-		viewController->getFBO().draw(0, 0);
+		const ofFbo& viewFbo = viewController->getFBO();
+		viewFbo.draw(0, 0);
 
-		//ostringstream os;
-
-		//const RiderSummaryUnion& riderSummary = networkController->getRiderSummary();
-		//viewController->setData(riderSummary);
-
-		//if (riderSummary.data != nullptr) {
-
-			//float currentSpeed = riderSummary.data[RS_SPEED_CURRENT];
-			//float totalRiders = riderSummary.data[RS_RIDERS_TOTAL];
-			//float totalTime = riderSummary.data[RS_TIME_TOTAL];
-			//float totalDistance = riderSummary.data[RS_DISTANCE_TOTAL];
-
-			//os << std::setprecision(1) << std::fixed << currentSpeed << " km/h " << endl
-			//	<< totalDistance << " m" << endl
-			//	<< totalTime << " hours" << endl
-			//	<< totalRiders << " riders" << endl;
-
-			//font.drawString(os.str(), 1000, 400);
-		//}
-		//else {
-		//	os << "NO NETWORK CONNECTION";
-		//	font.drawString(os.str(), 100, 400);
-		//}
 	}
 	break;
 	case APPLICATION_BIKEVIDEO:

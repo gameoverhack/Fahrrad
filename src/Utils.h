@@ -70,7 +70,7 @@ typedef enum {
 	//RS_KW_NORMAL,
 	//RS_KW_DEVICE,
 	//RS_DISTANCE_CURRENT,
-	//RS_DISTANCE_DAY,
+	RS_DISTANCE_DAY,
 	RS_DISTANCE_TOTAL,
 	//RS_TIME_CURRENT,
 	//RS_TIME_DAY,
@@ -79,6 +79,12 @@ typedef enum {
 	RS_DATA_START
 
 };
+
+static string getString(float n, int precision = 0, int fill = 0) {
+	ostringstream os;
+	os << std::setfill('0') << std::setw(fill) << std::setprecision(precision) << std::fixed << n;
+	return os.str();
+}
 
 typedef struct {
 

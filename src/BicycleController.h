@@ -30,6 +30,7 @@ public:
 	void triggerSensor(SensorMode sensorMode);
 	void setRecordRiders(bool b);
 	const RiderInfo& getCurrentRiderInfo();
+	const vector<RiderInfo>& getTopRiderInfo();
 	const RiderSummaryUnion& getRiderSummary();
 	bool isDataLoaded();
 
@@ -70,6 +71,9 @@ protected:
 	vector<RiderInfo> allRiderInfo;
 	unordered_map< string, vector<RiderInfo> > dailyRiderInfo;
 
+	int numTopRiders;
+	vector<RiderInfo> topRiderInfo;
+
 	RiderInfo currentRider;
 
 	float totalNumberRiders = 0;
@@ -78,7 +82,7 @@ protected:
 	vector<float> totalDailyDistances;
 	vector<int> daysOfWeek;
 	vector<bool> daysOfWeekToUse;
-	vector<int> daysOpen = { 2,3,4,5,6 };
+	vector<int> daysOpen = { 0,1,2,3,4,5,6 };
 	int activeDaysUsed = 0;
 
 	RiderSummaryUnion riderSummary;

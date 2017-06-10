@@ -207,6 +207,7 @@
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp" />
     <ClCompile Include="src\RenderController.cpp" />
     <ClCompile Include="src\VideoController.cpp" />
+    <ClCompile Include="src\ViewController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\addons\ofxFlickr\src\md5.h" />
@@ -411,6 +412,7 @@
     <ClInclude Include="src\SerializationUtils.h" />
     <ClInclude Include="src\Utils.h" />
     <ClInclude Include="src\VideoController.h" />
+    <ClInclude Include="src\ViewController.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(OF_ROOT)\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">

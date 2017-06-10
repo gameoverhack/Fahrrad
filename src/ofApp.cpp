@@ -52,12 +52,28 @@ void ofApp::update() {
 	case APPLICATION_STATSLOCAL:
 	{
 		bicycleController->update();
+
+		//if (bicycleController->isDataLoaded()) {
+
+			const vector<RiderInfo>& topRiderInfo = bicycleController->getTopRiderInfo();
+			const RiderSummaryUnion& riderSummary = bicycleController->getRiderSummary();
+			networkController->setRiderSummary(riderSummary);
+			viewController->setData(riderSummary, topRiderInfo);
+
+		//}
+
 		networkController->update();
+		viewController->update();
 	}
 	break;
 	case APPLICATION_STATSREMOTE:
 	{
 		networkController->update();
+		
+		const RiderSummaryUnion& riderSummary = networkController->getRiderSummary();
+		viewController->setData(riderSummary);
+
+		viewController->update();
 	}
 	break;
 	case APPLICATION_BIKEVIDEO:
@@ -99,59 +115,73 @@ void ofApp::draw() {
 	break;
 	case APPLICATION_STATSLOCAL:
 	{
-		ostringstream os;
+		
+		viewController->getFBO().draw(0, 0);
+		
+		//ostringstream os;
 
-		if (bicycleController->isDataLoaded()) {
+		//if (bicycleController->isDataLoaded()) {
 
-			const RiderInfo& riderInfo = bicycleController->getCurrentRiderInfo();
-			const RiderSummaryUnion& riderSummary = bicycleController->getRiderSummary();
-			networkController->setRiderSummary(riderSummary);
+			//const vector<RiderInfo>& topRiderInfo = bicycleController->getTopRiderInfo();
+			//const RiderSummaryUnion& riderSummary = bicycleController->getRiderSummary();
+			//networkController->setRiderSummary(riderSummary);
+			//viewController->setData(riderSummary, topRiderInfo);
 
-			int dayranking = riderInfo.dayranking + 1; // 0 ordered adjustment
-			int allranking = riderInfo.allranking + 1; // 0 ordered adjustment
-			float currentSpeed = riderInfo.currentSpeed;
-			float currentKiloWatts = riderInfo.currentKiloWatts;
-			float normalisedSpeed = riderInfo.normalisedSpeed;
-			float distanceTravelled = riderInfo.distanceTravelled;
-			string currentAnimal = bicycleController->getAnimalFromIndex(riderInfo.currentAnimal);
-			string currentDevice = bicycleController->getDeviceFromIndex(riderInfo.currentDevice);
+			//const RiderInfo& riderInfo = topRiderInfo[topRiderInfo.size() - 2];//bicycleController->getCurrentRiderInfo();
+			//int dayranking = riderInfo.dayranking + 1; // 0 ordered adjustment
+			//int allranking = riderInfo.allranking + 1; // 0 ordered adjustment
+			//float currentSpeed = riderInfo.currentSpeed;
+			//float currentKiloWatts = riderInfo.currentKiloWatts;
+			//float normalisedSpeed = riderInfo.normalisedSpeed;
+			//float distanceTravelled = riderInfo.distanceTravelled;
+			//string currentAnimal = bicycleController->getAnimalFromIndex(riderInfo.currentAnimal);
+			//string currentDevice = bicycleController->getDeviceFromIndex(riderInfo.currentDevice);
 
 
-			os << std::setprecision(1) << std::fixed << currentSpeed << " km/h " << currentKiloWatts << " kW" << endl 
-				<< distanceTravelled << " m" << endl << dayranking << " // " << allranking << endl 
-				<< currentAnimal << endl << currentDevice;
-			
-			if (riderInfo.isActive) {
-				font.drawString(os.str(), 1000, 300);
-			}
+			//os << std::setprecision(1) << std::fixed << currentSpeed << " km/h " << currentKiloWatts << " kW" << endl 
+			//	<< distanceTravelled << " m" << endl << dayranking << " // " << allranking << endl 
+			//	<< currentAnimal << endl << currentDevice;
+			//
+			//if (riderInfo.isActive) {
+			//	font.drawString(os.str(), 1000, 300);
+			//}
 
-		}
-		else {
-			os << "LOADING DATA";
-			font.drawString(os.str(), 1000, 400);
-		}
+		//}
+		//else {
+		//	os << "LOADING DATA";
+		//	font.drawString(os.str(), 100, 400);
+		//}
 		
 	}
 	break;
 	case APPLICATION_STATSREMOTE:
 	{
-		const RiderSummaryUnion& riderSummary = networkController->getRiderSummary();
-		
-		if (riderSummary.data != nullptr) {
-			float currentSpeed = riderSummary.data[1];
-			float totalRiders = riderSummary.data[2];
-			float totalTime = riderSummary.data[3];
-			float totalDistance = riderSummary.data[4];
 
-			ostringstream os;
+		viewController->getFBO().draw(0, 0);
 
-			os << std::setprecision(1) << std::fixed << currentSpeed << " km/h " << endl
-				<< totalDistance << " m" << endl
-				<< totalTime << " millis" << endl
-				<< totalRiders << " riders" << endl;
+		//ostringstream os;
 
-			font.drawString(os.str(), 1000, 400);
-		}
+		//const RiderSummaryUnion& riderSummary = networkController->getRiderSummary();
+		//viewController->setData(riderSummary);
+
+		//if (riderSummary.data != nullptr) {
+
+			//float currentSpeed = riderSummary.data[RS_SPEED_CURRENT];
+			//float totalRiders = riderSummary.data[RS_RIDERS_TOTAL];
+			//float totalTime = riderSummary.data[RS_TIME_TOTAL];
+			//float totalDistance = riderSummary.data[RS_DISTANCE_TOTAL];
+
+			//os << std::setprecision(1) << std::fixed << currentSpeed << " km/h " << endl
+			//	<< totalDistance << " m" << endl
+			//	<< totalTime << " hours" << endl
+			//	<< totalRiders << " riders" << endl;
+
+			//font.drawString(os.str(), 1000, 400);
+		//}
+		//else {
+		//	os << "NO NETWORK CONNECTION";
+		//	font.drawString(os.str(), 100, 400);
+		//}
 	}
 	break;
 	case APPLICATION_BIKEVIDEO:
@@ -226,11 +256,13 @@ void ofApp::drawGUI() {
 			{
 				bicycleController->drawGUI();
 				networkController->drawGUI();
+				viewController->drawGUI();
 			}
 			break;
 			case APPLICATION_STATSREMOTE:
 			{
 				networkController->drawGUI();
+				viewController->drawGUI();
 			}
 			break;
 			case APPLICATION_BIKEVIDEO:
@@ -285,14 +317,18 @@ void ofApp::changeMode() {
 	{
 		if (bicycleController != nullptr) delete bicycleController;
 		if (networkController != nullptr) delete networkController;
+		if (viewController != nullptr) delete viewController;
 		bicycleController = nullptr;
 		networkController = nullptr;
+		viewController = nullptr;
 	}
 	break;
 	case APPLICATION_STATSREMOTE:
 	{
 		if (networkController != nullptr) delete networkController;
+		if (viewController != nullptr) delete viewController;
 		networkController = nullptr;
+		viewController = nullptr;
 	}
 	break;
 	case APPLICATION_BIKEVIDEO:
@@ -342,12 +378,14 @@ void ofApp::changeMode() {
 		if (imageDisplayController != nullptr) delete imageDisplayController;
 		if (renderController != nullptr) delete renderController;
 		if (networkController != nullptr) delete networkController;
+		if (viewController != nullptr) delete viewController;
 		bicycleController = nullptr;
 		videoController = nullptr;
 		imageCaptureController = nullptr;
 		imageDisplayController = nullptr;
 		renderController = nullptr;
 		networkController = nullptr;
+		viewController = nullptr;
 	}
 	break;
 	case APPLICATION_STATSLOCAL:
@@ -358,6 +396,9 @@ void ofApp::changeMode() {
 		networkController = new NetworkController;
 		networkController->setup();
 		networkController->setMode(NetworkController::NETWORK_SEND);
+		viewController = new ViewController;
+		viewController->setup();
+		viewController->setMode(ViewController::VIEW_SEND);
 		
 	}
 	break;
@@ -366,6 +407,9 @@ void ofApp::changeMode() {
 		networkController = new NetworkController;
 		networkController->setup();
 		networkController->setMode(NetworkController::NETWORK_RECV);
+		viewController = new ViewController;
+		viewController->setup();
+		viewController->setMode(ViewController::VIEW_RECV);
 	}
 	break;
 	case APPLICATION_BIKEVIDEO:
@@ -428,12 +472,14 @@ void ofApp::exit() {
 	if (imageDisplayController != nullptr) delete imageDisplayController;
 	if (renderController != nullptr) delete renderController;
 	if (networkController != nullptr) delete networkController;
+	if (viewController != nullptr) delete viewController;
 	bicycleController = nullptr;
 	videoController = nullptr;
 	imageCaptureController = nullptr;
 	imageDisplayController = nullptr;
 	renderController = nullptr;
 	networkController = nullptr;
+	viewController = nullptr;
 }
 
 //--------------------------------------------------------------

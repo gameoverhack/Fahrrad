@@ -151,7 +151,7 @@ void NetworkController::threadedFunction() {
 						//char c[1] = { '*' };
 						//udp.Send(&c[0], 1);
 						//ofSleepMillis(1);
-						udp.Send(&riderSummary.chars[0], riderSummary.data[0] * sizeof(float));
+						udp.Send(&riderSummary.chars[0], riderSummary.data[RS_DATA_SIZE] * sizeof(float));
 						//ofSleepMillis(1);
 						bNetworkNeedsUpdate = false;
 					}
@@ -225,9 +225,9 @@ void NetworkController::drawGUI() {
 void NetworkController::setRiderSummary(const RiderSummaryUnion & rsu) {
 	if (bUse) {
 		lock();
-		if (!bNetworkNeedsUpdate && ofGetElapsedTimeMillis() - lastNetworkTimeout >= networkTimeout) {
-			if (riderSummary.data == nullptr) riderSummary.data = new float[(int)rsu.data[0]];
-			memcpy(&riderSummary.data[0], &rsu.data[0], rsu.data[0]);
+		if (!bNetworkNeedsUpdate && ofGetElapsedTimeMillis() - lastNetworkTimeout >= networkTimeout && rsu.data != nullptr) {
+			if (riderSummary.data == nullptr) riderSummary.data = new float[(int)rsu.data[RS_DATA_SIZE]];
+			memcpy(&riderSummary.data[0], &rsu.data[0], rsu.data[RS_DATA_SIZE]);
 			bNetworkNeedsUpdate = true;
 			lastNetworkTimeout = ofGetElapsedTimeMillis();
 		}

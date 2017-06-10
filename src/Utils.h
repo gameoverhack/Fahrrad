@@ -56,6 +56,30 @@ typedef union {
 	char*	chars;
 } RiderSummaryUnion;
 
+typedef enum {
+	RS_DATA_SIZE = 0,
+	//RS_IS_ACTIVE,
+	//RS_RANK_DAILY,
+	//RS_RANK_ALL,
+	RS_SPEED_CURRENT,
+	//RS_SPEED_TOP,
+	//RS_SPEED_NORMAL,
+	RS_SPEED_ANIMAL,
+	//RS_KW_CURRENT,
+	//RS_KW_TOP,
+	//RS_KW_NORMAL,
+	//RS_KW_DEVICE,
+	//RS_DISTANCE_CURRENT,
+	//RS_DISTANCE_DAY,
+	RS_DISTANCE_TOTAL,
+	//RS_TIME_CURRENT,
+	//RS_TIME_DAY,
+	RS_TIME_TOTAL,
+	RS_RIDERS_TOTAL,
+	RS_DATA_START
+
+};
+
 typedef struct {
 
 	bool isActive = false;

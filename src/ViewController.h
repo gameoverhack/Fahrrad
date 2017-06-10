@@ -36,8 +36,8 @@ protected:
 	ofFbo dialGreyFbo;
 	ofFbo dialMaskFbo;
 
-	ofxTextAlignTTF fDeviceBold;
-	ofxTextAlignTTF fDeviceItalic;
+	ofTrueTypeFont fDeviceBold;
+	ofTrueTypeFont fDeviceItalic;
 	ofxTextAlignTTF fWattsCurrent;
 	ofxTextAlignTTF fSpeedCurrent;
 	ofxTextAlignTTF fSpeedHigh;

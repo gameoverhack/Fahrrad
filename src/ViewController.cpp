@@ -1,4 +1,4 @@
-#include "ViewController.h"
+ï»¿#include "ViewController.h"
 
 //--------------------------------------------------------------
 ViewController::ViewController() {
@@ -156,8 +156,9 @@ void ViewController::renderSender() {
 		//	}
 		//}
 
-		string deviceDE = "eine Handyladegerät";
-		string deviceEN = "a test thing";
+		string deviceDE = "";
+		string deviceEN = "";
+
 		for (int i = 0; i < milestonesWatts.size(); i++) {
 			if (riderInfo.currentKiloWatts < milestonesWatts[i].value) {
 				if (i > 0) {
@@ -215,9 +216,14 @@ void ViewController::renderSender() {
 		backgroundFbo.draw(0, 0);
 
 		ofSetColor(0);
-		fDeviceBold.draw(deviceDE, 45.578, 71.999, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_TOP);
+
+		// need this hack because ofxTextAlign can't handle unicode strings :(
+		//fDeviceBold.draw(deviceDE, 45.578, 71.999, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_TOP);
+		fDeviceBold.drawString(deviceDE, 45.578, 71.999 + fDeviceBold.getLineHeight() + fDeviceBold.getDescenderHeight());
 		ofSetColor(112, 111, 111);
-		fDeviceItalic.draw(deviceEN, 50.125, 169.875, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_TOP);
+		//fDeviceItalic.draw(deviceEN, 50.125, 169.875, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_TOP);
+		fDeviceItalic.drawString(deviceEN, 50.125, 169.875 + fDeviceItalic.getLineHeight() + fDeviceItalic.getDescenderHeight());
+
 		ofSetColor(0);
 		fWattsCurrent.draw(watts, 871.709, 142.148, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
 		fSpeedCurrent.draw(speedCurrent, 537.281, 818.94, ofxTextAlign::HORIZONTAL_ALIGN_CENTER | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
@@ -331,6 +337,7 @@ void ViewController::changeMode() {
 		
 		fDeviceBold.load("fonts/NotBd.ttf",44);
 		fDeviceItalic.load("fonts/NotRgI.ttf", 17);
+
 		fWattsCurrent.load("fonts/OpenSans-Bold.ttf", 56);
 		fSpeedCurrent.load("fonts/OpenSans-Bold.ttf", 260);
 		fSpeedHigh.load("fonts/OpenSans-Regular.ttf", 42);

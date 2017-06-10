@@ -218,6 +218,7 @@ void ViewController::renderSender() {
 		ofSetColor(0);
 
 		// need this hack because ofxTextAlign can't handle unicode strings :(
+
 		//fDeviceBold.draw(deviceDE, 45.578, 71.999, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_TOP);
 		fDeviceBold.drawString(deviceDE, 45.578, 71.999 + fDeviceBold.getLineHeight() + fDeviceBold.getDescenderHeight());
 		ofSetColor(112, 111, 111);

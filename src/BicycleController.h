@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxXmlSettings.h"
 #include "IGuiBase.h"
 
 #ifndef TARGET_WIN32
@@ -34,8 +33,8 @@ public:
 	const RiderSummaryUnion& getRiderSummary();
 	bool isDataLoaded();
 
-	string getAnimalFromIndex(const int& index);
-	string getDeviceFromIndex(const int& index);
+	//string getAnimalFromIndex(const int& index);
+	//string getDeviceFromIndex(const int& index);
 
 protected:
 
@@ -59,14 +58,6 @@ protected:
 
 	int boosterDifficulty;
 	vector<float> maxWatts = { 285.0f / 60.0f, 370.0f / 60.0f, 455.0f / 60.0f, 540.0f / 60.0f, 625.0f / 60.0f, 710.0f / 60.0f, 795.0f / 60.0f, 880.0f / 60.0f, 965.0f / 60.0f, 1050.0f / 60.0f };
-
-	typedef struct {
-		float value;
-		string type;
-	} MileStone;
-
-	vector<MileStone> milestonesSpeed;
-	vector<MileStone> milestonesWatts;
 
 	vector<RiderInfo> allRiderInfo;
 	unordered_map< string, vector<RiderInfo> > dailyRiderInfo;

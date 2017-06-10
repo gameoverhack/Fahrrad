@@ -64,7 +64,7 @@ typedef enum {
 	RS_SPEED_CURRENT,
 	//RS_SPEED_TOP,
 	//RS_SPEED_NORMAL,
-	RS_SPEED_ANIMAL,
+	//RS_SPEED_ANIMAL,
 	//RS_KW_CURRENT,
 	//RS_KW_TOP,
 	//RS_KW_NORMAL,
@@ -99,9 +99,6 @@ typedef struct {
 	float currentKiloWatts = 0.0f;
 	float topKiloWatts = 0.0f;
 	float distanceTravelled = 0.0f;
-	
-	int currentAnimal = -1;
-	int currentDevice = -1;
 
 	int day = 0;
 	int month = 0;

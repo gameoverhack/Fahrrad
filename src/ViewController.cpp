@@ -28,6 +28,40 @@ void ViewController::setup() {
 	lastViewTimeout = ofGetElapsedTimeMillis() - viewTimeout;
 	currentViewMode = VIEW_NONE;
 
+	// load milestones
+	ofxXmlSettings XML;
+	if (XML.loadFile("xml/milestonesSpeed.xml")) {
+		ofLogNotice() << "XML milestonesSpeed loaded";
+		XML.pushTag("milestonesSpeed", 0);
+		int numMilestones = XML.getNumTags("milestone");
+		for (int i = 0; i < numMilestones; i++) {
+			MileStone m;
+			m.value = XML.getValue("milestone:speed", 0., i);
+			m.type = XML.getValue("milestone:name", "", i);
+			ofLogNotice() << "Milestone: " << i << " = (" << m.value << ", " << m.type << ")";
+			milestonesSpeed.push_back(m);
+		}
+	}
+	else {
+		ofLogError() << "XML milestonesSpeed could not be loaded";
+	}
+
+	if (XML.loadFile("xml/milestonesWatts.xml")) {
+		ofLogNotice() << "XML milestonesWatt loaded";
+		XML.pushTag("milestonesWatt", 0);
+		int numMilestones = XML.getNumTags("milestone");
+		for (int i = 0; i < numMilestones; i++) {
+			MileStone m;
+			m.value = XML.getValue("milestone:watt", 0., i);
+			m.type = XML.getValue("milestone:name", "", i);
+			ofLogNotice() << "Milestone: " << i << " = (" << m.value << ", " << m.type << ")";
+			milestonesWatts.push_back(m);
+		}
+	}
+	else {
+		ofLogError() << "XML milestonesWatt could not be loaded";
+	}
+
 	//startThread();
 }
 
@@ -101,8 +135,7 @@ void ViewController::renderSender() {
 	if (topRiderInfo.size() > 0 && riderSummary.data != nullptr) {
 
 		const RiderInfo& riderInfo = topRiderInfo[topRiderInfo.size() - 2];
-		string deviceDE = "eine TestDinge";
-		string deviceEN = "a test thing";
+		
 		string watts = getString(riderInfo.currentKiloWatts);
 		string speedCurrent = getString(riderInfo.currentSpeed);
 		string speedHigh = getString(riderInfo.topSpeed);
@@ -111,7 +144,29 @@ void ViewController::renderSender() {
 		int total = riderInfo.time / 1000.0; int minutes = (total / 60) % 60; int seconds = total % 60;
 		string timeRider = getString(minutes, 0, 2) + ":" + getString(seconds, 0, 2);
 		string heartRate = getString(171); // TODO!!!
-		// high score to do
+		
+
+		//int currentAnimal = -1;
+		//for (int i = 0; i < milestonesSpeed.size(); i++) {
+		//	if (riderInfo.currentSpeed < milestonesSpeed[i].value) {
+		//		if (i > 0) {
+		//			currentAnimal = i;//milestonesSpeed[i].type;
+		//		}
+		//		break;
+		//	}
+		//}
+
+		string deviceDE = "eine Handyladegerät";
+		string deviceEN = "a test thing";
+		for (int i = 0; i < milestonesWatts.size(); i++) {
+			if (riderInfo.currentKiloWatts < milestonesWatts[i].value) {
+				if (i > 0) {
+					//currentRider.currentDevice = i;
+					deviceDE = deviceEN = milestonesWatts[i].type;
+				}
+				break;
+			}
+		}
 		
 		float normalAngle = 218.5f;
 		float maxDisplaySpeed = 70.0f;

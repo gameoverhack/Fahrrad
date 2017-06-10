@@ -48,40 +48,6 @@ void BicycleController::setup() {
 
 	if (bRecordRiders) {
 		
-		// load milestones
-		ofxXmlSettings XML;
-		if (XML.loadFile("xml/milestonesSpeed.xml")) {
-			ofLogNotice() << "XML milestonesSpeed loaded";
-			XML.pushTag("milestonesSpeed", 0);
-			int numMilestones = XML.getNumTags("milestone");
-			for (int i = 0; i < numMilestones; i++) {
-				MileStone m;
-				m.value = XML.getValue("milestone:speed", 0., i);
-				m.type = XML.getValue("milestone:name", "", i);
-				ofLogNotice() << "Milestone: " << i << " = (" << m.value << ", " << m.type << ")";
-				milestonesSpeed.push_back(m);
-			}
-		}
-		else {
-			ofLogError() << "XML milestonesSpeed could not be loaded";
-		}
-
-		if (XML.loadFile("xml/milestonesWatts.xml")) {
-			ofLogNotice() << "XML milestonesWatt loaded";
-			XML.pushTag("milestonesWatt", 0);
-			int numMilestones = XML.getNumTags("milestone");
-			for (int i = 0; i < numMilestones; i++) {
-				MileStone m;
-				m.value = XML.getValue("milestone:watt", 0., i);
-				m.type = XML.getValue("milestone:name", "", i);
-				ofLogNotice() << "Milestone: " << i << " = (" << m.value << ", " << m.type << ")";
-				milestonesWatts.push_back(m);
-			}
-		}
-		else {
-			ofLogError() << "XML milestonesWatt could not be loaded";
-		}
-
 		totalDistanceTravelled = 0;
 
 		startDay = 30;
@@ -397,7 +363,7 @@ void BicycleController::threadedFunction() {
 					topRiderInfo[topRiderInfo.size() - 2] = currentRider;
 
 					riderSummary.data[RS_SPEED_CURRENT] = currentRider.currentSpeed;
-					riderSummary.data[RS_SPEED_ANIMAL] = currentRider.currentAnimal;
+					//riderSummary.data[RS_SPEED_ANIMAL] = currentRider.currentAnimal;
 					riderSummary.data[RS_DISTANCE_DAY] = totalDailyDistances[getTodaysRiderIndex()];
 					riderSummary.data[RS_DISTANCE_TOTAL] = totalDistanceTravelled;
 					riderSummary.data[RS_TIME_TOTAL] = (totalTimeTaken + currentRider.time) / 1000.0f / 60.0f / 60.0f;
@@ -520,26 +486,6 @@ void BicycleController::updateRiderInfo() {
 		}
 	}
 
-	currentRider.currentAnimal = -1;
-	for (int i = 0; i < milestonesSpeed.size(); i++) {
-		if (currentRider.currentSpeed < milestonesSpeed[i].value) {
-			if (i > 0) {
-				currentRider.currentAnimal = i;//milestonesSpeed[i].type;
-			}
-			break;
-		}
-	}
-
-	currentRider.currentDevice = -1;
-	for (int i = 0; i < milestonesWatts.size(); i++) {
-		if (currentRider.currentKiloWatts < milestonesWatts[i].value) {
-			if (i > 0) {
-				currentRider.currentDevice = i;//milestonesSpeed[i].type;
-			}
-			break;
-		}
-	}
-
 	currentRider.time = ofGetElapsedTimeMillis() - riderStartTimeMillis;
 
 }
@@ -611,24 +557,24 @@ bool BicycleController::isDataLoaded() {
 	return bIsDataLoaded;
 }
 
-//--------------------------------------------------------------
-string BicycleController::getAnimalFromIndex(const int & index) {
-	if (index >= 0 && index < milestonesSpeed.size()) {
-		return milestonesSpeed[index].type;
-	} else {
-		return "";
-	}
-}
-
-//--------------------------------------------------------------
-string BicycleController::getDeviceFromIndex(const int & index) {
-	if (index >= 0 && index < milestonesWatts.size()) {
-		return milestonesWatts[index].type;
-	}
-	else {
-		return "";
-	}
-}
+////--------------------------------------------------------------
+//string BicycleController::getAnimalFromIndex(const int & index) {
+//	if (index >= 0 && index < milestonesSpeed.size()) {
+//		return milestonesSpeed[index].type;
+//	} else {
+//		return "";
+//	}
+//}
+//
+////--------------------------------------------------------------
+//string BicycleController::getDeviceFromIndex(const int & index) {
+//	if (index >= 0 && index < milestonesWatts.size()) {
+//		return milestonesWatts[index].type;
+//	}
+//	else {
+//		return "";
+//	}
+//}
 
 //--------------------------------------------------------------
 void BicycleController::drawGUI() {
@@ -688,9 +634,9 @@ void BicycleController::drawGUI() {
 				vector<RiderInfo>& todaysRiderInfo = getTodaysRiderInfo();
 				for (int i = 0; i < todaysRiderInfo.size(); i++) {
 					if (numFound < numRequested) {
-						ImGui::Text("day: %i  %.3f km/hr  %.3f m  %s  %s %i / %i / %i", todaysRiderInfo[i].dayranking + 1,
+						ImGui::Text("day: %i  %.3f km/hr  %.3f m  %i / %i / %i", todaysRiderInfo[i].dayranking + 1,
 							todaysRiderInfo[i].topSpeed, todaysRiderInfo[i].distanceTravelled,
-							getAnimalFromIndex(todaysRiderInfo[i].currentAnimal).c_str(), getDeviceFromIndex(todaysRiderInfo[i].currentDevice).c_str(),
+							//getAnimalFromIndex(todaysRiderInfo[i].currentAnimal).c_str(), getDeviceFromIndex(todaysRiderInfo[i].currentDevice).c_str(),
 							todaysRiderInfo[i].day, todaysRiderInfo[i].month, todaysRiderInfo[i].year);
 						numFound++;
 					}
@@ -699,9 +645,9 @@ void BicycleController::drawGUI() {
 				numFound = 0;
 				for (int i = 0; i < allRiderInfo.size(); i++) {
 					if (numFound < numRequested) {
-						ImGui::Text("all: %i  %.3f km/hr  %.3f m  %s  %s %i / %i / %i", allRiderInfo[i].allranking + 1,
+						ImGui::Text("all: %i  %.3f km/hr  %.3f m  %i / %i / %i", allRiderInfo[i].allranking + 1,
 							allRiderInfo[i].topSpeed, allRiderInfo[i].distanceTravelled,
-							getAnimalFromIndex(allRiderInfo[i].currentAnimal).c_str(), getDeviceFromIndex(allRiderInfo[i].currentDevice).c_str(),
+							//getAnimalFromIndex(allRiderInfo[i].currentAnimal).c_str(), getDeviceFromIndex(allRiderInfo[i].currentDevice).c_str(),
 							allRiderInfo[i].day, allRiderInfo[i].month, allRiderInfo[i].year);
 						numFound++;
 					}

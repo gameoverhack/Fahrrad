@@ -4,6 +4,7 @@
 #include "IGuiBase.h"
 #include "ofxSvg.h"
 #include "ofxTextAlignTTF.h"
+#include "ofxXmlSettings.h"
 
 class ViewController : public IGuiBase, public ofThread {
 public:
@@ -43,6 +44,14 @@ protected:
 	ofxTextAlignTTF fDistanceTime;
 	ofxTextAlignTTF fHeartRate;
 	ofxTextAlignTTF fHighScores;
+
+	typedef struct {
+		float value;
+		string type;
+	} MileStone;
+
+	vector<MileStone> milestonesSpeed;
+	vector<MileStone> milestonesWatts;
 
 	bool bViewNeedsUpdate;
 	RiderSummaryUnion riderSummary;

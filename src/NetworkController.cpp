@@ -227,7 +227,7 @@ void NetworkController::setRiderSummary(const RiderSummaryUnion & rsu) {
 		lock();
 		if (!bNetworkNeedsUpdate && ofGetElapsedTimeMillis() - lastNetworkTimeout >= networkTimeout && rsu.data != nullptr) {
 			if (riderSummary.data == nullptr) riderSummary.data = new float[(int)rsu.data[RS_DATA_SIZE]];
-			memcpy(&riderSummary.data[0], &rsu.data[0], rsu.data[RS_DATA_SIZE]);
+			memcpy(&riderSummary.data[0], &rsu.data[0], rsu.data[RS_DATA_SIZE] * sizeof(float));
 			bNetworkNeedsUpdate = true;
 			lastNetworkTimeout = ofGetElapsedTimeMillis();
 		}

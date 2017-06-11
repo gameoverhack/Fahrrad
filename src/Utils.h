@@ -58,7 +58,8 @@ typedef union {
 
 typedef enum {
 	RS_DATA_SIZE = 0,
-	//RS_IS_ACTIVE,
+	RS_NUM_DAYS,
+	RS_IS_ACTIVE,
 	//RS_RANK_DAILY,
 	//RS_RANK_ALL,
 	RS_SPEED_CURRENT,

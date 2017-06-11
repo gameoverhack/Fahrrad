@@ -31,11 +31,13 @@ protected:
 	ofFbo fbo;
 	ofFbo backgroundFbo;
 
+	// SENDER FBOs
 	ofFbo dialRedFbo;
 	ofFbo dialMaxFbo;
 	ofFbo dialGreyFbo;
 	ofFbo dialMaskFbo;
 
+	// SENDER FONTS
 	ofTrueTypeFont fDeviceBold;
 	ofTrueTypeFont fDeviceItalic;
 	ofxTextAlignTTF fWattsCurrent;
@@ -44,6 +46,17 @@ protected:
 	ofxTextAlignTTF fDistanceTime;
 	ofxTextAlignTTF fHeartRate;
 	ofxTextAlignTTF fHighScores;
+
+	// RECEIVER POLY/SVG
+	ofPolyline polyDEOutlinesIn;
+	ofPolyline polyDEOutlinesOut;
+
+	// RECEIVER FONTS
+	ofTrueTypeFont fAnimalBold;
+	ofTrueTypeFont fAnimalItalic;
+	ofxTextAlignTTF fPercentageDone;
+	ofxTextAlignTTF fSpeedCurrent2;
+	ofxTextAlignTTF fDistanceTime2;
 
 	typedef struct {
 		float value;

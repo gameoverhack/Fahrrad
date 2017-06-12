@@ -8,8 +8,8 @@ int main( ){
 
 #ifdef TARGET_WIN32
 	ofGLWindowSettings settings;
-	//settings.setGLVersion(2, 1); // in shader this is #version 120
-	settings.setGLVersion(4, 0); // in shader this is #version 150
+	settings.setGLVersion(2, 1); // in shader this is #version 120
+	//settings.setGLVersion(4, 0); // in shader this is #version 150
 #else
 	ofGLESWindowSettings settings;
 	settings.glesVersion = 2;

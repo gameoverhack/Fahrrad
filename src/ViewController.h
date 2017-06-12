@@ -48,8 +48,7 @@ protected:
 	ofxTextAlignTTF fHighScores;
 
 	// RECEIVER POLY/SVG
-	ofPolyline polyDEOutlinesIn;
-	ofPolyline polyDEOutlinesOut;
+	ofPolyline polyDEOutlines;
 
 	// RECEIVER FONTS
 	ofTrueTypeFont fAnimalBold;

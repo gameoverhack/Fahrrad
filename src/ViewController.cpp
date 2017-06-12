@@ -356,48 +356,54 @@ void ViewController::renderReciever() {
 
 		}
 
-		ofNoFill();
+
+		// calculate outline of germany
+		//float mx = ofGetMouseX();
+		//CLAMP(mx, 1.0f, ofGetWidth());
+		//float step = mx / ofGetWidth();
 		
-		// draw outline of germany
-		float mx = ofGetMouseX();
-		CLAMP(mx, 1.0f, ofGetWidth());
-		float step = mx / ofGetWidth();
+		float W = 6.0; // width of line - TODO: parameter
+		ofPoint vL[4];
 
-		//ofPolyline & outline = polyDEOutlines[0];
-		ofSetColor(255, 79, 56, 255);
-		int num = step * polyDEOutlinesIn.size(); //tP / 100.0f * polyDEOutlinesIn.size();
+		int num = (tP / 100.0f * polyDEOutlines.size()) + 11; // 11 is Dresden startpoint
+
 		ofMesh mesh;
-		mesh.setMode(OF_PRIMITIVE_LINE_STRIP);
+		mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
 
-		//ofBeginShape();
-		for (int j = 0; j < num; j++) {
-			//ofVertex(polyDEOutlinesIn[j]);
-			mesh.addVertex(polyDEOutlinesIn[j]);
+		for (int j = 10; j < num; j++) {
+
+			int index1 = j - 1;
+			int index2 = j - 0;
+			if (index1 >= polyDEOutlines.size()) index1 = index1 - polyDEOutlines.size() + 10;
+			if (index2 >= polyDEOutlines.size()) index2 = index2 - polyDEOutlines.size() + 10;
+			ofPoint p1 = polyDEOutlines[index1];
+			ofPoint p2 = polyDEOutlines[index2];
+			ofPoint  v = p2 - p1;
+
+			v /= v.length();  // make it a unit vector
+
+			ofPoint vp(-v.y, v.x);  // compute the vector perpendicular to v
+
+			vL[0] = p1 + W / 2 * vp;
+			vL[1] = p1 - W / 2 * vp;
+			vL[2] = p2 + W / 2 * vp;
+			vL[3] = p2 - W / 2 * vp;
+
+			mesh.addVertex(vL[0]);
+			mesh.addVertex(vL[1]);
+			mesh.addVertex(vL[2]);
+			mesh.addVertex(vL[3]);
+
 		}
-		mesh.draw();
-		//ofEndShape();
-		//ofSetColor(0, 255, 56, 255);
-		//ofBeginShape();
-		//for (int j = polyDEOutlinesOut.size(); j >= polyDEOutlinesOut.size() - num; j--) {
-		//	ofVertex(polyDEOutlinesOut[j]);
-		//}
-		//ofEndShape();
 
 		// draw current position around germany
 
 		ofFill();
-		ofDrawCircle(polyDEOutlinesIn[CLAMP(num, 0, polyDEOutlinesIn.size() - 1)], 4);
-
-		
-		//float mx = ofGetMouseX();
-		//CLAMP(mx, 1.0f, ofGetWidth());
-		//float step = mx / ofGetWidth();
-		//ofPath path;
-		//path.setStrokeWidth(40);
-		//path.setStrokeColor(ofColor(0, 255, 0, 255));
-		//path.lineTo(line[i]);
-		//path.draw();
-
+		ofSetColor(255, 79, 56, 255);
+		mesh.draw();
+		ofSetColor(0, 73, 148);
+		ofDrawCircle(vL[2], W);
+		//ofDrawBitmapString(ofToString(num), vL[2]);
 	}
 	else {
 		backgroundFbo.draw(0, 0);
@@ -480,23 +486,7 @@ void ViewController::changeMode() {
 		ofPath p = svgDEOutline.getPathAt(0);
 		p.setPolyWindingMode(OF_POLY_WINDING_ODD);
 		vector<ofPolyline>& lines = const_cast<vector<ofPolyline>&>(p.getOutline());
-
-		polyDEOutlinesIn = lines[0].getResampledByCount(800);
-
-		//svgDEOutline.load("images/Erg_DEOutlineOutside.svg");
-		//p = svgDEOutline.getPathAt(0);
-		//p.setPolyWindingMode(OF_POLY_WINDING_ODD);
-		//lines = const_cast<vector<ofPolyline>&>(p.getOutline());
-
-		//polyDEOutlinesOut = lines[0].getResampledByCount(500);
-
-		//polyDEOutlinesOut = lines[0].getResampledBySpacing(1);
-
-		//for (int i = 0; i < polyDEOutlinesIn.size(); i++) {
-		//	
-		//	polyDEOutlinesIn[i] *= 1.1;
-		//	//polyDEOutlinesIn[i].scale(0.28);
-		//}
+		polyDEOutlines = lines[0].getResampledByCount(800);
 
 	}
 	break;

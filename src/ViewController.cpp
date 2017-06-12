@@ -559,7 +559,7 @@ const ofFbo & ViewController::getFBO() {
 void ViewController::renderSvgToFbo(string filePath, ofFbo & svgFbo, float w, float h, ofColor c) {
 	ofxSVG svg;
 	svg.load(filePath);
-	svgFbo.allocate(w, h, GL_RGBA, 8);
+	svgFbo.allocate(w, h, GL_RGBA); //, 8 multisampling not working on linux :(
 	svgFbo.begin();
 	{
 		ofClear(c);

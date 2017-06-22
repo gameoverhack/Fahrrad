@@ -84,7 +84,7 @@ protected:
 	void renderSender();
 	void renderReciever();
 
-	void renderSvgToFbo(string filePath, ofFbo& svgFbo, float w, float h, ofColor c);
+	void renderToFbo(string fileName, ofFbo& imageFbo, float w, float h, ofColor c);
 	int getTodaysRiderIndex();
 
 	void changeMode();

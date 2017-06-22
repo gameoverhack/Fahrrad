@@ -450,11 +450,11 @@ void ViewController::changeMode() {
 	{
 
 		fbo.allocate(1080.0f, 1920.0f, GL_RGBA); // vertical layout
-		renderSvgToFbo("images/Erg_Sender.svg", backgroundFbo, 1080.0f, 1920.0f, ofColor(255, 255, 255, 0));
-		renderSvgToFbo("images/Erg_DialRed.svg", dialRedFbo, 923.422f, 923.422f, ofColor(0, 0, 0, 0));
-		renderSvgToFbo("images/Erg_DialMax.svg", dialMaxFbo, 923.422f, 923.422f, ofColor(0, 0, 0, 0));
-		renderSvgToFbo("images/Erg_DialGrey.svg", dialGreyFbo, 923.422f, 923.422f, ofColor(0, 0, 0, 0));
-		renderSvgToFbo("images/Erg_DialMask.svg", dialMaskFbo, 923.422f, 923.422f, ofColor(0, 0, 0, 0));
+		renderToFbo("Erg_Sender", backgroundFbo, 1080.0f, 1920.0f, ofColor(255, 255, 255, 0));
+		renderToFbo("Erg_DialRed", dialRedFbo, 923.422f, 923.422f, ofColor(0, 0, 0, 0));
+		renderToFbo("Erg_DialMax", dialMaxFbo, 923.422f, 923.422f, ofColor(0, 0, 0, 0));
+		renderToFbo("Erg_DialGrey", dialGreyFbo, 923.422f, 923.422f, ofColor(0, 0, 0, 0));
+		renderToFbo("Erg_DialMask", dialMaskFbo, 923.422f, 923.422f, ofColor(0, 0, 0, 0));
 		
 		fDeviceBold.load("fonts/NotBd.ttf",44);
 		fDeviceItalic.load("fonts/NotRgI.ttf", 17);
@@ -472,7 +472,7 @@ void ViewController::changeMode() {
 	{
 
 		fbo.allocate(1080.0f, 1080.0f, GL_RGBA); // horizontal/square layout
-		renderSvgToFbo("images/Erg_Receiver.svg", backgroundFbo, 1080.0f, 1080.0f, ofColor(255, 255, 255, 0));
+		renderToFbo("Erg_Receiver", backgroundFbo, 1080.0f, 1080.0f, ofColor(255, 255, 255, 0));
 		
 		fAnimalBold.load("fonts/NotMd_.ttf", 24);
 		fAnimalItalic.load("fonts/NotRgI.ttf", 24);
@@ -556,17 +556,23 @@ const ofFbo & ViewController::getFBO() {
 }
 
 //--------------------------------------------------------------
-void ViewController::renderSvgToFbo(string filePath, ofFbo & svgFbo, float w, float h, ofColor c) {
-	ofxSVG svg;
-	svg.load(filePath);
-	svgFbo.allocate(w, h, GL_RGBA); //, 8 multisampling not working on linux :(
-	svgFbo.begin();
+void ViewController::renderToFbo(string fileName, ofFbo & imageFbo, float w, float h, ofColor c) {
+	string filePath = "images/" + fileName + ".png";
+
+	//ofxSVG svg;
+	//svg.load(filePath);
+	
+	ofImage img;
+	img.load(filePath);
+
+	imageFbo.allocate(w, h, GL_RGBA); //, 8 multisampling not working on linux :(
+	imageFbo.begin();
 	{
 		ofClear(c);
 		ofSetColor(255, 255, 255, 255);
-		svg.draw();
+		img.draw(-1, -1, imageFbo.getWidth() + 1, imageFbo.getHeight() + 1);
 	}
-	svgFbo.end();
+	imageFbo.end();
 }
 
 //--------------------------------------------------------------

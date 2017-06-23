@@ -29,13 +29,8 @@ public:
 	void triggerSensor(SensorMode sensorMode);
 	void setRecordRiders(bool b);
 	const RiderInfo& getCurrentRiderInfo();
-	//const vector<RiderInfo>& getTopRiderInfo();
-	//const RiderSummaryUnion& getRiderSummary();
 	const RiderData& getRiderData();
 	bool isDataLoaded();
-
-	//string getAnimalFromIndex(const int& index);
-	//string getDeviceFromIndex(const int& index);
 
 protected:
 

@@ -1,9 +1,6 @@
 #include "BicycleController.h"
 
 bool RiderRankFunction(const RiderInfo& a, const RiderInfo& b) { 
-	//return	a.month > b.month ||
-	//		a.month == b.month && a.day > b.day ||
-	//		a.month == b.month && a.day == b.day && a.topSpeed > b.topSpeed;
 	return a.topSpeed > b.topSpeed;
 }
 
@@ -18,13 +15,7 @@ BicycleController::~BicycleController() {
 	ofLogNotice() << className << ": destructor";
 
 	// kill the thread
-
-	//lock();
-	//delete[] riderSummary.data;
-	//unlock();
-
 	waitForThread();
-	
 
 	this->IGuiBase::~IGuiBase(); // call base destructor
 }
@@ -310,21 +301,10 @@ void BicycleController::threadedFunction() {
 
 					if (bDone) {
 
-						//for (unordered_map< string, vector<RiderInfo> >::iterator it = dailyRiderInfo.begin(); it != dailyRiderInfo.end(); ++it) {
-						//	ofLogNotice() << "Check: " << it->first << " with " << it->second.size() << " riders";
-						//}
-
 						// sort todays rider info
-
 						vector<RiderInfo>& todaysRiderInfo = getTodaysRiderInfo();
 						std::sort(todaysRiderInfo.begin(), todaysRiderInfo.end(), RiderRankFunction);
 						std::sort(allRiderInfo.begin(), allRiderInfo.end(), RiderRankFunction);
-
-						int dayranking = 0;
-						for (int i = 0; i < todaysRiderInfo.size(); i++) {
-							todaysRiderInfo[i].dayranking = dayranking;
-							dayranking++;
-						}
 
 						int allranking = 0;
 						for (int i = 0; i < allRiderInfo.size(); i++) {
@@ -411,12 +391,6 @@ void BicycleController::threadedFunction() {
 						std::sort(todaysRiderInfo.begin(), todaysRiderInfo.end(), RiderRankFunction);
 						std::sort(allRiderInfo.begin(), allRiderInfo.end(), RiderRankFunction);
 
-						int dayranking = 0;
-						for (int i = 0; i < todaysRiderInfo.size(); i++) {
-							todaysRiderInfo[i].dayranking = dayranking;
-							dayranking++;
-						}
-
 						int allranking = 0;
 						for (int i = 0; i < allRiderInfo.size(); i++) {
 							allRiderInfo[i].allranking = allranking;
@@ -462,19 +436,6 @@ void BicycleController::updateRiderInfo() {
 
 	if (currentRider.currentSpeed > currentRider.topSpeed) {
 		currentRider.topSpeed = currentRider.currentSpeed;
-	}
-
-	currentRider.dayranking = 0;
-
-	vector<RiderInfo>& todaysRiderInfo = getTodaysRiderInfo();
-
-	for (int i = 0; i < todaysRiderInfo.size(); i++) {
-		if (currentRider.topSpeed > todaysRiderInfo[i].topSpeed) {
-			break;
-		}
-		else {
-			currentRider.dayranking++;
-		}
 	}
 
 	currentRider.allranking = 0;
@@ -536,23 +497,12 @@ void BicycleController::setRecordRiders(bool b) {
 }
 
 //--------------------------------------------------------------
-const RiderInfo & BicycleController::getCurrentRiderInfo(){
+const RiderInfo & BicycleController::getCurrentRiderInfo() {
 	ofScopedLock lock(mutex);
 	return currentRider;
 }
 
-////--------------------------------------------------------------
-//const vector<RiderInfo>& BicycleController::getTopRiderInfo() {
-//	ofScopedLock lock(mutex);
-//	return topRiderInfo;
-//}
-//
-////--------------------------------------------------------------
-//const RiderSummaryUnion & BicycleController::getRiderSummary() {
-//	ofScopedLock lock(mutex);
-//	return riderSummary;
-//}
-
+//--------------------------------------------------------------
 const RiderData & BicycleController::getRiderData(){
 	ofScopedLock lock(mutex);
 	return riderData;
@@ -563,25 +513,6 @@ bool BicycleController::isDataLoaded() {
 	ofScopedLock lock(mutex);
 	return bIsDataLoaded;
 }
-
-////--------------------------------------------------------------
-//string BicycleController::getAnimalFromIndex(const int & index) {
-//	if (index >= 0 && index < milestonesSpeed.size()) {
-//		return milestonesSpeed[index].type;
-//	} else {
-//		return "";
-//	}
-//}
-//
-////--------------------------------------------------------------
-//string BicycleController::getDeviceFromIndex(const int & index) {
-//	if (index >= 0 && index < milestonesWatts.size()) {
-//		return milestonesWatts[index].type;
-//	}
-//	else {
-//		return "";
-//	}
-//}
 
 //--------------------------------------------------------------
 void BicycleController::drawGUI() {
@@ -638,18 +569,6 @@ void BicycleController::drawGUI() {
 				ImGui::NewLine();
 				int numRequested = 5;
 				int numFound = 0;
-				vector<RiderInfo>& todaysRiderInfo = getTodaysRiderInfo();
-				for (int i = 0; i < todaysRiderInfo.size(); i++) {
-					if (numFound < numRequested) {
-						ImGui::Text("day: %i  %.3f km/hr  %.3f m  %i / %i / %i", todaysRiderInfo[i].dayranking + 1,
-							todaysRiderInfo[i].topSpeed, todaysRiderInfo[i].distanceTravelled,
-							//getAnimalFromIndex(todaysRiderInfo[i].currentAnimal).c_str(), getDeviceFromIndex(todaysRiderInfo[i].currentDevice).c_str(),
-							todaysRiderInfo[i].day, todaysRiderInfo[i].month, todaysRiderInfo[i].year);
-						numFound++;
-					}
-				}
-				ImGui::NewLine();
-				numFound = 0;
 				for (int i = 0; i < allRiderInfo.size(); i++) {
 					if (numFound < numRequested) {
 						ImGui::Text("all: %i  %.3f km/hr  %.3f m  %i / %i / %i", allRiderInfo[i].allranking + 1,

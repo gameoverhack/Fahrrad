@@ -91,7 +91,7 @@ typedef struct {
 
 	bool isActive = false;
 
-	int dayranking = INFINITY;
+	//int dayranking = INFINITY;
 	int allranking = INFINITY;
 
 	float normalisedSpeed = 0.0f;
@@ -109,7 +109,7 @@ typedef struct {
 
 	template<class Archive>
 	void serialize(Archive & ar, const unsigned int version) {
-		ar & BOOST_SERIALIZATION_NVP(dayranking);
+		//ar & BOOST_SERIALIZATION_NVP(dayranking);
 		ar & BOOST_SERIALIZATION_NVP(allranking);
 		ar & BOOST_SERIALIZATION_NVP(topSpeed);
 		ar & BOOST_SERIALIZATION_NVP(topKiloWatts);

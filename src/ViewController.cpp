@@ -221,7 +221,7 @@ void ViewController::renderSender() {
 		fWattsCurrent.draw(watts, 871.709, 142.148, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
 
 		// draw speed - current and max
-		fSpeedCurrent.draw(speedCurrent, 537.281, 818.94, ofxTextAlign::HORIZONTAL_ALIGN_CENTER | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
+		fSpeedCurrent.draw(speedCurrent, 537.281, 758.004, ofxTextAlign::HORIZONTAL_ALIGN_CENTER | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
 		ofSetColor(238, 82, 83); // TODO: check this color!
 		fSpeedHigh.draw(speedHigh, 913.814, 307.874, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
 
@@ -358,6 +358,7 @@ void ViewController::renderReciever() {
 		ofMesh mesh;
 		mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
 
+		// from https://stackoverflow.com/questions/14514543/opengl-es-2-0-dynamically-change-line-width
 		for (int j = 10; j < num; j++) {
 
 			int index1 = j - 1;

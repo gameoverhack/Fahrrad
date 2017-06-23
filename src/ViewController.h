@@ -59,7 +59,8 @@ protected:
 
 	typedef struct {
 		float value;
-		string type;
+		string typeDE;
+		string typeEN;
 	} MileStone;
 
 	vector<MileStone> milestonesSpeed;

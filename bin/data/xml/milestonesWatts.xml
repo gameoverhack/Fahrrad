@@ -1,55 +1,73 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <milestonesWatt>
+  <milestone>
+    <nameDE>ein machtloses Ding</nameDE>
+    <nameEN>a powerless thing</nameEN>
+    <watt>0.0</watt>
+  </milestone>
 	<milestone>
-		<name>Nachtlicht</name>
+		<nameDE>Nachtlicht</nameDE>
+    <nameEN>Nachtlicht</nameEN>
 		<watt>0.5</watt>
 	</milestone>
 	<milestone>
-		<name>Radiowecker</name>
+		<nameDE>Radiowecker</nameDE>
+    <nameEN>Radiowecker</nameEN>
 		<watt>3.0</watt>
 	</milestone>
 	<milestone>
-		<name>Handyladegerät</name>
+		<nameDE>Handyladegerät</nameDE>
+    <nameEN>Handyladegerät</nameEN>
 		<watt>5.0</watt>
 	</milestone>
 	<milestone>
-		<name>WLAN-Router</name>
+		<nameDE>WLAN-Router</nameDE>
+    <nameEN>WLAN-Router</nameEN>
 		<watt>6.0</watt>
 	</milestone>
 	<milestone>
-		<name>Energiesparlampe</name>
+		<nameDE>Energiesparlampe</nameDE>
+    <nameEN>Energiesparlampe</nameEN>
 		<watt>11.0</watt>
 	</milestone>
 	<milestone>
-		<name>DVD-Player</name>
+		<nameDE>DVD-Player</nameDE>
+    <nameEN>DVD-Player</nameEN>
 		<watt>20.0</watt>
 	</milestone>
 	<milestone>
-		<name>Flachbildschirm (17")</name>
+		<nameDE>Flachbildschirm (17")</nameDE>
+    <nameEN>Flachbildschirm (17")</nameEN>
 		<watt>30.0</watt>
 	</milestone>
 	<milestone>
-		<name>Glühbirne</name>
+		<nameDE>Glühbirne</nameDE>
+    <nameEN>Glühbirne</nameEN>
 		<watt>40.0</watt>
 	</milestone>
 	<milestone>
-		<name>Laptop</name>
+		<nameDE>Laptop</nameDE>
+    <nameEN>Laptop</nameEN>
 		<watt>50.0</watt>
 	</milestone>
 	<milestone>
-		<name>Lockenstab</name>
+		<nameDE>Lockenstab</nameDE>
+    <nameEN>Lockenstab</nameEN>
 		<watt>100.0</watt>
 	</milestone>
 	<milestone>
-		<name>Pürierstab</name>
+		<nameDE>Pürierstab</nameDE>
+    <nameEN>Pürierstab</nameEN>
 		<watt>200.0</watt>
 	</milestone>
 	<milestone>
-		<name>Toaster</name>
+		<nameDE>Toaster</nameDE>
+    <nameEN>Toaster</nameEN>
 		<watt>800.0</watt>
 	</milestone>
 	<milestone>
-		<name>Mickrowelle</name>
+		<nameDE>Mickrowelle</nameDE>
+    <nameEN>Mickrowelle</nameEN>
 		<watt>1000.0</watt>
 	</milestone>
 </milestonesWatt>

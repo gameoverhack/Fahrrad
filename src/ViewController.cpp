@@ -34,8 +34,9 @@ void ViewController::setup() {
 		for (int i = 0; i < numMilestones; i++) {
 			MileStone m;
 			m.value = XML.getValue("milestone:speed", 0., i);
-			m.type = XML.getValue("milestone:name", "", i);
-			ofLogNotice() << "Milestone: " << i << " = (" << m.value << ", " << m.type << ")";
+			m.typeDE = XML.getValue("milestone:nameDE", "", i);
+			m.typeEN = XML.getValue("milestone:nameEN", "", i);
+			ofLogNotice() << "Milestone: " << i << " = (" << m.value << ", " << m.typeDE << ", " << m.typeEN << ")";
 			milestonesSpeed.push_back(m);
 		}
 	}
@@ -50,8 +51,9 @@ void ViewController::setup() {
 		for (int i = 0; i < numMilestones; i++) {
 			MileStone m;
 			m.value = XML.getValue("milestone:watt", 0., i);
-			m.type = XML.getValue("milestone:name", "", i);
-			ofLogNotice() << "Milestone: " << i << " = (" << m.value << ", " << m.type << ")";
+			m.typeDE = XML.getValue("milestone:nameDE", "", i);
+			m.typeEN = XML.getValue("milestone:nameEN", "", i);
+			ofLogNotice() << "Milestone: " << i << " = (" << m.value << ", " << m.typeDE << ", " << m.typeEN << ")";
 			milestonesWatts.push_back(m);
 		}
 	}
@@ -141,11 +143,9 @@ void ViewController::renderSender() {
 		string deviceEN = "";
 
 		for (int i = 0; i < milestonesWatts.size(); i++) {
-			if (riderInfo.currentKiloWatts < milestonesWatts[i].value) {
-				if (i > 0) {
-					//currentRider.currentDevice = i;
-					deviceDE = deviceEN = milestonesWatts[i].type;
-				}
+			if (riderInfo.currentKiloWatts <= milestonesWatts[i].value) {
+				deviceDE = milestonesWatts[i].typeDE;
+				deviceEN = milestonesWatts[i].typeEN;
 				break;
 			}
 		}
@@ -294,11 +294,9 @@ void ViewController::renderReciever() {
 
 		//int currentAnimal = -1;
 		for (int i = 0; i < milestonesSpeed.size(); i++) {
-			if (riderSummary.data[RS_SPEED_CURRENT] < milestonesSpeed[i].value) {
-				if (i > 0) {
-					//currentAnimal = i;//milestonesSpeed[i].type;
-					animalDE = animalEN = milestonesSpeed[i].type;
-				}
+			if (riderSummary.data[RS_SPEED_CURRENT] <= milestonesSpeed[i].value) {
+				animalDE = milestonesSpeed[i].typeDE;
+				animalEN = milestonesSpeed[i].typeEN;
 				break;
 			}
 		}
@@ -348,12 +346,12 @@ void ViewController::renderReciever() {
 		// calculate outline of germany
 		//float mx = ofGetMouseX();
 		//CLAMP(mx, 1.0f, ofGetWidth());
-		//float step = mx / ofGetWidth();
+		//float step = mx / ofGetWidth() * 2.0 * 100.0f;
 		
 		float W = 6.0; // width of line - TODO: parameter
 		ofPoint vL[4];
 
-		int num = (tP / 100.0f * polyDEOutlines.size()) + 11; // 11 is Dresden startpoint
+		int num = (tP / 100.0f * polyDEOutlines.size()) + 11; // step // 11 is Dresden startpoint
 
 		ofMesh mesh;
 		mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
@@ -386,7 +384,6 @@ void ViewController::renderReciever() {
 		}
 
 		// draw current position around germany
-
 		ofFill();
 		ofSetColor(255, 79, 56, 255);
 		mesh.draw();

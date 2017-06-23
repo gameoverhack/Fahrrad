@@ -97,6 +97,7 @@ protected:
 	int updateVelocityTime;
 	int lastVelocityTimeout;
 
+	int minimumRiderTime;
 	int numberOfMagnets;
 
 	bool bIsRiderActive;
@@ -139,6 +140,7 @@ protected:
 		ar & BOOST_SERIALIZATION_NVP(riderInactiveTime);
 		ar & BOOST_SERIALIZATION_NVP(boosterDifficulty);
 		ar & BOOST_SERIALIZATION_NVP(numberOfMagnets);
+		ar & BOOST_SERIALIZATION_NVP(minimumRiderTime);
 	}
 
 };

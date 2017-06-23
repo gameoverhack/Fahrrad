@@ -82,7 +82,7 @@ void BicycleController::setDefaults() {
 	boosterDifficulty = 5;
 
 	numberOfMagnets = 2;
-
+	minimumRiderTime = 10;
 }
 
 //--------------------------------------------------------------
@@ -376,11 +376,11 @@ void BicycleController::threadedFunction() {
 
 					bIsRiderActive = false;
 					currentAverageVelocity = lastMeasuredVelocity = 0.0;
+					
 
-					if (bRecordRiders && bIsDataLoaded) {
+					if (bRecordRiders && bIsDataLoaded && currentRider.time >= minimumRiderTime * 1000) {
 
 						vector<RiderInfo>& todaysRiderInfo = getTodaysRiderInfo();
-
 						currentRider.isActive = false;
 
 						totalNumberRiders++;
@@ -406,6 +406,10 @@ void BicycleController::threadedFunction() {
 						ostringstream os;
 						os << "configs/stats/dailyRiderInfo_" << ofGetYear() << "_" << std::setfill('0') << std::setw(2) << ofGetMonth() << "_" << std::setfill('0') << std::setw(2) << ofGetDay() << string(CONFIG_TYPE);
 						Serializer.saveClass(ofToDataPath(os.str()), (todaysRiderInfo), ARCHIVE_BINARY);
+					}
+					else {
+						currentRider.isActive = false;
+						currentRider = RiderInfo();
 					}
 					
 
@@ -526,6 +530,7 @@ void BicycleController::drawGUI() {
 
 			ImGui::SliderInt("Wheel Diameter (mm)", &wheelDiameter, 600, 700);
 			ImGui::SliderInt("Number of Magnets", &numberOfMagnets, 1, 4);
+			ImGui::SliderInt("Minimum Rider Time (s)", &minimumRiderTime, 1, 30);
 			
 			ImGui::SliderInt("Update Velocity (millis)", &updateVelocityTime, 20, 1000);
 

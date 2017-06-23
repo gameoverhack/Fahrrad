@@ -72,14 +72,17 @@ void BicycleController::setDefaults() {
 	nextSensorMode = SENSOR_SIMULATE;
 
 	wheelDiameter = 678; // in millimetres
-	updateVelocityTime = 250; // in millis
+	updateVelocityTime = 150; // in millis
 
 	velocityDecay = 0.0;
 	velocityEase = 0.5;
-	velocityNormalSpeed = 20.0;
+	velocityNormalSpeed = 40.0;
 
-	riderInactiveTime = 6200; //millis
+	riderInactiveTime = 2000; //millis
 	boosterDifficulty = 5;
+
+	numberOfMagnets = 2;
+	minimumRiderTime = 30;
 }
 
 //--------------------------------------------------------------
@@ -177,7 +180,7 @@ void BicycleController::threadedFunction() {
 			{
 				double wheelCircumference = wheelDiameter * PI;
 				double targetVelocity = simulateVelocity * 1000.0 * 1000.0 / 60.0 / 60.0; // km/h * meters * millimeters / minutes / seconds = mm/s
-				double simulateTimeout = wheelCircumference / targetVelocity * 1000.0; // mm / mm/s * 1000.0 = milliseconds
+				double simulateTimeout = (wheelCircumference / targetVelocity * 1000.0) / numberOfMagnets; // mm / mm/s * 1000.0 = milliseconds
 				if (timeSinceLastSensor >= simulateTimeout) {
 					triggerSensor(SENSOR_SIMULATE);
 				}
@@ -477,7 +480,7 @@ void BicycleController::triggerSensor(SensorMode sensorMode) {
 		}
 
 		lastSensorTimeout = ofGetElapsedTimeMillis();
-		float dist = (wheelDiameter * PI / 1000.0);
+		float dist = (wheelDiameter * PI / 1000.0) / numberOfMagnets;
 		lastMeasuredVelocity = (dist / 1000.0) / (timeSinceLastSensor / 1000.0 / 60.0 / 60.0);
 		distanceTravelled += dist;
 		currentRider.distanceTravelled += dist;
@@ -522,7 +525,8 @@ void BicycleController::drawGUI() {
 		{
 
 			ImGui::SliderInt("Wheel Diameter (mm)", &wheelDiameter, 600, 700);
-
+			ImGui::SliderInt("Number of Magnets", &numberOfMagnets, 1, 4);
+			
 			ImGui::SliderInt("Update Velocity (millis)", &updateVelocityTime, 20, 1000);
 
 			ImGui::SliderFloat("Velocity Decay (per/update)", &velocityDecay, 0.0, 20.0);
@@ -580,7 +584,8 @@ void BicycleController::drawGUI() {
 				}
 				ImGui::NewLine();
 				int index = getTodaysRiderIndex();
-				ImGui::Text("todays index: %i distance: %.3f m total days: %i  used days: %i data: %i bytes", index, totalDailyDistances[getTodaysRiderIndex()], totalDailyDistances.size(), activeDaysUsed, (4 + activeDaysUsed)*sizeof(float));
+				ImGui::Text("todays index: %i distance: %.3f m days: %i time: %i used days: %i data: %i bytes", 
+					index, totalDailyDistances[getTodaysRiderIndex()], totalDailyDistances.size(), activeDaysUsed, currentRider.time, (4 + activeDaysUsed)*sizeof(float));
 
 			}
 

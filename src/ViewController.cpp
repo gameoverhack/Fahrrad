@@ -70,7 +70,7 @@ void ViewController::setDefaults() {
 
 	ofLogNotice() << className << ": setDefaults";
 
-	viewTimeout = (int)(1000.0 / 60.0);
+	viewTimeout = 150;
 	nextViewMode = VIEW_NONE;
 
 }

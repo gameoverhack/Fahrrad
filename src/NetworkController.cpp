@@ -54,7 +54,7 @@ void NetworkController::setDefaults() {
 	ipPort = 7000;
 
 	nextNetworkMode = NETWORK_NONE;
-	networkTimeout = 50.0f;
+	networkTimeout = 150;
 
 }
 

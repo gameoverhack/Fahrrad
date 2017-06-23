@@ -148,35 +148,20 @@ void NetworkController::threadedFunction() {
 				case NETWORK_SEND:
 				{
 					if (bNetworkNeedsUpdate) {
-						//char c[1] = { '*' };
-						//udp.Send(&c[0], 1);
-						//ofSleepMillis(1);
 						udp.Send(&riderSummary.chars[0], riderSummary.data[RS_DATA_SIZE] * sizeof(float));
-						//ofSleepMillis(1);
 						bNetworkNeedsUpdate = false;
 					}
 				}
 				break;
 				case NETWORK_RECV:
 				{
-					//if (!bNetworkNeedsUpdate) {
-					//	char c[1] = { '0' };
-					//	int recv = udp.Receive(&c[0], 1);
-					//	if (recv == 1) {
-					//		if (c[0] == '*') {
-					//			bNetworkNeedsUpdate = true;
-					//		}
-					//	}
-					//}
-					//else {
-						char c[1400] = { 0 };
-						int recv = udp.Receive(&c[0], 1400);
-						if (recv > 0) {
-							if (riderSummary.data == nullptr) riderSummary.data = new float[(int)(recv / sizeof(float))];
-							memcpy(&riderSummary.chars[0], &c[0], recv);
-						}
-						//bNetworkNeedsUpdate = false;
-					//}
+
+					char c[1400] = { 0 };
+					int recv = udp.Receive(&c[0], 1400);
+					if (recv > 0) {
+						if (riderSummary.data == nullptr) riderSummary.data = new float[(int)(recv / sizeof(float))];
+						memcpy(&riderSummary.chars[0], &c[0], recv);
+					}
 
 				}
 				break;

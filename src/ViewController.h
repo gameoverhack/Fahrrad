@@ -6,7 +6,7 @@
 #include "ofxTextAlignTTF.h"
 #include "ofxXmlSettings.h"
 
-class ViewController : public IGuiBase, public ofThread {
+class ViewController : public IGuiBase {
 public:
 
 	ViewController();
@@ -85,11 +85,8 @@ protected:
 	void renderReciever();
 
 	void renderToFbo(string fileName, ofFbo& imageFbo, float w, float h, ofColor c);
-	int getTodaysRiderIndex();
 
 	void changeMode();
-
-	void threadedFunction();
 
 	void setDefaults();
 	bool loadParameters();

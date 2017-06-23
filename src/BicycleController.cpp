@@ -66,7 +66,7 @@ void BicycleController::setup() {
 		bYear = startYear;
 
 		numTopRiders = 3;
-		topRiderInfo.resize(numTopRiders + 2); // top N + current + last
+		riderData.topRiderInfo.resize(numTopRiders + 2); // top N + current + last
 
 	}
 
@@ -329,18 +329,18 @@ void BicycleController::threadedFunction() {
 						int allranking = 0;
 						for (int i = 0; i < allRiderInfo.size(); i++) {
 							allRiderInfo[i].allranking = allranking;
-							if (i < numTopRiders) topRiderInfo[i] = allRiderInfo[i];
+							if (i < numTopRiders) riderData.topRiderInfo[i] = allRiderInfo[i];
 							allranking++;
 						}
 
-						if(allRiderInfo.size() > 0) topRiderInfo[topRiderInfo.size() - 1] = allRiderInfo[allRiderInfo.size() - 1];
+						if(allRiderInfo.size() > 0) riderData.topRiderInfo[riderData.topRiderInfo.size() - 1] = allRiderInfo[allRiderInfo.size() - 1];
 
 						bIsDataLoaded = true;
 
 						//riderSummary.data = new float[4 + totalDailyDistances.size()];
-						riderSummary.data = new float[RS_DATA_START + activeDaysUsed];
-						riderSummary.data[RS_DATA_SIZE] = RS_DATA_START + activeDaysUsed;
-						riderSummary.data[RS_NUM_DAYS] = activeDaysUsed;
+						riderData.riderSummary.data = new float[RS_DATA_START + activeDaysUsed];
+						riderData.riderSummary.data[RS_DATA_SIZE] = RS_DATA_START + activeDaysUsed;
+						riderData.riderSummary.data[RS_NUM_DAYS] = activeDaysUsed;
 
 					}
 				}
@@ -361,21 +361,21 @@ void BicycleController::threadedFunction() {
 
 					if (bIsRiderActive) updateRiderInfo();
 
-					topRiderInfo[topRiderInfo.size() - 2] = currentRider;
+					riderData.topRiderInfo[riderData.topRiderInfo.size() - 2] = currentRider;
 
-					riderSummary.data[RS_SPEED_CURRENT] = currentRider.currentSpeed;
+					riderData.riderSummary.data[RS_SPEED_CURRENT] = currentRider.currentSpeed;
 					//riderSummary.data[RS_NUM_DAYS] = totalDailyDistances.size();
-					riderSummary.data[RS_IS_ACTIVE] = bIsRiderActive;
-					riderSummary.data[RS_DISTANCE_DAY] = totalDailyDistances[getTodaysRiderIndex()];
-					riderSummary.data[RS_DISTANCE_TOTAL] = totalDistanceTravelled;
-					riderSummary.data[RS_TIME_TOTAL] = (totalTimeTaken + currentRider.time) / 1000.0f;
-					riderSummary.data[RS_RIDERS_TOTAL] = totalNumberRiders;
+					riderData.riderSummary.data[RS_IS_ACTIVE] = bIsRiderActive;
+					riderData.riderSummary.data[RS_DISTANCE_DAY] = totalDailyDistances[getTodaysRiderIndex()];
+					riderData.riderSummary.data[RS_DISTANCE_TOTAL] = totalDistanceTravelled;
+					riderData.riderSummary.data[RS_TIME_TOTAL] = (totalTimeTaken + currentRider.time) / 1000.0f;
+					riderData.riderSummary.data[RS_RIDERS_TOTAL] = totalNumberRiders;
 
 					int usedDay = 0;
 
 					for (int i = 0; i < totalDailyDistances.size(); i++) {
 						if (daysOfWeekToUse[i]) {
-							riderSummary.data[RS_DATA_START + usedDay] = totalDailyDistances[i];
+							riderData.riderSummary.data[RS_DATA_START + usedDay] = totalDailyDistances[i];
 							usedDay++;
 						}
 					}
@@ -420,11 +420,11 @@ void BicycleController::threadedFunction() {
 						int allranking = 0;
 						for (int i = 0; i < allRiderInfo.size(); i++) {
 							allRiderInfo[i].allranking = allranking;
-							if (i < numTopRiders) topRiderInfo[i] = allRiderInfo[i];
+							if (i < numTopRiders) riderData.topRiderInfo[i] = allRiderInfo[i];
 							allranking++;
 						}
 
-						topRiderInfo[topRiderInfo.size() - 1] = allRiderInfo[allRiderInfo.size() - 1];
+						riderData.topRiderInfo[riderData.topRiderInfo.size() - 1] = allRiderInfo[allRiderInfo.size() - 1];
 
 						ostringstream os;
 						os << "configs/stats/dailyRiderInfo_" << ofGetYear() << "_" << std::setfill('0') << std::setw(2) << ofGetMonth() << "_" << std::setfill('0') << std::setw(2) << ofGetDay() << string(CONFIG_TYPE);
@@ -541,16 +541,21 @@ const RiderInfo & BicycleController::getCurrentRiderInfo(){
 	return currentRider;
 }
 
-//--------------------------------------------------------------
-const vector<RiderInfo>& BicycleController::getTopRiderInfo() {
-	ofScopedLock lock(mutex);
-	return topRiderInfo;
-}
+////--------------------------------------------------------------
+//const vector<RiderInfo>& BicycleController::getTopRiderInfo() {
+//	ofScopedLock lock(mutex);
+//	return topRiderInfo;
+//}
+//
+////--------------------------------------------------------------
+//const RiderSummaryUnion & BicycleController::getRiderSummary() {
+//	ofScopedLock lock(mutex);
+//	return riderSummary;
+//}
 
-//--------------------------------------------------------------
-const RiderSummaryUnion & BicycleController::getRiderSummary() {
+const RiderData & BicycleController::getRiderData(){
 	ofScopedLock lock(mutex);
-	return riderSummary;
+	return riderData;
 }
 
 //--------------------------------------------------------------

@@ -53,14 +53,10 @@ void ofApp::update() {
 	{
 		bicycleController->update();
 
-		//if (bicycleController->isDataLoaded()) {
+		const RiderData& riderData = bicycleController->getRiderData();
+		networkController->setRiderSummary(riderData.riderSummary);
+		viewController->setData(riderData.riderSummary, riderData.topRiderInfo);
 
-			const vector<RiderInfo>& topRiderInfo = bicycleController->getTopRiderInfo();
-			const RiderSummaryUnion& riderSummary = bicycleController->getRiderSummary();
-			networkController->setRiderSummary(riderSummary);
-			viewController->setData(riderSummary, topRiderInfo);
-
-		//}
 
 		networkController->update();
 		viewController->update();

@@ -122,6 +122,11 @@ typedef struct {
 
 } RiderInfo;
 
+typedef struct {
+	vector<RiderInfo> topRiderInfo;
+	RiderSummaryUnion riderSummary;
+} RiderData;
+
 inline void uniqueRandomIndex(vector<int> & vec, int start, int end, int size) {
 
 	int r = (int)ofRandom(start, end);

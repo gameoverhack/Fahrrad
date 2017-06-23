@@ -11,9 +11,6 @@ ViewController::~ViewController() {
 
 	ofLogNotice() << className << ": destructor";
 
-	// kill the thread
-	//waitForThread();
-
 	this->IGuiBase::~IGuiBase(); // call base destructor
 }
 
@@ -61,15 +58,11 @@ void ViewController::setup() {
 	else {
 		ofLogError() << "XML milestonesWatt could not be loaded";
 	}
-
-	//startThread();
 }
 
 //--------------------------------------------------------------
 void ViewController::setMode(ViewMode mode) {
-	lock();
 	nextViewMode = mode;
-	unlock();
 }
 
 //--------------------------------------------------------------
@@ -86,9 +79,6 @@ void ViewController::setDefaults() {
 void ViewController::update() {
 
 	if (!bUse) return;
-
-	// check thread safe GUI changes
-	//lock();
 
 	// check what mode we're in
 	if (nextViewMode != currentViewMode) {
@@ -123,8 +113,6 @@ void ViewController::update() {
 
 		bViewNeedsUpdate = false;
 	}
-
-	//unlock();
 
 }
 
@@ -460,7 +448,7 @@ void ViewController::changeMode() {
 		fDeviceItalic.load("fonts/NotRgI.ttf", 17);
 
 		fWattsCurrent.load("fonts/OpenSans-Bold.ttf", 56);
-		fSpeedCurrent.load("fonts/OpenSans-Bold.ttf", 260);
+		fSpeedCurrent.load("fonts/OpenSans-Bold.ttf", 166);
 		fSpeedHigh.load("fonts/OpenSans-Regular.ttf", 42);
 		fDistanceTime.load("fonts/OpenSans-Bold.ttf", 45);
 		fHeartRate.load("fonts/OpenSans-Bold.ttf", 44);
@@ -498,25 +486,6 @@ void ViewController::changeMode() {
 }
 
 //--------------------------------------------------------------
-void ViewController::threadedFunction() {
-
-	while (isThreadRunning()) {
-
-		if (bUse) {
-
-			//lock();
-
-			//unlock();
-
-		}
-
-		ofSleepMillis(1);
-
-	}
-
-}
-
-//--------------------------------------------------------------
 void ViewController::drawGUI() {
 
 	if (ImGui::CollapsingHeader(className.c_str())) {
@@ -525,10 +494,7 @@ void ViewController::drawGUI() {
 			ImGui::SliderInt("View Timeout (millis)", &viewTimeout, 1, 1000);
 			ImGui::Combo("View Mode", (int*)&nextViewMode, viewModes);
 			ImGui::NewLine();
-			//lock();
 			ImGui::Text("View Mode: %s", viewModes[currentViewMode].c_str());
-			//unlock();
-
 		}
 		endGUI();
 	}
@@ -537,7 +503,6 @@ void ViewController::drawGUI() {
 //--------------------------------------------------------------
 void ViewController::setData(const RiderSummaryUnion & rsu, const vector<RiderInfo>& tri) {
 	if (bUse) {
-		//lock();
 		if (!bViewNeedsUpdate && ofGetElapsedTimeMillis() - lastViewTimeout >= viewTimeout && rsu.data != nullptr) {
 			if (riderSummary.data == nullptr) riderSummary.data = new float[(int)rsu.data[0]];
 			memcpy(&riderSummary.data[0], &rsu.data[0], rsu.data[0] * sizeof(float));
@@ -545,13 +510,11 @@ void ViewController::setData(const RiderSummaryUnion & rsu, const vector<RiderIn
 			bViewNeedsUpdate = true;
 			lastViewTimeout = ofGetElapsedTimeMillis();
 		}
-		//unlock();
 	}
 }
 
 //--------------------------------------------------------------
 const ofFbo & ViewController::getFBO() {
-	//ofScopedLock lock(mutex);
 	return fbo;
 }
 

@@ -82,7 +82,7 @@ void BicycleController::setDefaults() {
 	boosterDifficulty = 5;
 
 	numberOfMagnets = 2;
-	minimumRiderTime = 30;
+
 }
 
 //--------------------------------------------------------------

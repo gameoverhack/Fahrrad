@@ -130,6 +130,9 @@
     <ClCompile Include="..\..\..\addons\ofxTextAlign\src\ofxTextAlignTTF.cpp">
       <Filter>addons\ofxTextAlign\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\PulseController.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -913,6 +916,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxTextAlign\src\ofxTextAlignTTF.h">
       <Filter>addons\ofxTextAlign\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PulseController.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -23,7 +23,7 @@ public:
 	void update();
 	void drawGUI();
 
-	void setData(const RiderSummaryUnion& rsu, const vector<RiderInfo>& tri = vector<RiderInfo>());
+	void setData(const RiderSummaryUnion& rsu, const vector<RiderInfo>& tri = vector<RiderInfo>(), const PulseData& pd = PulseData());
 	const ofFbo& getFBO();
 
 protected:
@@ -69,6 +69,7 @@ protected:
 	bool bViewNeedsUpdate;
 	RiderSummaryUnion riderSummary;
 	vector<RiderInfo> topRiderInfo;
+	PulseData pulseData;
 
 	double lastViewTimeout;
 	int viewTimeout;

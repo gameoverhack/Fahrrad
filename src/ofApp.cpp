@@ -52,11 +52,15 @@ void ofApp::update() {
 	case APPLICATION_STATSLOCAL:
 	{
 		bicycleController->update();
+		pulseController->update();
 
 		const RiderData& riderData = bicycleController->getRiderData();
-		networkController->setRiderSummary(riderData.riderSummary);
-		viewController->setData(riderData.riderSummary, riderData.topRiderInfo);
+		const PulseData& pulseData = pulseController->getPulseData();
 
+		networkController->setRiderSummary(riderData.riderSummary);
+		viewController->setData(riderData.riderSummary, riderData.topRiderInfo, pulseData);
+
+		
 
 		networkController->update();
 		viewController->update();
@@ -200,6 +204,7 @@ void ofApp::drawGUI() {
 			case APPLICATION_STATSLOCAL:
 			{
 				bicycleController->drawGUI();
+				pulseController->drawGUI();
 				networkController->drawGUI();
 				viewController->drawGUI();
 			}
@@ -261,9 +266,11 @@ void ofApp::changeMode() {
 	case APPLICATION_STATSLOCAL:
 	{
 		if (bicycleController != nullptr) delete bicycleController;
+		if (pulseController != nullptr) delete pulseController;
 		if (networkController != nullptr) delete networkController;
 		if (viewController != nullptr) delete viewController;
 		bicycleController = nullptr;
+		pulseController = nullptr;
 		networkController = nullptr;
 		viewController = nullptr;
 	}
@@ -318,6 +325,7 @@ void ofApp::changeMode() {
 	case APPLICATION_NONE:
 	{
 		if (bicycleController != nullptr) delete bicycleController;
+		if (pulseController != nullptr) delete pulseController;
 		if (videoController != nullptr) delete videoController;
 		if (imageCaptureController != nullptr) delete imageCaptureController;
 		if (imageDisplayController != nullptr) delete imageDisplayController;
@@ -325,6 +333,7 @@ void ofApp::changeMode() {
 		if (networkController != nullptr) delete networkController;
 		if (viewController != nullptr) delete viewController;
 		bicycleController = nullptr;
+		pulseController = nullptr;
 		videoController = nullptr;
 		imageCaptureController = nullptr;
 		imageDisplayController = nullptr;
@@ -338,6 +347,8 @@ void ofApp::changeMode() {
 		bicycleController = new BicycleController;
 		bicycleController->setRecordRiders(true);
 		bicycleController->setup();
+		pulseController = new PulseController;
+		pulseController->setup();
 		networkController = new NetworkController;
 		networkController->setup();
 		networkController->setMode(NetworkController::NETWORK_SEND);
@@ -412,6 +423,7 @@ bool ofApp::saveParameters() {
 void ofApp::exit() {
 	ofLogNotice() << "Exiting Application and destroying controllers - be patient!";
 	if (bicycleController != nullptr) delete bicycleController;
+	if (pulseController != nullptr) delete pulseController;
 	if (videoController != nullptr) delete videoController;
 	if (imageCaptureController != nullptr) delete imageCaptureController;
 	if (imageDisplayController != nullptr) delete imageDisplayController;
@@ -419,6 +431,7 @@ void ofApp::exit() {
 	if (networkController != nullptr) delete networkController;
 	if (viewController != nullptr) delete viewController;
 	bicycleController = nullptr;
+	pulseController = nullptr;
 	videoController = nullptr;
 	imageCaptureController = nullptr;
 	imageDisplayController = nullptr;

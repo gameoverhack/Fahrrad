@@ -499,12 +499,13 @@ void ViewController::drawGUI() {
 }
 
 //--------------------------------------------------------------
-void ViewController::setData(const RiderSummaryUnion & rsu, const vector<RiderInfo>& tri) {
+void ViewController::setData(const RiderSummaryUnion & rsu, const vector<RiderInfo>& tri, const PulseData& pd) {
 	if (bUse) {
 		if (!bViewNeedsUpdate && ofGetElapsedTimeMillis() - lastViewTimeout >= viewTimeout && rsu.data != nullptr) {
 			if (riderSummary.data == nullptr) riderSummary.data = new float[(int)rsu.data[0]];
 			memcpy(&riderSummary.data[0], &rsu.data[0], rsu.data[0] * sizeof(float));
 			topRiderInfo = tri;
+			pulseData = pd;
 			bViewNeedsUpdate = true;
 			lastViewTimeout = ofGetElapsedTimeMillis();
 		}

@@ -12,6 +12,17 @@ const static string API_SECRET = "db2d65d186157c1e";
 #define CONFIG_TYPE ".lnxconf"
 #endif
 
+typedef struct {
+	uint32_t bpm;
+	uint32_t signal;
+	uint32_t beat;
+} PulseData;
+
+typedef union {
+	PulseData data;
+	char chars[sizeof(PulseData)];
+} PulseDataUnion;
+
 static int days_between( struct tm &tsa,  struct tm &tsb) {
 	time_t a = mktime(&tsa);
 	time_t b = mktime(&tsb);

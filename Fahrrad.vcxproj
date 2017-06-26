@@ -212,6 +212,7 @@
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.cpp" />
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlerror.cpp" />
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp" />
+    <ClCompile Include="src\PulseController.cpp" />
     <ClCompile Include="src\RenderController.cpp" />
     <ClCompile Include="src\VideoController.cpp" />
     <ClCompile Include="src\ViewController.cpp" />
@@ -420,6 +421,7 @@
     <ClInclude Include="..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\videostab\videostab.hpp" />
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.h" />
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.h" />
+    <ClInclude Include="src\PulseController.h" />
     <ClInclude Include="src\RenderController.h" />
     <ClInclude Include="src\SerializationUtils.h" />
     <ClInclude Include="src\Utils.h" />

@@ -11,6 +11,7 @@
 #include "ImageDisplayController.h"
 #include "NetworkController.h"
 #include "ViewController.h"
+#include "PulseController.h"
 
 class ofApp : public ofBaseApp, public IGuiBase {
 
@@ -83,6 +84,7 @@ public:
 	RenderController * renderController;
 	NetworkController * networkController;
 	ViewController * viewController;
+	PulseController * pulseController;
 
 	ofTrueTypeFont font;
 

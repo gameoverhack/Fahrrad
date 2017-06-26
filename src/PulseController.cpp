@@ -90,6 +90,9 @@ void PulseController::changeMode() {
 	switch (nextSensorMode) {
 	case SENSOR_TEENSY:
 	{
+#ifndef TARGET_WIN32
+		system("stty raw crtscts -F /dev/ttyACM0");
+#endif
 		serial.enumerateDevices();
 		serial.setup(0, 115200);
 		// on PI need to execute stty raw crtscts -F /dev/ttyACM0

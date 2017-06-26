@@ -3,9 +3,9 @@
 #include "ofMain.h"
 #include "IGuiBase.h"
 
-#ifndef TARGET_WIN32
-#include "ofxGPIO.h"
-#endif
+//#ifndef TARGET_WIN32
+//#include "ofxGPIO.h"
+//#endif
 
 class PulseController : public IGuiBase, public ofThread {
 
@@ -71,11 +71,11 @@ protected:
 	//int T = 512;
 	//int rate[10];
 
-#ifndef TARGET_WIN32
-    GPIO gpio17;
-    string gio17_state;
-    string lastMsg;
-#endif
+//#ifndef TARGET_WIN32
+//    GPIO gpio17;
+//    string gio17_state;
+//    string lastMsg;
+//#endif
 
 	void changeMode();
 

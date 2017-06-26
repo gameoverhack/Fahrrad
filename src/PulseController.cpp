@@ -76,9 +76,9 @@ void PulseController::changeMode() {
 	break;
 	case SENSOR_GPIO:
 	{
-#ifndef TARGET_WIN32
-        gpio17.unexport_gpio();
-#endif
+//#ifndef TARGET_WIN32
+//        gpio17.unexport_gpio();
+//#endif
 	}
 	break;
 	}
@@ -96,13 +96,13 @@ void PulseController::changeMode() {
 	break;
 	case SENSOR_GPIO:
 	{
-#ifndef TARGET_WIN32
-        gpio17.setup("17");
-        gpio17.export_gpio();
-        gpio17.setdir_gpio("in");
-
-        lastMsg = "0";
-#endif
+//#ifndef TARGET_WIN32
+//        gpio17.setup("17");
+//        gpio17.export_gpio();
+//        gpio17.setdir_gpio("in");
+//
+//        lastMsg = "0";
+//#endif
 	}
 	break;
 	}
@@ -161,17 +161,17 @@ void PulseController::threadedFunction() {
 			break;
 			case SENSOR_GPIO:
 			{
-#ifndef TARGET_WIN32
-                // read gpio value
-                gpio17.getval_gpio(gio17_state);
-                // can we get analogue or only digital values?
-
-                // if some gpio value, then triggerSensor(SENSOR_GPIO)
-                if(gio17_state == "0" && lastMsg == "1"){
-                    triggerSensor(SENSOR_GPIO);
-                }
-                lastMsg = gio17_state;
-#endif
+//#ifndef TARGET_WIN32
+//                // read gpio value
+//                gpio17.getval_gpio(gio17_state);
+//                // can we get analogue or only digital values?
+//
+//                // if some gpio value, then triggerSensor(SENSOR_GPIO)
+//                if(gio17_state == "0" && lastMsg == "1"){
+//                    triggerSensor(SENSOR_GPIO);
+//                }
+//                lastMsg = gio17_state;
+//#endif
 			}
 			break;
 			}

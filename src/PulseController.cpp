@@ -91,7 +91,7 @@ void PulseController::changeMode() {
 	case SENSOR_TEENSY:
 	{
 		serial.enumerateDevices();
-		serial.setup(0, 115200);
+		serial.setup(0, 57600);
 	}
 	break;
 	case SENSOR_GPIO:

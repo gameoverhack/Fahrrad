@@ -91,7 +91,9 @@ void PulseController::changeMode() {
 	case SENSOR_TEENSY:
 	{
 		serial.enumerateDevices();
-		serial.setup(0, 57600);
+		serial.setup(0, 115200);
+		// on PI need to execute stty raw crtscts -F /dev/ttyACM0
+		// need to insert this in .bash_profile
 	}
 	break;
 	case SENSOR_GPIO:

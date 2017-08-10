@@ -60,8 +60,6 @@ void ofApp::update() {
 		networkController->setRiderSummary(riderData.riderSummary);
 		viewController->setData(riderData.riderSummary, riderData.topRiderInfo, pulseData);
 
-		
-
 		networkController->update();
 		viewController->update();
 	}
@@ -122,6 +120,16 @@ void ofApp::draw() {
 		ofRotateZ(90);
 		viewFbo.draw(0, 0);
 		ofPopMatrix();
+
+		const vector<int>& sensorData = pulseController->getSensorData();
+		ofMesh mesh;
+		mesh.setMode(OF_PRIMITIVE_LINE_STRIP);
+		for (int i = 0; i < sensorData.size(); i++) {
+			mesh.addVertex(ofPoint(i, ofGetHeight() - sensorData[i], 0));
+		}
+		ofSetColor(255, 0, 0);
+		mesh.draw();
+		ofSetColor(255);
 
 	}
 	break;

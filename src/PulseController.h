@@ -27,6 +27,9 @@ public:
 	void drawGUI();
 
 	const PulseData& getPulseData();
+	const vector<int>& getSensorData() {
+		return sensorData;
+	}
 
 protected:
 
@@ -51,6 +54,9 @@ protected:
 
 	double timeSinceLastSensor;
 	int lastSensorTimeout;
+
+	vector<int> sensorData;
+	int currentSensorIndex;
 
 	//void calculateBPM();
 

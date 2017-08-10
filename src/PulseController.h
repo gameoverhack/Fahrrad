@@ -17,19 +17,15 @@ public:
 	typedef enum {
 		SENSOR_NONE = 0,
 		SENSOR_SIMULATE,
-		SENSOR_KEYBOARD,
-		SENSOR_TEENSY,
-		SENSOR_GPIO
+		SENSOR_ARDUINO,
 	} SensorMode;
 
 	void setup();
 	void update();
 	void drawGUI();
 
-	const PulseData& getPulseData();
-	const vector<int>& getSensorData() {
-		return sensorData;
-	}
+	vector<PulseData> getPulseData();
+	vector<PulseData> getRawPulseData();
 
 protected:
 
@@ -39,49 +35,26 @@ protected:
 	bool bIsPulseActive;
 
 	int targetPulseRate;
-	int pulseRecvDelay;
+	int sensorReadTimeout;
+	int sensorUpdateTimeout;
+
+	int lastUpdateTimeout;
+	int lastSensorTimeout;
 
 	vector<string> sensorModes = {
 		"SENSOR_NONE",
 		"SENSOR_SIMULAT",
-		"SENSOR_KEYBOARD",
-		"SENSOR_TEENSY",
-		"SENSOR_GPIO"
+		"SENSOR_ARDUINO",
 	};
 
 	SensorMode nextSensorMode;
 	SensorMode currentSensorMode;
 
-	double timeSinceLastSensor;
-	int lastSensorTimeout;
+	vector<PulseData> pulseData;
+	int currentPulseDataIndex;
 
-	vector<int> sensorData;
-	int currentSensorIndex;
-
-	//void calculateBPM();
-
-	//int sampleCounter = 0;
-	//int timeSinceLastSignal = 0;
-	//int timeAtLastSignal = 0;
-	//int lastBeatTime = 0;
-
-	//bool Pulse = false;
-	//bool QS = false;
-	//bool firstBeat = true;
-	//bool secondBeat = false;
-	//int BPM = 0;
-	//int IBI = 600;
-	//int amp = 0;
-	//int thresh = 530;
-	//int P = 512;
-	//int T = 512;
-	//int rate[10];
-
-//#ifndef TARGET_WIN32
-//    GPIO gpio17;
-//    string gio17_state;
-//    string lastMsg;
-//#endif
+	vector<PulseData> rawPulseData;
+	int currentRawPulseDataIndex;
 
 	void changeMode();
 
@@ -97,7 +70,8 @@ protected:
 	void serialize(Archive & ar, const unsigned int version) {
 		ar & BOOST_SERIALIZATION_NVP(nextSensorMode);
 		ar & BOOST_SERIALIZATION_NVP(targetPulseRate);
-		ar & BOOST_SERIALIZATION_NVP(pulseRecvDelay);
+		ar & BOOST_SERIALIZATION_NVP(sensorReadTimeout);
+		ar & BOOST_SERIALIZATION_NVP(sensorUpdateTimeout);
 	}
 
 };

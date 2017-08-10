@@ -23,7 +23,7 @@ public:
 	void update();
 	void drawGUI();
 
-	void setData(const RiderSummaryUnion& rsu, const vector<RiderInfo>& tri = vector<RiderInfo>(), const PulseData& pd = PulseData());
+	void setData(const RiderSummaryUnion& rsu, const vector<RiderInfo>& tri = vector<RiderInfo>(), const vector<PulseData>& pd = vector<PulseData>(), const vector<PulseData>& rd = vector<PulseData>());
 	const ofFbo& getFBO();
 
 protected:
@@ -69,10 +69,13 @@ protected:
 	bool bViewNeedsUpdate;
 	RiderSummaryUnion riderSummary;
 	vector<RiderInfo> topRiderInfo;
-	PulseData pulseData;
+	vector<PulseData> pulseData;
+	vector<PulseData> rawPulseData;
 
 	double lastViewTimeout;
 	int viewTimeout;
+
+	bool bShowPulseSignal;
 
 	vector<string> viewModes = {
 		"VIEW_NONE",
@@ -99,5 +102,6 @@ protected:
 	template<class Archive>
 	void serialize(Archive & ar, const unsigned int version) {
 		ar & BOOST_SERIALIZATION_NVP(viewTimeout);
+		ar & BOOST_SERIALIZATION_NVP(bShowPulseSignal);
 	}
 };

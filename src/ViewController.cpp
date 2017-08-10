@@ -74,6 +74,7 @@ void ViewController::setDefaults() {
 
 	viewTimeout = 150;
 	nextViewMode = VIEW_NONE;
+	bShowPulseSignal = false;
 
 }
 
@@ -231,7 +232,32 @@ void ViewController::renderSender() {
 		fDistanceTime.draw(distanceRider, 552.785, 1051.155, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
 		fDistanceTime.draw(timeRider, 900.819, 1051.155, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
 
-		// TODO: draw heartrate monitor!!
+		// draw heartrate graph
+		ofFill();
+		ofSetColor(238, 82, 83);
+		for (int i = 0; i < 35; i++) {
+			float x = 83.726f + i * 21.468f;
+			float y = 1436.69f;
+			float w = 10.716;
+			float h = (CLAMP(pulseData[i].bpm, 60, 200) - 60) * (145.068f / (200.0f - 60.0f));
+			ofDrawRectangle(x, y, w, -h);
+		}
+		ofNoFill();
+
+		// draw pulse signal
+		if (bShowPulseSignal) {
+			ofSetColor(0, 73, 148);
+			ofMesh mesh;
+			mesh.setMode(OF_PRIMITIVE_LINE_STRIP);
+			for (int i = 0; i < rawPulseData.size(); i++) {
+				mesh.addVertex(ofPoint(77.533f + i, 1436.69f - CLAMP(rawPulseData[i].signal, 0, 1024) * (145.068f / 1024.0f), 0));
+			}
+			mesh.draw();
+		}
+		
+		// draw heart rate in the heart!
+		ofSetColor(0);
+		fHeartRate.draw(ofToString(CLAMP(pulseData[35].bpm, 0, 200)), 937.0f, 1373.888, ofxTextAlign::HORIZONTAL_ALIGN_CENTER | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
 
 		// draw high scores
 		for (int i = 0; i < topRiderInfo.size(); i++) {
@@ -390,6 +416,7 @@ void ViewController::renderReciever() {
 		ofSetColor(0, 73, 148);
 		ofDrawCircle(vL[2], W);
 		//ofDrawBitmapString(ofToString(num), vL[2]);
+
 	}
 	else {
 		backgroundFbo.draw(0, 0);
@@ -449,7 +476,7 @@ void ViewController::changeMode() {
 		fSpeedCurrent.load("fonts/OpenSans-Bold.ttf", 166);
 		fSpeedHigh.load("fonts/OpenSans-Regular.ttf", 42);
 		fDistanceTime.load("fonts/OpenSans-Bold.ttf", 45);
-		fHeartRate.load("fonts/OpenSans-Bold.ttf", 44);
+		fHeartRate.load("fonts/OpenSans-Bold.ttf", 30);
 		fHighScores.load("fonts/Roboto-Regular.ttf", 26);
 
 	}
@@ -491,21 +518,24 @@ void ViewController::drawGUI() {
 		{
 			ImGui::SliderInt("View Timeout (millis)", &viewTimeout, 1, 1000);
 			ImGui::Combo("View Mode", (int*)&nextViewMode, viewModes);
+			ImGui::Checkbox("Show Pulse Signal", &bShowPulseSignal);
 			ImGui::NewLine();
 			ImGui::Text("View Mode: %s", viewModes[currentViewMode].c_str());
+			
 		}
 		endGUI();
 	}
 }
 
 //--------------------------------------------------------------
-void ViewController::setData(const RiderSummaryUnion & rsu, const vector<RiderInfo>& tri, const PulseData& pd) {
+void ViewController::setData(const RiderSummaryUnion & rsu, const vector<RiderInfo>& tri, const vector<PulseData>& pd, const vector<PulseData>& rd) {
 	if (bUse) {
 		if (!bViewNeedsUpdate && ofGetElapsedTimeMillis() - lastViewTimeout >= viewTimeout && rsu.data != nullptr) {
 			if (riderSummary.data == nullptr) riderSummary.data = new float[(int)rsu.data[0]];
 			memcpy(&riderSummary.data[0], &rsu.data[0], rsu.data[0] * sizeof(float));
 			topRiderInfo = tri;
 			pulseData = pd;
+			rawPulseData = rd;
 			bViewNeedsUpdate = true;
 			lastViewTimeout = ofGetElapsedTimeMillis();
 		}

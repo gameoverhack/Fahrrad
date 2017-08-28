@@ -116,7 +116,7 @@ protected:
 #ifndef TARGET_WIN32
     GPIO gpio17;
     string gio17_state;
-    string lastMsg;
+    string lastGPIOMsg;
 #endif
 
 	void changeMode();

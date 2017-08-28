@@ -154,8 +154,7 @@ void BicycleController::changeMode() {
         gpio17.setup("17");
         gpio17.export_gpio();
         gpio17.setdir_gpio("in");
-
-        lastMsg = "0";
+        lastGPIOMsg = "0";
 #endif
 	}
 	break;
@@ -213,10 +212,10 @@ void BicycleController::threadedFunction() {
                 // can we get analogue or only digital values?
 
                 // if some gpio value, then triggerSensor(SENSOR_GPIO)
-                if(gio17_state == "0" && lastMsg == "1"){
+                if(gio17_state == "0" && lastGPIOMsg == "1"){
                     triggerSensor(SENSOR_GPIO);
                 }
-                lastMsg = gio17_state;
+                lastGPIOMsg = gio17_state;
 #endif
 			}
 			break;

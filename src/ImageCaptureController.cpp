@@ -25,10 +25,14 @@ ImageCaptureController::~ImageCaptureController() {
 
 //--------------------------------------------------------------
 void ImageCaptureController::setup() {
+
 	ofLogNotice() << className << ": setup";
 
 	// call base clase setup for now
 	IGuiBase::setup();
+
+	bLEDBlinkOn = false;
+	lastLedBlinkTime = ofGetElapsedTimeMillis();
 
 	bSetImageStorePath = false;
 
@@ -105,6 +109,7 @@ void ImageCaptureController::setup() {
 
 //--------------------------------------------------------------
 void ImageCaptureController::setDefaults() {
+
 	ofLogNotice() << className << ": setDefaults";
 
 #ifdef TARGET_WIN32
@@ -120,6 +125,9 @@ void ImageCaptureController::setDefaults() {
 	simulateTimeout = 2000;
 
 	flickrAuthenticateTimeout = 10000;
+
+	ledBlinkSpeed = 40;
+
 }
 
 //--------------------------------------------------------------
@@ -193,6 +201,7 @@ void ImageCaptureController::update() {
 	unlock();
 
 	if (thisCurrentPhotoState == PHOTO_TAKEIMAGE) {
+		bLEDBlinkOn = true;
 		takeImage();
 	}
 
@@ -213,7 +222,10 @@ void ImageCaptureController::changeMode() {
 	break;
 	case SENSOR_GPIO:
 	{
-
+#ifndef TARGET_WIN32
+		gpio22.setval_gpio("0");
+		gpio27.unexport_gpio();
+#endif
 	}
 	break;
 	}
@@ -230,7 +242,16 @@ void ImageCaptureController::changeMode() {
 	break;
 	case SENSOR_GPIO:
 	{
-
+#ifndef TARGET_WIN32
+		gpio27.setup("27"); // button input
+		gpio27.export_gpio();
+		gpio27.setdir_gpio("in");
+		gpio22.setup("22"); // led output
+		gpio22.export_gpio();
+		gpio22.setdir_gpio("out");
+		lastGPIOMsg = "0";
+		gpio22.setval_gpio("0");
+#endif
 	}
 	break;
 	}
@@ -301,7 +322,16 @@ void ImageCaptureController::threadedFunction() {
 			break;
 			case SENSOR_GPIO:
 			{
+#ifndef TARGET_WIN32
+				// read gpio value
+				gpio27.getval_gpio(gio27_state);
 
+				// if some gpio value, then triggerSensor(SENSOR_GPIO)
+				if (gio27_state == "1" && lastGPIOMsg == "0") {
+					triggerSensor(SENSOR_GPIO);
+				}
+				lastGPIOMsg = gio27_state;
+#endif
 			}
 			break;
 			}
@@ -320,12 +350,14 @@ void ImageCaptureController::threadedFunction() {
 			switch (thisCurrentPhotoState) {
 			case PHOTO_NONE:
 			{
-
+				bLEDBlinkOn = false;
 			}
 			break;
 			case PHOTO_REQUESTED:
 			{
 				playCountdownSound();
+				bLEDBlinkOn = true;
+				lastLedBlinkTime = ofGetElapsedTimeMillis();
 			}
 			break;
 			case PHOTO_COUNTDOWN:
@@ -336,6 +368,13 @@ void ImageCaptureController::threadedFunction() {
 						currentPhotoState = PHOTO_TAKEIMAGE;
 					}
 					unlock();
+				}
+				else {
+					//cout << soundPlayerCountdown.getPosition() << endl;
+					if (ofGetElapsedTimeMillis() - lastLedBlinkTime > ledBlinkSpeed / soundPlayerCountdown.getPosition()) {
+						lastLedBlinkTime = ofGetElapsedTimeMillis();
+						bLEDBlinkOn = !bLEDBlinkOn;
+					}
 				}
 			}
 			break;
@@ -351,6 +390,7 @@ void ImageCaptureController::threadedFunction() {
 			break;
 			case PHOTO_FINISHING:
 			{
+				bLEDBlinkOn = true;
 				playShutterSound();
 			}
 			break;
@@ -367,6 +407,9 @@ void ImageCaptureController::threadedFunction() {
 			break;
 			}
 
+#ifndef TARGET_WIN32
+				gpio22.setval_gpio(bLEDBlinkOn ? "1" : "0"); // blink that LED
+#endif
 
 		}
 
@@ -524,6 +567,8 @@ void ImageCaptureController::drawGUI() {
 
 			}
 
+			ImGui::SliderInt("LED Blink Speed (millis)", &ledBlinkSpeed, 10, 1000);
+
 			ImGui::Combo("Sensor Mode", (int*)&nextSensorMode, sensorModes);
 
 			switch (nextSensorMode) {
@@ -548,6 +593,9 @@ void ImageCaptureController::drawGUI() {
 
 			ImGui::NewLine();
 			ImGui::Text("Time since last sensor reading : %.0f millis", timeSinceLastSensor);
+			ImGui::NewLine();
+
+			ImGui::Checkbox("LED Blink", &bLEDBlinkOn);
 
 			unlock();
 

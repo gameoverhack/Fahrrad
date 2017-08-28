@@ -79,6 +79,17 @@ protected:
 		"SENSOR_GPIO"
 	};
 
+	bool bLEDBlinkOn;
+	int ledBlinkSpeed;
+	int lastLedBlinkTime;
+
+#ifndef TARGET_WIN32
+	GPIO gpio27; // button input
+	GPIO gpio22; // led output
+	string gio27_state;
+	string lastGPIOMsg;
+#endif
+
 	PhotoState currentPhotoState;
 
 	SensorMode nextSensorMode;
@@ -117,5 +128,6 @@ protected:
 		ar & BOOST_SERIALIZATION_NVP(saturation);
 		ar & BOOST_SERIALIZATION_NVP(simulateTimeout);
 		ar & BOOST_SERIALIZATION_NVP(flickrAuthenticateTimeout);
+		ar & BOOST_SERIALIZATION_NVP(ledBlinkSpeed);
 	}
 };

@@ -250,7 +250,7 @@ void ImageCaptureController::changeMode() {
 		gpio22.export_gpio();
 		gpio22.setdir_gpio("out");
 		lastGPIOMsg = "0";
-		gpio22.setval_gpio("0");
+		gpio22.setval_gpio("1");
 #endif
 	}
 	break;
@@ -408,7 +408,7 @@ void ImageCaptureController::threadedFunction() {
 			}
 
 #ifndef TARGET_WIN32
-				gpio22.setval_gpio(bLEDBlinkOn ? "1" : "0"); // blink that LED
+				gpio22.setval_gpio(bLEDBlinkOn ? "0" : "1"); // blink that LED
 #endif
 
 		}

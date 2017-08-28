@@ -4,6 +4,10 @@
 #include "IGuiBase.h"
 #include "ofxFlickr.h"
 
+#ifndef TARGET_WIN32
+#include "ofxGPIO.h"
+#endif
+
 class ImageCaptureController : public IGuiBase, public ofThread {
 public:
 

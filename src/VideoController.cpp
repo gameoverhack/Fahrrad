@@ -40,6 +40,7 @@ void VideoController::setDefaults() {
 #endif
 	currentVideoIndex = 0;
 	speedUpdateTimeout = 1000;
+	videoFadeThreshold = 10.0f;
 
 }
 
@@ -121,6 +122,7 @@ void VideoController::drawGUI() {
 			bSetVideoPath = ImGui::Button("Set Video Path");
 			ImGui::Combo("Video File", &nextVideoIndex, videoFilePaths);
 			ImGui::SliderInt("Speed Update Time (millis)", &speedUpdateTimeout, 0, 2000);
+			ImGui::SliderFloat("Video Fade Threshold (km/h)", &videoFadeThreshold, 0.0f, 40.0f);
 		}
 		endGUI();
 	}
@@ -146,7 +148,12 @@ void VideoController::setSpeed(float speed) {
 }
 
 //--------------------------------------------------------------
-ofTexture & VideoController::getVideoTexture() {
+const float & VideoController::getVideoFadeThreshold() {
+	return videoFadeThreshold;
+}
+
+//--------------------------------------------------------------
+const ofTexture & VideoController::getVideoTexture() {
 #ifdef TARGET_WIN32
     return vid.getTexture();
 #else

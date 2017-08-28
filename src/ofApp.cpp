@@ -137,9 +137,26 @@ void ofApp::draw() {
 		const RiderInfo& riderInfo = bicycleController->getCurrentRiderInfo();
 
 		float normalisedSpeed = riderInfo.normalisedSpeed;
+		float currentSpeed = riderInfo.currentSpeed;
+		const float& videoFadeThreshold = videoController->getVideoFadeThreshold();
 
 		videoController->setSpeed(normalisedSpeed);
+
+		float currentFade = 0.0f;
+
+		if (currentSpeed == 0.0f) {
+			currentFade = 0.0f;
+		}
+		if (currentSpeed >= videoFadeThreshold) {
+			currentFade = 1.0f;
+		}
+		if (currentSpeed > 0.0f && currentSpeed < videoFadeThreshold) {
+			currentFade = currentSpeed / videoFadeThreshold;
+		}
+
+		ofSetColor(255 * currentFade);
 		videoController->getVideoTexture().draw(0, 0, ofGetWidth(), ofGetHeight());
+		ofSetColor(255);
 
 	}
 	break;

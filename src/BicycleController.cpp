@@ -333,7 +333,7 @@ void BicycleController::threadedFunction() {
 			if (ofGetElapsedTimeMillis() - lastVelocityTimeout > updateVelocityTime) {
 				currentAverageVelocity = currentAverageVelocity * (1.0 - velocityEase) + lastMeasuredVelocity * velocityEase;
 				currentNormalisedVelocity = currentAverageVelocity / velocityNormalSpeed;
-				lastMeasuredVelocity = lastMeasuredVelocity - velocityDecay; // do we need this?
+				//lastMeasuredVelocity = lastMeasuredVelocity - velocityDecay; // do we need this? do we do this later? maybe...
 				
 				// update rider info
 				currentRider.currentSpeed = currentAverageVelocity;
@@ -365,7 +365,7 @@ void BicycleController::threadedFunction() {
 
 				}
 
-				if (lastMeasuredVelocity < 0.0) lastMeasuredVelocity = 0;
+				if (lastMeasuredVelocity < 0.0f) lastMeasuredVelocity = 0.0f;
 				lastVelocityTimeout = ofGetElapsedTimeMillis();
 			}
 
@@ -374,46 +374,54 @@ void BicycleController::threadedFunction() {
 				
 				if (bIsRiderActive) {
 
-					bIsRiderActive = false;
-					currentAverageVelocity = lastMeasuredVelocity = 0.0;
-					
-
-					if (bRecordRiders && bIsDataLoaded && currentRider.time >= minimumRiderTime * 1000) {
-
-						vector<RiderInfo>& todaysRiderInfo = getTodaysRiderInfo();
-						currentRider.isActive = false;
-
-						totalNumberRiders++;
-						totalTimeTaken += currentRider.time;
-
-						todaysRiderInfo.push_back(currentRider);
-						allRiderInfo.push_back(currentRider);
-						currentRider = RiderInfo(); // reset current rider
-
-						// sort and save rider info
-						std::sort(todaysRiderInfo.begin(), todaysRiderInfo.end(), RiderRankFunction);
-						std::sort(allRiderInfo.begin(), allRiderInfo.end(), RiderRankFunction);
-
-						int allranking = 0;
-						for (int i = 0; i < allRiderInfo.size(); i++) {
-							allRiderInfo[i].allranking = allranking;
-							if (i < numTopRiders) riderData.topRiderInfo[i] = allRiderInfo[i];
-							allranking++;
-						}
-
-						riderData.topRiderInfo[riderData.topRiderInfo.size() - 1] = allRiderInfo[allRiderInfo.size() - 1];
-
-						ostringstream os;
-						os << "configs/stats/dailyRiderInfo_" << ofGetYear() << "_" << std::setfill('0') << std::setw(2) << ofGetMonth() << "_" << std::setfill('0') << std::setw(2) << ofGetDay() << string(CONFIG_TYPE);
-						Serializer.saveClass(ofToDataPath(os.str()), (todaysRiderInfo), ARCHIVE_BINARY);
+					if (lastMeasuredVelocity > 0.0f) {
+						// ease the velocity down
+						lastMeasuredVelocity = CLAMP(lastMeasuredVelocity - velocityDecay, 0.0f, 120.0f);
 					}
 					else {
-						currentRider.isActive = false;
-						currentRider = RiderInfo();
-					}
-					
+						bIsRiderActive = false;
+						currentAverageVelocity = lastMeasuredVelocity = 0.0;
 
-					ofLogVerbose() << "Rider Inactive";
+
+						if (bRecordRiders && bIsDataLoaded && currentRider.time >= minimumRiderTime * 1000) {
+
+							vector<RiderInfo>& todaysRiderInfo = getTodaysRiderInfo();
+							currentRider.isActive = false;
+
+							totalNumberRiders++;
+							totalTimeTaken += currentRider.time;
+
+							todaysRiderInfo.push_back(currentRider);
+							allRiderInfo.push_back(currentRider);
+							currentRider = RiderInfo(); // reset current rider
+
+														// sort and save rider info
+							std::sort(todaysRiderInfo.begin(), todaysRiderInfo.end(), RiderRankFunction);
+							std::sort(allRiderInfo.begin(), allRiderInfo.end(), RiderRankFunction);
+
+							int allranking = 0;
+							for (int i = 0; i < allRiderInfo.size(); i++) {
+								allRiderInfo[i].allranking = allranking;
+								if (i < numTopRiders) riderData.topRiderInfo[i] = allRiderInfo[i];
+								allranking++;
+							}
+
+							riderData.topRiderInfo[riderData.topRiderInfo.size() - 1] = allRiderInfo[allRiderInfo.size() - 1];
+
+							ostringstream os;
+							os << "configs/stats/dailyRiderInfo_" << ofGetYear() << "_" << std::setfill('0') << std::setw(2) << ofGetMonth() << "_" << std::setfill('0') << std::setw(2) << ofGetDay() << string(CONFIG_TYPE);
+							Serializer.saveClass(ofToDataPath(os.str()), (todaysRiderInfo), ARCHIVE_BINARY);
+						}
+						else {
+							currentRider.isActive = false;
+							currentRider = RiderInfo();
+						}
+
+
+						ofLogVerbose() << "Rider Inactive";
+					}
+
+					
 				}
 			}
 
@@ -539,7 +547,7 @@ void BicycleController::drawGUI() {
 
 			ImGui::SliderInt("Rider Inactive Time (millis)", &riderInactiveTime, 1000, 6000);
 
-			ImGui::SliderFloat("Velocity Normal (km/h)", &velocityNormalSpeed, 0.01, 60.0);
+			ImGui::SliderFloat("Velocity Normal (km/h)", &velocityNormalSpeed, 0.01, 80.0);
 
 			ImGui::SliderInt("Booster Difficulty", &boosterDifficulty, 0, maxWatts.size() - 1);
 			

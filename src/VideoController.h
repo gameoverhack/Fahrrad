@@ -21,7 +21,8 @@ public:
 
 	void setSpeed(float speed);
 
-	ofTexture& getVideoTexture();
+	const float& getVideoFadeThreshold();
+	const ofTexture& getVideoTexture();
 
 protected:
 
@@ -38,6 +39,8 @@ protected:
 
 	int lastSpeedUpdateTime;
 	int speedUpdateTimeout;
+
+	float videoFadeThreshold;
 
 	int nextVideoIndex;
 	int currentVideoIndex;
@@ -57,6 +60,7 @@ protected:
 		ar & BOOST_SERIALIZATION_NVP(videoPath);
 		ar & BOOST_SERIALIZATION_NVP(currentVideoIndex);
 		ar & BOOST_SERIALIZATION_NVP(speedUpdateTimeout);
+		ar & BOOST_SERIALIZATION_NVP(videoFadeThreshold);
 	}
 
 };

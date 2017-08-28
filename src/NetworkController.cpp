@@ -49,7 +49,7 @@ void NetworkController::setDefaults() {
 	ipAddress[0] = 192;
 	ipAddress[1] = 168;
 	ipAddress[2] = 178;
-	ipAddress[3] = 66;
+	ipAddress[3] = 21;
 	
 	ipPort = 7000;
 

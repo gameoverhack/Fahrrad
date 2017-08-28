@@ -494,7 +494,7 @@ void ViewController::changeMode() {
 		renderToFbo("Erg_DialGrey", dialGreyFbo, 923.422f, 923.422f, ofColor(0, 0, 0, 0));
 		renderToFbo("Erg_DialMask", dialMaskFbo, 923.422f, 923.422f, ofColor(0, 0, 0, 0));
 		
-		fDeviceBold.load("fonts/NotBd.ttf",44);
+		fDeviceBold.load("fonts/NotBd.ttf",38);
 		fDeviceItalic.load("fonts/NotRgI.ttf", 17);
 
 		fWattsCurrent.load("fonts/OpenSans-Bold.ttf", 56);

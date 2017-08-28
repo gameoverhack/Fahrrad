@@ -223,7 +223,7 @@ void ViewController::renderSender() {
 
 		// draw speed - current and max
 		fSpeedCurrent.draw(speedCurrent, 537.281, 758.004, ofxTextAlign::HORIZONTAL_ALIGN_CENTER | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
-		ofSetColor(238, 82, 83); // TODO: check this color!
+		ofSetColor(130, 198, 116); // TODO: check this color!
 		fSpeedHigh.draw(speedHigh, 913.814, 307.874, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
 
 		// draw info about distance and time

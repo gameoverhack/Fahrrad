@@ -41,15 +41,29 @@ void BicycleController::setup() {
 		
 		totalDistanceTravelled = 0;
 
-		startDay = 11;
-		startMonth = 6 - 1;
-		startYear = 2017;
+		int daysTillOpening = days_between(30, 9 - 1, 2017, ofGetDay(), ofGetMonth() - 1, ofGetYear());
 
-		endDay = 1;
-		endMonth = 5 - 1;
+		if (daysTillOpening < -1) {
+			startDay = 28;
+			startMonth = 8 - 1;
+			startYear = 2017;
+		}
+
+		if (daysTillOpening == -1) {
+			startDay = 29;
+			startMonth = 9 - 1;
+			startYear = 2017;
+		}
+
+		if (daysTillOpening >= 0) {
+			startDay = 30;
+			startMonth = 9 - 1;
+			startYear = 2017;
+		}
+
+		endDay = 18;
+		endMonth = 3 - 1;
 		endYear = 2018;
-
-		//int totalDays = days_between(startDay, startMonth, startYear, endDay, endMonth, endYear);
 		
 		bIsDataLoaded = false;
 		bDay = startDay;
@@ -248,16 +262,17 @@ void BicycleController::threadedFunction() {
 							os << year << "_" << std::setfill('0') << std::setw(2) << month << "_" << std::setfill('0') << std::setw(2) << day;
 
 
-							//for (int i = 0; i < 1000; i++) {
+							//for (int i = 0; i < 100; i++) {
+							//	float rTime = 1 * 60 * 1000;// ofRandom(0.5 * 60 * 1000.0f, 10 * 60 * 1000.0f);
 							//	// generate random riders
 							//	currentRider = RiderInfo();
-							//	currentRider.currentSpeed = ofRandom(1, 58);
-							//	currentRider.time = ofRandom(0.5 * 60 * 1000, 10 * 60 * 1000);
-							//	currentRider.distanceTravelled = currentRider.currentSpeed / 60.0 / 60.0 / 1000.0 * currentRider.time;
+							//	currentRider.currentSpeed = 26.0f;// ofRandom(20, 58);
+							//	currentRider.distanceTravelled = currentRider.currentSpeed / 60.0 / 60.0 * rTime;
 							//	currentRider.day = day;
 							//	currentRider.month = month;
 							//	currentRider.year = year;
 							//	updateRiderInfo();
+							//	currentRider.time = rTime; // do this here to avoid overflow in time
 							//	todaysRiderInfo.push_back(currentRider);
 							//}
 							//Serializer.saveClass(ofToDataPath("configs/stats/dailyRiderInfo_" + os.str() + string(CONFIG_TYPE)), (todaysRiderInfo), ARCHIVE_BINARY);

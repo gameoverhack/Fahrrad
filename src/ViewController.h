@@ -89,6 +89,8 @@ protected:
 	void renderSender();
 	void renderReciever();
 
+	void setDistanceMesh(ofMesh & mesh, ofPoint & finalPosition, float width, float pct);
+
 	void renderToFbo(string fileName, ofFbo& imageFbo, float w, float h, ofColor c);
 
 	void changeMode();

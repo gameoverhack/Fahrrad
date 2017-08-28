@@ -374,47 +374,33 @@ void ViewController::renderReciever() {
 		//CLAMP(mx, 1.0f, ofGetWidth());
 		//float step = mx / ofGetWidth() * 2.0 * 100.0f;
 		
-		float W = 6.0; // width of line - TODO: parameter
-		ofPoint vL[4];
+		float width = 6.0f;
+		ofPoint finalPosition;
 
-		int num = (tP / 100.0f * polyDEOutlines.size()) + 11; // step // 11 is Dresden startpoint
-
-		ofMesh mesh;
-		mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
-
-		// from https://stackoverflow.com/questions/14514543/opengl-es-2-0-dynamically-change-line-width
-		for (int j = 10; j < num; j++) {
-
-			int index1 = j - 1;
-			int index2 = j - 0;
-			if (index1 >= polyDEOutlines.size()) index1 = index1 - polyDEOutlines.size() + 10;
-			if (index2 >= polyDEOutlines.size()) index2 = index2 - polyDEOutlines.size() + 10;
-			ofPoint p1 = polyDEOutlines[index1];
-			ofPoint p2 = polyDEOutlines[index2];
-			ofPoint  v = p2 - p1;
-
-			v /= v.length();  // make it a unit vector
-
-			ofPoint vp(-v.y, v.x);  // compute the vector perpendicular to v
-
-			vL[0] = p1 + W / 2 * vp;
-			vL[1] = p1 - W / 2 * vp;
-			vL[2] = p2 + W / 2 * vp;
-			vL[3] = p2 - W / 2 * vp;
-
-			mesh.addVertex(vL[0]);
-			mesh.addVertex(vL[1]);
-			mesh.addVertex(vL[2]);
-			mesh.addVertex(vL[3]);
-
+		if (tP <= 100) {
+			ofMesh mesh;
+			setDistanceMesh(mesh, finalPosition, width, tP);
+			ofFill();
+			ofSetColor(255, 79, 56, 255);
+			mesh.draw();
+		}
+		else {
+			ofMesh mesh1;
+			setDistanceMesh(mesh1, finalPosition, width, 100);
+			ofFill();
+			ofSetColor(255, 79, 56, 255);
+			mesh1.draw();
+			ofMesh mesh2;
+			float remainder = (int)tP % 100;
+			setDistanceMesh(mesh2, finalPosition, width, remainder);
+			ofFill();
+			ofSetColor(130, 198, 116, 255);
+			mesh2.draw();
 		}
 
 		// draw current position around germany
-		ofFill();
-		ofSetColor(255, 79, 56, 255);
-		mesh.draw();
 		ofSetColor(0, 73, 148);
-		ofDrawCircle(vL[2], W);
+		ofDrawCircle(finalPosition, width);
 		//ofDrawBitmapString(ofToString(num), vL[2]);
 
 	}
@@ -423,8 +409,47 @@ void ViewController::renderReciever() {
 	}
 
 }
-
 //--------------------------------------------------------------
+void ViewController::setDistanceMesh(ofMesh & mesh, ofPoint & finalPosition, float width, float pct) {
+	
+	mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+
+	//float W = 6.0; // width of line - TODO: parameter
+	ofPoint vL[4];
+
+	int num = (pct / 100.0f * polyDEOutlines.size()) + 11; // step // 11 is Dresden startpoint
+
+	// from https://stackoverflow.com/questions/14514543/opengl-es-2-0-dynamically-change-line-width
+	for (int j = 10; j < num; j++) {
+
+		int index1 = j - 1;
+		int index2 = j - 0;
+		if (index1 >= polyDEOutlines.size()) index1 = index1 - polyDEOutlines.size() + 10;
+		if (index2 >= polyDEOutlines.size()) index2 = index2 - polyDEOutlines.size() + 10;
+		ofPoint p1 = polyDEOutlines[index1];
+		ofPoint p2 = polyDEOutlines[index2];
+		ofPoint  v = p2 - p1;
+
+		v /= v.length();  // make it a unit vector
+
+		ofPoint vp(-v.y, v.x);  // compute the vector perpendicular to v
+
+		vL[0] = p1 + width / 2 * vp;
+		vL[1] = p1 - width / 2 * vp;
+		vL[2] = p2 + width / 2 * vp;
+		vL[3] = p2 - width / 2 * vp;
+
+		mesh.addVertex(vL[0]);
+		mesh.addVertex(vL[1]);
+		mesh.addVertex(vL[2]);
+		mesh.addVertex(vL[3]);
+
+	}
+
+	finalPosition = vL[2];
+
+}
+
 void ViewController::changeMode() {
 
 	// shutdown the current mode

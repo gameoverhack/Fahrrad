@@ -144,14 +144,30 @@ void ofApp::draw() {
 
 		float currentFade = 0.0f;
 
-		if (currentSpeed == 0.0f) {
-			currentFade = 0.0f;
+		if (videoController->getFrame() > 0) {
+			if (currentSpeed == 0.0f) {
+				currentFade = 0.0f;
+			}
+			if (currentSpeed >= videoFadeThreshold) {
+				currentFade = 1.0f;
+			}
+			if (currentSpeed > 0.0f && currentSpeed < videoFadeThreshold) {
+				currentFade = currentSpeed / videoFadeThreshold;
+			}
 		}
-		if (currentSpeed >= videoFadeThreshold) {
+		else {
 			currentFade = 1.0f;
 		}
-		if (currentSpeed > 0.0f && currentSpeed < videoFadeThreshold) {
-			currentFade = currentSpeed / videoFadeThreshold;
+
+		
+
+		if (riderInfo.isActive == false && currentSpeed == 0.0f) {
+			if (videoController->getFrame() != 0) {
+				videoController->rewind();
+			}
+			else {
+				currentFade = 1.0;
+			}
 		}
 
 		ofSetColor(255 * currentFade);

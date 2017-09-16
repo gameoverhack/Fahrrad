@@ -20,6 +20,7 @@ void VideoController::setup() {
 	// call base clase setup for now
 	IGuiBase::setup();
 
+	bRewindPending = false;
 	bSetVideoPath = false;
 	lastSpeedUpdateTime = ofGetElapsedTimeMillis();
 #ifndef TARGET_WIN32
@@ -74,6 +75,7 @@ void VideoController::update() {
 #ifdef TARGET_WIN32
             vid.stop();
 			vid.load(videoFilePaths[nextVideoIndex]);
+			vid.setLoopState(OF_LOOP_NONE);
             vid.play();
 #else
             ofxOMXPlayerSettings settings;
@@ -92,6 +94,11 @@ void VideoController::update() {
 #ifdef TARGET_WIN32
 	vid.update();
 #endif
+
+	if (vid.getIsMovieDone()) {
+		vid.setFrame(2);
+		vid.play();
+	}
 
 }
 
@@ -123,6 +130,8 @@ void VideoController::drawGUI() {
 			ImGui::Combo("Video File", &nextVideoIndex, videoFilePaths);
 			ImGui::SliderInt("Speed Update Time (millis)", &speedUpdateTimeout, 0, 2000);
 			ImGui::SliderFloat("Video Fade Threshold (km/h)", &videoFadeThreshold, 0.0f, 40.0f);
+			float frame = vid.getCurrentFrame();
+			ImGui::SliderFloat("Video position", &frame, 0.0f, vid.getTotalNumFrames());
 		}
 		endGUI();
 	}
@@ -138,6 +147,7 @@ void VideoController::setSpeed(float speed) {
 		} else {
 			if (vid.isPaused()) {
 				vid.setPaused(false);
+				bRewindPending = false;
 			}
 			vid.setSpeed(speed);
 		}
@@ -164,6 +174,20 @@ const ofTexture & VideoController::getVideoTexture() {
     }
 
 #endif
+}
+
+void VideoController::rewind() {
+	if (vid.getCurrentFrame() != 0 && !bRewindPending) {
+		vid.setPaused(true);
+		vid.setFrame(0);
+		bRewindPending = true;
+	}
+	
+	//vid.update();
+}
+
+int VideoController::getFrame() {
+	return vid.getCurrentFrame();
 }
 
 //--------------------------------------------------------------

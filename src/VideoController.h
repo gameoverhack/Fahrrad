@@ -24,6 +24,10 @@ public:
 	const float& getVideoFadeThreshold();
 	const ofTexture& getVideoTexture();
 
+	void rewind();
+
+	int getFrame();
+
 protected:
 
 #ifdef TARGET_WIN32
@@ -33,6 +37,8 @@ protected:
 	ofTexture defaultTexture;
 #endif
 	
+	bool bRewindPending;
+
 	ofDirectory dir;
 	string videoPath;
 	vector<string> videoFilePaths;

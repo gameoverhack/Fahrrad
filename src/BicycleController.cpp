@@ -462,9 +462,8 @@ vector<RiderInfo>& BicycleController::getTodaysRiderInfo(){
 //--------------------------------------------------------------
 void BicycleController::updateRiderInfo() {
 
-	if (currentRider.currentSpeed > currentRider.topSpeed) {
-		currentRider.topSpeed = currentRider.currentSpeed;
-	}
+	currentRider.topSpeed = MAX(currentRider.topSpeed, currentRider.currentSpeed);
+	currentRider.topKiloWatts = MAX(currentRider.topKiloWatts, currentRider.currentKiloWatts);
 
 	currentRider.allranking = 0;
 

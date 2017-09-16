@@ -28,6 +28,9 @@ public:
 
 protected:
 
+	float lastTopSpeed;
+	float lastTopWatts;
+
 	int timeSinceLastRider;
 	int timeoutSinceLastRider;
 

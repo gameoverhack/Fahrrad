@@ -133,9 +133,9 @@ void ViewController::renderSender() {
 
 		const RiderInfo& riderInfo = topRiderInfo[topRiderInfo.size() - 2];
 		
-		string watts = getString(riderInfo.currentKiloWatts);
+		string watts = string(riderInfo.isActive ? getString(riderInfo.currentKiloWatts) : getString(lastTopWatts));
 		string speedCurrent = getString(riderInfo.currentSpeed);
-		string speedHigh = getString(riderInfo.topSpeed);
+		string speedHigh = string(riderInfo.isActive ? getString(riderInfo.topSpeed) : getString(lastTopSpeed));
 		string distanceToday = getString(riderSummary.data[RS_DISTANCE_DAY] / 1000.0f, 1);
 		string distanceRider = getString(riderInfo.distanceTravelled / 1000.0f, 2);
 		int total = riderInfo.time / 1000.0; int minutes = (total / 60) % 60; int seconds = total % 60;
@@ -148,7 +148,7 @@ void ViewController::renderSender() {
 		string deviceEN = "";
 
 		for (int i = 0; i < milestonesWatts.size(); i++) {
-			if (riderInfo.currentKiloWatts <= milestonesWatts[i].value) {
+			if ((riderInfo.isActive ? riderInfo.currentKiloWatts : lastTopWatts) <= milestonesWatts[i].value) {
 				deviceDE = milestonesWatts[i].typeDE;
 				deviceEN = milestonesWatts[i].typeEN;
 				break;
@@ -292,12 +292,17 @@ void ViewController::renderSender() {
 		}
 
 		// hide watts and top speed if no rider
-		//if (riderInfo.isActive) timeSinceLastRider = ofGetElapsedTimeMillis();
-		if (!riderInfo.isActive) {// ofGetElapsedTimeMillis() - timeSinceLastRider > timeoutSinceLastRider) {
+		if (riderInfo.isActive) {
+			timeSinceLastRider = ofGetElapsedTimeMillis();
+			lastTopSpeed = MAX(lastTopSpeed, riderInfo.currentSpeed);
+			lastTopWatts = MAX(lastTopWatts, riderInfo.currentKiloWatts);
+		}
+		if (ofGetElapsedTimeMillis() - timeSinceLastRider > timeoutSinceLastRider) {
 			ofFill();
 			ofSetColor(255);
 			ofDrawRectangle(600, 30, 470, 160);
 			ofDrawRectangle(850, 240, 215, 75);
+			lastTopSpeed = lastTopWatts = 0.0f;
 		}
 	}
 	else {

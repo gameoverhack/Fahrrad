@@ -238,11 +238,35 @@ void ViewController::renderSender() {
 		// draw heartrate graph
 		ofFill();
 		ofSetColor(238, 82, 83);
+
+		// NB: using the last entry to hack encode the last index of pulse recorded
+		int lastBPMIndex = pulseData[35].bpm; 
+
+		// sort the bpm from latest to oldest
+		vector<float> bpm(35);
+		bpm[34] = pulseData[lastBPMIndex].bpm;
+
+		int bpmIndex = 0;
+		if (lastBPMIndex + 1 < 35) {
+			for (int i = lastBPMIndex + 1; i < 35; i++) {
+				bpm[bpmIndex] = pulseData[i].bpm;
+				bpmIndex++;
+			}
+		}
+
+		if (lastBPMIndex - 1 > 0) {
+			for (int i = 0; i <= lastBPMIndex - 1; i++) {
+				bpm[bpmIndex] = pulseData[i].bpm;
+				bpmIndex++;
+			}
+		}
+
+		// show it onscreen
 		for (int i = 0; i < 35; i++) {
 			float x = 83.726f + i * 21.468f;
 			float y = 1436.69f;
 			float w = 10.716;
-			float h = (CLAMP(pulseData[i].bpm, 60, 200) - 60) * (145.068f / (200.0f - 60.0f));
+			float h = (CLAMP(bpm[i], 60, 200) - 60) * (145.068f / (200.0f - 60.0f));
 			ofDrawRectangle(x, y, w, -h);
 		}
 		ofNoFill();
@@ -259,8 +283,8 @@ void ViewController::renderSender() {
 		}
 		
 		// draw heart rate in the heart!
-		ofSetColor(0);
-		fHeartRate.draw(ofToString(CLAMP(pulseData[35].bpm, 0, 200)), 937.0f, 1373.888, ofxTextAlign::HORIZONTAL_ALIGN_CENTER | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
+		ofSetColor(0); 
+		fHeartRate.draw(ofToString(CLAMP(pulseData[lastBPMIndex].bpm, 0, 200)), 937.0f, 1373.888, ofxTextAlign::HORIZONTAL_ALIGN_CENTER | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
 
 		// draw high scores
 		for (int i = 0; i < topRiderInfo.size(); i++) {

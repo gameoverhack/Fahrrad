@@ -3,8 +3,16 @@
 #include "SerializationUtils.h"
 #include "ofxImGui.h"
 
+//// my api and key
 const static string API_KEY = "8eae23d79b1fa5153426d0c5b966ac2b";
 const static string API_SECRET = "db2d65d186157c1e";
+const static string API_USER = "149397704@N05";
+
+// museum api and key
+//const static string API_KEY = "2c624f35f9292a59b6858346ed0e539a";
+//const static string API_SECRET = "f2b89f4fbc368281";
+//const static string API_USER = "158304589@N08";
+// fullname=Verkehrsmuseum%20Dresden&oauth_token=72157686246113820-03069863ba17808c&oauth_token_secret=f681c40c5fbda89c&user_nsid=158304589%40N08&username=verkehrsmuseum
 
 #ifdef TARGET_WIN32
 #define CONFIG_TYPE ".winconf"

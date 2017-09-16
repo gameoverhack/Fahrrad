@@ -135,9 +135,17 @@ void PulseController::threadedFunction() {
 						pdu.data.bpm = ofRandom(CLAMP(targetPulseRate - 20, 0, 220), CLAMP(targetPulseRate + 20, 0, 220));
 						pdu.data.signal = 0;//sin(ofGetElapsedTimef()) * 200 + 400;
 						pdu.data.beat = 0;//sin(ofGetElapsedTimef()) == 1 ? 1000 : 0;
+						pulseData[currentPulseDataIndex] = pdu.data;
+						PulseData fake;
+						fake.bpm = currentPulseDataIndex;
+						pulseData[35] = fake;
+						currentPulseDataIndex++;
+						if (currentPulseDataIndex >= 36) currentPulseDataIndex = 0;
 						lastUpdateTimeout = ofGetElapsedTimeMillis();
 					}
-					
+					rawPulseData[currentRawPulseDataIndex] = pdu.data;
+					currentRawPulseDataIndex++;
+					if (currentRawPulseDataIndex >= rawPulseData.size()) currentRawPulseDataIndex = 0;
 					unlock();
 				}
 				break;
@@ -155,7 +163,9 @@ void PulseController::threadedFunction() {
 							else {
 								if (ofGetElapsedTimeMillis() - lastUpdateTimeout >= sensorUpdateTimeout) {
 									pulseData[currentPulseDataIndex] = pdu.data;
-									pulseData[35] = pdu.data;
+									PulseData fake;
+									fake.bpm = currentPulseDataIndex;
+									pulseData[35] = fake;
 									currentPulseDataIndex++;
 									if (currentPulseDataIndex >= 36) currentPulseDataIndex = 0;
 									lastUpdateTimeout = ofGetElapsedTimeMillis();

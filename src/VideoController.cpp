@@ -37,7 +37,7 @@ void VideoController::setDefaults() {
 #ifdef TARGET_WIN32
 	videoPath = "C:/Users/gameover8/Desktop/video";
 #else
-    videoPath = "/home/pi/openFrameworks/addons/ofxOMXPlayer/video";
+    videoPath = "/home/pi/Desktop/video";
 #endif
 	currentVideoIndex = 0;
 	speedUpdateTimeout = 1000;

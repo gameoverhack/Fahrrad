@@ -34,6 +34,9 @@ public:
 
 protected:
 
+	bool bSetBackupPath;
+	string backupPath;
+
 	int startDay;
 	int startMonth;
 	int startYear;
@@ -141,6 +144,7 @@ protected:
 		ar & BOOST_SERIALIZATION_NVP(boosterDifficulty);
 		ar & BOOST_SERIALIZATION_NVP(numberOfMagnets);
 		ar & BOOST_SERIALIZATION_NVP(minimumRiderTime);
+		ar & BOOST_SERIALIZATION_NVP(backupPath);
 	}
 
 };

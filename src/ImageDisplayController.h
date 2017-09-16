@@ -40,6 +40,7 @@ protected:
 	bool bIsDirectoryListed;
 
 	vector<ofxFlickr::Media> downloadQueue;
+	vector<string> allFlickrMedia;
 
 	bool bSetImageDownloadPath;
 	string imageDownloadPath;

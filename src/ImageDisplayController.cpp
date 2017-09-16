@@ -145,15 +145,29 @@ void ImageDisplayController::threadedFunction() {
 				dir.listDir(imageDownloadPath);
 				
 				vector<int> randomDirectoryIndexes;
+				vector<string> availablePaths;
 
 				if (dir.size() > 0) {
-					uniqueRandomIndex(randomDirectoryIndexes, 0, dir.size(), MIN(dir.size(), imagePixels.size())); // see Utils.h
+
+					// check if we have deleted anything on Flickr
+					for (int j = 0; j < dir.size(); j++) {
+						bool bBlackListed = true;
+						for (int i = 0; i < allFlickrMedia.size(); i++) {
+							if (allFlickrMedia[i] == dir.getName(j)) {
+								bBlackListed = false;
+							}
+						}
+						if (!bBlackListed) availablePaths.push_back(dir.getPath(j));
+					}
+
+					if(availablePaths.size() > 0) uniqueRandomIndex(randomDirectoryIndexes, 0, availablePaths.size(), MIN(availablePaths.size(), imagePixels.size())); // see Utils.h
+					
 				}
 
 				for (int i = 0; i < imagePixels.size(); i++) {
 					string filePath = "";
-					if (i < dir.size()) {
-						filePath = dir.getPath(randomDirectoryIndexes[i]);
+					if (i < availablePaths.size()) {
+						filePath = availablePaths[randomDirectoryIndexes[i]];
 					}else{
 						filePath = ofToDataPath("images/tmpImage.jpg");
 					}
@@ -219,6 +233,20 @@ void ImageDisplayController::threadedFunction() {
 						ofDirectory dir;
 						dir.allowExt("jpg");
 						dir.listDir(imageDownloadPath);
+
+						bool bHaveListed = false;
+						for (int j = 0; j < downloadQueue.size(); j++) {
+							string title = downloadQueue[j].title + ".jpg";
+							for (int i = 0; i < allFlickrMedia.size(); i++) {
+								if (allFlickrMedia[i] == title) {
+									bHaveListed = true;
+									break;
+								}
+							}
+							if (!bHaveListed) allFlickrMedia.push_back(title);
+						}
+						
+
 						lock();
 						imageDownloadDir = dir;
 						bIsDirectoryListed = true;
@@ -226,6 +254,7 @@ void ImageDisplayController::threadedFunction() {
 
 					ofxFlickr::Media media = downloadQueue.front();
 					string title = media.title + ".jpg";
+
 					bool bDoDownload = true;
 					for (int i = 0; i < imageDownloadDir.size(); i++) {
 
@@ -303,6 +332,7 @@ void ImageDisplayController::onFlickrEvent(ofxFlickr::APIEvent & evt) {
 				flickrSearchPage++;
 			}else{
 				flickrSearchPage = 0;
+				allFlickrMedia.clear();
 			}
 			unlock();
 		}

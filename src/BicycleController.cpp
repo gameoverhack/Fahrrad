@@ -75,12 +75,15 @@ void BicycleController::setup() {
 
 	}
 
+	bSetBackupPath = false;
+
 	startThread();
 
 }
 
 //--------------------------------------------------------------
 void BicycleController::setDefaults() {
+
 	ofLogNotice() << className << ": setDefaults";
 
 	nextSensorMode = SENSOR_SIMULATE;
@@ -88,21 +91,43 @@ void BicycleController::setDefaults() {
 	wheelDiameter = 678; // in millimetres
 	updateVelocityTime = 150; // in millis
 
-	velocityDecay = 0.0;
+	velocityDecay = 1.0;
 	velocityEase = 0.5;
-	velocityNormalSpeed = 40.0;
+	velocityNormalSpeed = 20.0;
 
 	riderInactiveTime = 2000; //millis
 	boosterDifficulty = 5;
 
 	numberOfMagnets = 2;
 	minimumRiderTime = 10;
+
+#ifdef TARGET_WIN32
+	backupPath = "C:/Users/gameover8/Desktop/backup";
+#else
+	backupPath = "/home/pi/Desktop/backup";
+#endif
+
 }
 
 //--------------------------------------------------------------
 void BicycleController::update() {
 
 	if (!bUse) return;
+
+	if (bSetBackupPath) {
+#ifndef TARGET_WIN32
+		ofSetWindowShape(10, 10);
+#endif
+		ofFileDialogResult result = ofSystemLoadDialog("Select Backup Folder", true);
+		if (result.bSuccess) {
+			lock();
+			backupPath = result.getPath();
+			unlock();
+		}
+#ifndef TARGET_WIN32
+		ofSetWindowShape(1920, 1080);
+#endif
+	}
 
 	// check thread safe GUI changes
 	lock();
@@ -274,7 +299,7 @@ void BicycleController::threadedFunction() {
 							//	todaysRiderInfo.push_back(currentRider);
 							//}
 							//Serializer.saveClass(ofToDataPath("configs/stats/dailyRiderInfo_" + os.str() + string(CONFIG_TYPE)), (todaysRiderInfo), ARCHIVE_BINARY);
-
+							//Serializer.saveClass(ofToDataPath(backupPath + "/dailyRiderInfo_" + os.str() + string(CONFIG_TYPE)), (todaysRiderInfo), ARCHIVE_BINARY);
 
 							ofLogNotice() << "Loading day: " << os.str();
 							Serializer.loadClass(ofToDataPath("configs/stats/dailyRiderInfo_" + os.str() + string(CONFIG_TYPE)), (todaysRiderInfo), ARCHIVE_BINARY);
@@ -422,8 +447,9 @@ void BicycleController::threadedFunction() {
 							riderData.topRiderInfo[riderData.topRiderInfo.size() - 1] = allRiderInfo[allRiderInfo.size() - 1];
 
 							ostringstream os;
-							os << "configs/stats/dailyRiderInfo_" << ofGetYear() << "_" << std::setfill('0') << std::setw(2) << ofGetMonth() << "_" << std::setfill('0') << std::setw(2) << ofGetDay() << string(CONFIG_TYPE);
-							Serializer.saveClass(ofToDataPath(os.str()), (todaysRiderInfo), ARCHIVE_BINARY);
+							os << "/dailyRiderInfo_" << ofGetYear() << "_" << std::setfill('0') << std::setw(2) << ofGetMonth() << "_" << std::setfill('0') << std::setw(2) << ofGetDay() << string(CONFIG_TYPE);
+							Serializer.saveClass(ofToDataPath("configs/stats" + os.str()), (todaysRiderInfo), ARCHIVE_BINARY);
+							Serializer.saveClass(ofToDataPath(backupPath + os.str()), (todaysRiderInfo), ARCHIVE_BINARY);
 						}
 						else {
 							currentRider.isActive = false;
@@ -547,7 +573,7 @@ void BicycleController::drawGUI() {
 	if (ImGui::CollapsingHeader(className.c_str())) {
 		beginGUI();
 		{
-
+			bSetBackupPath = ImGui::Button("Set Backup Path");
 			ImGui::SliderInt("Wheel Diameter (mm)", &wheelDiameter, 600, 700);
 			ImGui::SliderInt("Number of Magnets", &numberOfMagnets, 1, 4);
 			ImGui::SliderInt("Minimum Rider Time (s)", &minimumRiderTime, 1, 30);

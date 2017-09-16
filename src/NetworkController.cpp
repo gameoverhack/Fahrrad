@@ -204,6 +204,7 @@ void NetworkController::drawGUI() {
 				if (currentNetworkMode == NETWORK_RECV) connectReceiver();
 				unlock();
 			}
+
 			ImGui::NewLine();
 			lock();
 			ImGui::Text("Network Mode: %s", networkModes[currentNetworkMode].c_str());

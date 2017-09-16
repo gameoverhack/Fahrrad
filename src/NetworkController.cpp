@@ -187,7 +187,15 @@ void NetworkController::drawGUI() {
 
 			ImGui::SliderInt("Network Timeout (millis)", &networkTimeout, 1, 1000);
 			ImGui::Combo("Network Mode", (int*)&nextNetworkMode, networkModes);
-			ImGui::InputInt4("IP Address", ipAddress);
+			//ImGui::InputInt4("IP Address", ipAddress);
+
+			if (currentNetworkMode == NETWORK_SEND) {
+				ImGui::SliderInt("IP Address 1", &ipAddress[0], 0, 255);
+				ImGui::SliderInt("IP Address 2", &ipAddress[1], 0, 255);
+				ImGui::SliderInt("IP Address 3", &ipAddress[2], 0, 255);
+				ImGui::SliderInt("IP Address 4", &ipAddress[3], 0, 255);
+			}
+
 			ImGui::InputInt("IP Port", &ipPort);
 			 bool bReconnect = ImGui::Button("Reconnect");
 			if (bReconnect) {

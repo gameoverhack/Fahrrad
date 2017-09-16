@@ -128,7 +128,7 @@ void ofApp::draw() {
 	{
 
 		const ofFbo& viewFbo = viewController->getFBO();
-		viewFbo.draw(0, 0);
+		viewFbo.draw(ofGetWidth() / 2.0 - viewFbo.getWidth() / 2.0, 0);
 
 	}
 	break;

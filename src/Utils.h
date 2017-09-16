@@ -95,7 +95,9 @@ typedef enum {
 static string getString(float n, int precision = 0, int fill = 0) {
 	ostringstream os;
 	os << std::setfill('0') << std::setw(fill) << std::setprecision(precision) << std::fixed << n;
-	return os.str();
+	string str = os.str();
+	ofStringReplace(str, ".", ",");
+	return str;
 }
 
 typedef struct {

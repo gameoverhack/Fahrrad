@@ -6,68 +6,88 @@
     <watt>0.0</watt>
   </milestone>
 	<milestone>
-		<nameDE>Nachtlicht</nameDE>
-    <nameEN>Nachtlicht</nameEN>
+		<nameDE>ein Nachtlicht</nameDE>
+    <nameEN>a night light</nameEN>
 		<watt>0.5</watt>
 	</milestone>
 	<milestone>
-		<nameDE>Radiowecker</nameDE>
-    <nameEN>Radiowecker</nameEN>
-		<watt>3.0</watt>
-	</milestone>
-	<milestone>
-		<nameDE>Handyladegerät</nameDE>
-    <nameEN>Handyladegerät</nameEN>
+		<nameDE>ein Handyladegerät</nameDE>
+    <nameEN>a mobile phone charger</nameEN>
 		<watt>5.0</watt>
 	</milestone>
 	<milestone>
-		<nameDE>WLAN-Router</nameDE>
-    <nameEN>WLAN-Router</nameEN>
-		<watt>6.0</watt>
-	</milestone>
-	<milestone>
-		<nameDE>Energiesparlampe</nameDE>
-    <nameEN>Energiesparlampe</nameEN>
+		<nameDE>eine Energiesparlampe</nameDE>
+    <nameEN>an energy-saving lamp</nameEN>
 		<watt>11.0</watt>
 	</milestone>
 	<milestone>
-		<nameDE>DVD-Player</nameDE>
-    <nameEN>DVD-Player</nameEN>
-		<watt>20.0</watt>
-	</milestone>
-	<milestone>
-		<nameDE>Flachbildschirm (17")</nameDE>
-    <nameEN>Flachbildschirm (17")</nameEN>
-		<watt>30.0</watt>
-	</milestone>
-	<milestone>
-		<nameDE>Glühbirne</nameDE>
-    <nameEN>Glühbirne</nameEN>
+		<nameDE>eine 40 Watt Glühbirne</nameDE>
+    <nameEN>a 40-watt lightbulb</nameEN>
 		<watt>40.0</watt>
 	</milestone>
 	<milestone>
-		<nameDE>Laptop</nameDE>
-    <nameEN>Laptop</nameEN>
+		<nameDE>einen Laptop</nameDE>
+    <nameEN>a laptop</nameEN>
 		<watt>50.0</watt>
 	</milestone>
 	<milestone>
-		<nameDE>Lockenstab</nameDE>
-    <nameEN>Lockenstab</nameEN>
+		<nameDE>einen 50 Zoll-TV</nameDE>
+    <nameEN>a 50-inch TV</nameEN>
+		<watt>92.0</watt>
+	</milestone>
+	<milestone>
+		<nameDE>einen Lockenstab</nameDE>
+    <nameEN>a curling iron</nameEN>
 		<watt>100.0</watt>
 	</milestone>
 	<milestone>
-		<nameDE>Pürierstab</nameDE>
-    <nameEN>Pürierstab</nameEN>
+		<nameDE>eine Playstation 4</nameDE>
+    <nameEN>a Playstation 4</nameEN>
+		<watt>114.0</watt>
+	</milestone>
+	<milestone>
+		<nameDE>einen Pürierstab</nameDE>
+    <nameEN>a blender</nameEN>
 		<watt>200.0</watt>
 	</milestone>
 	<milestone>
-		<nameDE>Toaster</nameDE>
-    <nameEN>Toaster</nameEN>
-		<watt>800.0</watt>
+		<nameDE>einen HD-Beamer</nameDE>
+    <nameEN>a HD projector</nameEN>
+		<watt>250.0</watt>
 	</milestone>
 	<milestone>
-		<nameDE>Mickrowelle</nameDE>
-    <nameEN>Mickrowelle</nameEN>
-		<watt>1000.0</watt>
+		<nameDE>eine Halogen-Deckenfluter</nameDE>
+    <nameEN>a halogen floodlight</nameEN>
+		<watt>300.0</watt>
 	</milestone>
+  <milestone>
+    <nameDE>einen Eierkocher</nameDE>
+    <nameEN>an egg boiler</nameEN>
+    <watt>350.0</watt>
+  </milestone>
+	<milestone>
+		<nameDE>eine Dunstabzugshaube</nameDE>
+    <nameEN>a kitchen hood</nameEN>
+		<watt>500.0</watt>
+	</milestone>
+	<milestone>
+		<nameDE>einen Laserdrucker</nameDE>
+    <nameEN>a laser printer</nameEN>
+		<watt>600.0</watt>
+	</milestone>
+  <milestone>
+    <nameDE>einen Toaster</nameDE>
+    <nameEN>a toaster</nameEN>
+    <watt>800.0</watt>
+  </milestone>
+  <milestone>
+    <nameDE>eine Mikrowelle</nameDE>
+    <nameEN>a microwave</nameEN>
+    <watt>1000.0</watt>
+  </milestone>
+  <milestone>
+    <nameDE>ein Bügeleisen</nameDE>
+    <nameEN>an iron</nameEN>
+    <watt>1200.0</watt>
+  </milestone>
 </milestonesWatt>

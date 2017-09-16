@@ -148,10 +148,9 @@ void ViewController::renderSender() {
 		string deviceEN = "";
 
 		for (int i = 0; i < milestonesWatts.size(); i++) {
-			if ((riderInfo.isActive ? riderInfo.currentKiloWatts : lastTopWatts) <= milestonesWatts[i].value) {
+			if ((riderInfo.isActive ? riderInfo.currentKiloWatts : lastTopWatts) >= milestonesWatts[i].value) {
 				deviceDE = milestonesWatts[i].typeDE;
 				deviceEN = milestonesWatts[i].typeEN;
-				break;
 			}
 		}
 		
@@ -337,10 +336,9 @@ void ViewController::renderReciever() {
 
 		//int currentAnimal = -1;
 		for (int i = 0; i < milestonesSpeed.size(); i++) {
-			if (riderSummary.data[RS_SPEED_CURRENT] <= milestonesSpeed[i].value) {
+			if (riderSummary.data[RS_SPEED_CURRENT] >= milestonesSpeed[i].value) {
 				animalDE = milestonesSpeed[i].typeDE;
 				animalEN = milestonesSpeed[i].typeEN;
-				break;
 			}
 		}
 

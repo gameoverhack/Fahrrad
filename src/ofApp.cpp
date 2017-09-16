@@ -13,9 +13,15 @@ void ofApp::setup() {
 	IGuiBase::setup();
 	currentApplicationMode = APPLICATION_NONE; // so we force application mode change in update
 
+#ifdef TARGET_WIN32
 	bShowDebug = true;
 	bShowFullScreen = false;
 	bShowCursor = true;
+#else
+	bShowDebug = false;
+	bShowFullScreen = false;
+	bShowCursor = false;
+#endif
 
 	ofSetFullscreen(bShowFullScreen);
 	if (bShowCursor) {
@@ -472,6 +478,13 @@ void ofApp::keyPressed(int key) {
 	case 'd':
 	{
 		bShowDebug ^= true;
+		bShowCursor ^= true;
+		if (bShowCursor) {
+			ofShowCursor();
+		}
+		else {
+			ofHideCursor();
+		}
 	}
 	break;
 	case 'f':

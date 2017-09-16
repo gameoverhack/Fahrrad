@@ -1,5 +1,41 @@
 #include "ImageCaptureController.h"
 
+/*
+                     brightness (int)    : min=-64 max=64 step=1 default=-8193 value=0
+                       contrast (int)    : min=0 max=64 step=1 default=57343 value=32
+                     saturation (int)    : min=0 max=128 step=1 default=57343 value=60
+                            hue (int)    : min=-40 max=40 step=1 default=-8193 value=0
+ white_balance_temperature_auto (bool)   : default=1 value=0
+                          gamma (int)    : min=72 max=500 step=1 default=57343 value=100
+                           gain (int)    : min=0 max=100 step=1 default=57343 value=0
+           power_line_frequency (menu)   : min=0 max=2 default=1 value=1
+				0: Disabled
+				1: 50 Hz
+				2: 60 Hz
+      white_balance_temperature (int)    : min=2800 max=6500 step=1 default=57343 value=2800
+                      sharpness (int)    : min=0 max=6 step=1 default=57343 value=2
+         backlight_compensation (int)    : min=0 max=2 step=1 default=57343 value=1
+                  exposure_auto (menu)   : min=0 max=3 default=0 value=3
+				1: Manual Mode
+				3: Aperture Priority Mode
+              exposure_absolute (int)    : min=1 max=5000 step=1 default=157 value=157 flags=inactive
+         exposure_auto_priority (bool)   : default=0 value=1
+                     brightness (int)    : min=-64 max=64 step=1 default=-8193 value=0
+                       contrast (int)    : min=0 max=64 step=1 default=57343 value=32
+                     saturation (int)    : min=0 max=128 step=1 default=57343 value=60
+                            hue (int)    : min=-40 max=40 step=1 default=-8193 value=0
+ white_balance_temperature_auto (bool)   : default=1 value=0
+                          gamma (int)    : min=72 max=500 step=1 default=57343 value=100
+                           gain (int)    : min=0 max=100 step=1 default=57343 value=0
+           power_line_frequency (menu)   : min=0 max=2 default=1 value=1
+				0: Disabled
+				1: 50 Hz
+				2: 60 Hz
+      white_balance_temperature (int)    : min=2800 max=6500 step=1 default=57343 value=2800
+                      sharpness (int)    : min=0 max=6 step=1 default=57343 value=2
+         backlight_compensation (int)    : min=0 max=2 step=1 default=57343 value=1
+*/
+
 //--------------------------------------------------------------
 ImageCaptureController::ImageCaptureController() {
 	className = "ImageCaptureController";
@@ -44,6 +80,9 @@ void ImageCaptureController::setup() {
 	//setup Camera
 	float w = 1280.0;
 	float h = 720.0;
+
+	system("v4l2-ctl --set-ctrl white_balance_temperature=2800");
+	system("v4l2-ctl --set-ctrl contrast=56");
 
 	cam.setDeviceID(0);
 	cam.setDesiredFrameRate(60);

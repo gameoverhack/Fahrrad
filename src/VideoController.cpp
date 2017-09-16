@@ -37,7 +37,7 @@ void VideoController::setDefaults() {
 #ifdef TARGET_WIN32
 	videoPath = "C:/Users/gameover8/Desktop/video";
 #else
-    videoPath = "/home/pi/Desktop/video";
+    	videoPath = "/home/pi/Desktop/video";
 #endif
 	currentVideoIndex = 0;
 	speedUpdateTimeout = 1000;
@@ -72,26 +72,24 @@ void VideoController::update() {
 		if (nextVideoIndex >= videoFilePaths.size()) nextVideoIndex = 0;
 
 		if (nextVideoIndex != 0 && videoFilePaths[nextVideoIndex] != "") {
-			ofLogVerbose() << "Loading video: " << videoFilePaths[nextVideoIndex];
+			ofLogNotice() << "Loading video: " << videoFilePaths[nextVideoIndex];
 
 #ifdef TARGET_WIN32
-            vid.stop();
+            		vid.stop();
 			vid.load(videoFilePaths[nextVideoIndex]);
 			vid.setLoopState(OF_LOOP_NONE);
-#ifdef TARGET_WIN32
 			vid.setFrame(pauseFrame);
-#else
-			vid.seekToTimeInSeconds(pauseFrame * 25);
-#endif
-            vid.play();
+			vid.play();
 			vid.setPaused(true);
 #else
-            ofxOMXPlayerSettings settings;
-            settings.videoPath = videoFilePaths[nextVideoIndex];
-            settings.useHDMIForAudio = false;	//default true
-            settings.enableLooping = true;		//default true
-            settings.enableTexture = true;		//default true
-            vid.setup(settings);
+            		ofxOMXPlayerSettings settings;
+            		settings.videoPath = videoFilePaths[nextVideoIndex];
+            		settings.useHDMIForAudio = false;	//default true
+            		settings.enableLooping = false;		//default true
+            		settings.enableTexture = true;		//default true
+			vid.setup(settings);
+			vid.seekToTimeInSeconds(pauseFrame * 25);
+			vid.setPaused(true);
 #endif
 
 		}
@@ -107,9 +105,8 @@ void VideoController::update() {
 #ifdef TARGET_WIN32
 		vid.setFrame(startLoopFrame);
 #else
-		vid.seekToTimeInSeconds(startLoopFrame * 25);
+		vid.seekToTimeInSeconds(startLoopFrame / 25.0);
 #endif
-		//vid.play();
 	}
 
 }
@@ -157,8 +154,12 @@ void VideoController::setSpeed(float speed) {
 
 	if (ofGetElapsedTimeMillis() - lastSpeedUpdateTime >= speedUpdateTimeout) {
 
-		if (speed == 0.0f) {
+		if(bRewindPending && vid.getCurrentFrame() >= pauseFrame + 5) {
 			vid.setPaused(true);
+		}
+
+		if (speed == 0.0f) {
+			//vid.setPaused(true);
 		}
 		else {
 			if (vid.isPaused()) {
@@ -194,14 +195,25 @@ const ofTexture & VideoController::getVideoTexture() {
 }
 
 //--------------------------------------------------------------
+void VideoController::fastforward() {
+	if (vid.getIsOpen()) {
+#ifdef TARGET_WIN32
+		vid.setFrame(endLoopFrame - 200);
+#else
+		vid.seekToTimeInSeconds((endLoopFrame - 200) / 25.0);
+#endif
+	}
+}
+
+//--------------------------------------------------------------
 void VideoController::rewind() {
-	if (vid.getCurrentFrame() != pauseFrame && !bRewindPending) {
+	if (vid.getCurrentFrame() != pauseFrame && !bRewindPending && vid.getIsOpen()) {
 #ifdef TARGET_WIN32
 		vid.setFrame(pauseFrame);
 #else
-		vid.seekToTimeInSeconds(pauseFrame * 25);
+		vid.seekToTimeInSeconds(pauseFrame / 25.0);
 #endif
-		vid.setPaused(true);
+		//vid.setPaused(true);
 		bRewindPending = true;
 	}
 }

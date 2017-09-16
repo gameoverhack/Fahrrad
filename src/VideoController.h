@@ -24,6 +24,7 @@ public:
 	const float& getVideoFadeThreshold();
 	const ofTexture& getVideoTexture();
 
+	void fastforward();
 	void rewind();
 	int isLooping();
 

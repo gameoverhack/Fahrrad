@@ -93,7 +93,7 @@ void BicycleController::setDefaults() {
 
 	velocityDecay = 1.0;
 	velocityEase = 0.5;
-	velocityNormalSpeed = 20.0;
+	velocityNormalSpeed = 40.0;
 
 	riderInactiveTime = 2000; //millis
 	boosterDifficulty = 5;

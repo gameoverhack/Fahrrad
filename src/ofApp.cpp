@@ -511,6 +511,11 @@ void ofApp::keyPressed(int key) {
 		}
 	}
 	break;
+	case '.':
+	{
+		if(currentApplicationMode == APPLICATION_BIKEVIDEO) videoController->fastforward();
+	}
+	break;
 	case ' ':
 	{
 

@@ -78,7 +78,11 @@ void VideoController::update() {
             vid.stop();
 			vid.load(videoFilePaths[nextVideoIndex]);
 			vid.setLoopState(OF_LOOP_NONE);
+#ifdef TARGET_WIN32
 			vid.setFrame(pauseFrame);
+#else
+			vid.seekToTimeInSeconds(pauseFrame * 25);
+#endif
             vid.play();
 			vid.setPaused(true);
 #else
@@ -100,7 +104,11 @@ void VideoController::update() {
 #endif
 
 	if (vid.getCurrentFrame() > endLoopFrame) {
+#ifdef TARGET_WIN32
 		vid.setFrame(startLoopFrame);
+#else
+		vid.seekToTimeInSeconds(startLoopFrame * 25);
+#endif
 		//vid.play();
 	}
 
@@ -188,7 +196,11 @@ const ofTexture & VideoController::getVideoTexture() {
 //--------------------------------------------------------------
 void VideoController::rewind() {
 	if (vid.getCurrentFrame() != pauseFrame && !bRewindPending) {
+#ifdef TARGET_WIN32
 		vid.setFrame(pauseFrame);
+#else
+		vid.seekToTimeInSeconds(pauseFrame * 25);
+#endif
 		vid.setPaused(true);
 		bRewindPending = true;
 	}

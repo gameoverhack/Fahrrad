@@ -196,10 +196,11 @@ const ofTexture & VideoController::getVideoTexture() {
 
 //--------------------------------------------------------------
 void VideoController::fastforward() {
-	if (vid.getIsOpen()) {
 #ifdef TARGET_WIN32
+	if (vid.isLoaded()) {
 		vid.setFrame(endLoopFrame - 200);
 #else
+	if (vid.getIsOpen()) {
 		vid.seekToTimeInSeconds((endLoopFrame - 200) / 25.0);
 #endif
 	}
@@ -207,10 +208,11 @@ void VideoController::fastforward() {
 
 //--------------------------------------------------------------
 void VideoController::rewind() {
-	if (vid.getCurrentFrame() != pauseFrame && !bRewindPending && vid.getIsOpen()) {
 #ifdef TARGET_WIN32
+	if (vid.getCurrentFrame() != pauseFrame && !bRewindPending && vid.isLoaded()) {
 		vid.setFrame(pauseFrame);
 #else
+	if (vid.getCurrentFrame() != pauseFrame && !bRewindPending && vid.getIsOpen()) {
 		vid.seekToTimeInSeconds(pauseFrame / 25.0);
 #endif
 		//vid.setPaused(true);

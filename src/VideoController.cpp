@@ -42,7 +42,9 @@ void VideoController::setDefaults() {
 	currentVideoIndex = 0;
 	speedUpdateTimeout = 1000;
 	videoFadeThreshold = 10.0f;
-
+	pauseFrame = 200;
+	startLoopFrame = 400;
+	endLoopFrame = 600;
 }
 
 //--------------------------------------------------------------
@@ -76,7 +78,9 @@ void VideoController::update() {
             vid.stop();
 			vid.load(videoFilePaths[nextVideoIndex]);
 			vid.setLoopState(OF_LOOP_NONE);
+			vid.setFrame(pauseFrame);
             vid.play();
+			vid.setPaused(true);
 #else
             ofxOMXPlayerSettings settings;
             settings.videoPath = videoFilePaths[nextVideoIndex];
@@ -95,9 +99,9 @@ void VideoController::update() {
 	vid.update();
 #endif
 
-	if (vid.getIsMovieDone()) {
-		vid.setFrame(2);
-		vid.play();
+	if (vid.getCurrentFrame() > endLoopFrame) {
+		vid.setFrame(startLoopFrame);
+		//vid.play();
 	}
 
 }
@@ -131,7 +135,10 @@ void VideoController::drawGUI() {
 			ImGui::SliderInt("Speed Update Time (millis)", &speedUpdateTimeout, 0, 2000);
 			ImGui::SliderFloat("Video Fade Threshold (km/h)", &videoFadeThreshold, 0.0f, 40.0f);
 			float frame = vid.getCurrentFrame();
-			ImGui::SliderFloat("Video position", &frame, 0.0f, vid.getTotalNumFrames());
+			ImGui::SliderFloat("Current video frame", &frame, 0.0f, vid.getTotalNumFrames());
+			ImGui::SliderInt("Pause frame", &pauseFrame, 0, 400);
+			ImGui::SliderInt("Start loop frame", &startLoopFrame, 0, 400);
+			ImGui::SliderInt("End loop frame", &endLoopFrame, vid.getTotalNumFrames() - 400, vid.getTotalNumFrames());
 		}
 		endGUI();
 	}
@@ -144,13 +151,15 @@ void VideoController::setSpeed(float speed) {
 
 		if (speed == 0.0f) {
 			vid.setPaused(true);
-		} else {
+		}
+		else {
 			if (vid.isPaused()) {
 				vid.setPaused(false);
-				bRewindPending = false;
 			}
+			bRewindPending = false;
 			vid.setSpeed(speed);
 		}
+		
 
 		lastSpeedUpdateTime = ofGetElapsedTimeMillis();
 	}
@@ -176,18 +185,18 @@ const ofTexture & VideoController::getVideoTexture() {
 #endif
 }
 
+//--------------------------------------------------------------
 void VideoController::rewind() {
-	if (vid.getCurrentFrame() != 0 && !bRewindPending) {
+	if (vid.getCurrentFrame() != pauseFrame && !bRewindPending) {
+		vid.setFrame(pauseFrame);
 		vid.setPaused(true);
-		vid.setFrame(0);
 		bRewindPending = true;
 	}
-	
-	//vid.update();
 }
 
-int VideoController::getFrame() {
-	return vid.getCurrentFrame();
+//--------------------------------------------------------------
+int VideoController::isLooping() {
+	return vid.getCurrentFrame() >= startLoopFrame;
 }
 
 //--------------------------------------------------------------

@@ -25,8 +25,7 @@ public:
 	const ofTexture& getVideoTexture();
 
 	void rewind();
-
-	int getFrame();
+	int isLooping();
 
 protected:
 
@@ -37,6 +36,10 @@ protected:
 	ofTexture defaultTexture;
 #endif
 	
+	int startLoopFrame;
+	int endLoopFrame;
+	int pauseFrame;
+
 	bool bRewindPending;
 
 	ofDirectory dir;
@@ -67,6 +70,9 @@ protected:
 		ar & BOOST_SERIALIZATION_NVP(currentVideoIndex);
 		ar & BOOST_SERIALIZATION_NVP(speedUpdateTimeout);
 		ar & BOOST_SERIALIZATION_NVP(videoFadeThreshold);
+		ar & BOOST_SERIALIZATION_NVP(pauseFrame);
+		ar & BOOST_SERIALIZATION_NVP(startLoopFrame);
+		ar & BOOST_SERIALIZATION_NVP(endLoopFrame);
 	}
 
 };

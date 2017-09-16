@@ -144,7 +144,7 @@ void ofApp::draw() {
 
 		float currentFade = 0.0f;
 
-		if (videoController->getFrame() > 0) {
+		if (videoController->isLooping()) {
 			if (currentSpeed == 0.0f) {
 				currentFade = 0.0f;
 			}
@@ -159,15 +159,8 @@ void ofApp::draw() {
 			currentFade = 1.0f;
 		}
 
-		
-
 		if (riderInfo.isActive == false && currentSpeed == 0.0f) {
-			if (videoController->getFrame() != 0) {
-				videoController->rewind();
-			}
-			else {
-				currentFade = 1.0;
-			}
+			videoController->rewind();
 		}
 
 		ofSetColor(255 * currentFade);

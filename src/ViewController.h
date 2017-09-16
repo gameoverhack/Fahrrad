@@ -28,6 +28,9 @@ public:
 
 protected:
 
+	int timeSinceLastRider;
+	int timeoutSinceLastRider;
+
 	ofFbo fbo;
 	ofFbo backgroundFbo;
 

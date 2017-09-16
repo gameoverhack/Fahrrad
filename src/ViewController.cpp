@@ -60,6 +60,10 @@ void ViewController::setup() {
 	else {
 		ofLogError() << "XML milestonesWatt could not be loaded";
 	}
+
+	timeoutSinceLastRider = 4000;
+	timeSinceLastRider = ofGetElapsedTimeMillis() - timeoutSinceLastRider;
+
 }
 
 //--------------------------------------------------------------
@@ -287,6 +291,14 @@ void ViewController::renderSender() {
 
 		}
 
+		// hide watts and top speed if no rider
+		//if (riderInfo.isActive) timeSinceLastRider = ofGetElapsedTimeMillis();
+		if (!riderInfo.isActive) {// ofGetElapsedTimeMillis() - timeSinceLastRider > timeoutSinceLastRider) {
+			ofFill();
+			ofSetColor(255);
+			ofDrawRectangle(600, 30, 470, 160);
+			ofDrawRectangle(850, 240, 215, 75);
+		}
 	}
 	else {
 		backgroundFbo.draw(0, 0); // for now draw this without white background to show we are loading

@@ -209,7 +209,6 @@ void BicycleController::threadedFunction() {
 #ifndef TARGET_WIN32
                 // read gpio value
                 gpio17.getval_gpio(gio17_state);
-                // can we get analogue or only digital values?
 
                 // if some gpio value, then triggerSensor(SENSOR_GPIO)
                 if(gio17_state == "0" && lastGPIOMsg == "1"){

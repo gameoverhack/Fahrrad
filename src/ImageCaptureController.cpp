@@ -144,8 +144,8 @@ void ImageCaptureController::setup() {
 	cam.initGrabber(w, h);
 
 	//setup Audio
-	soundPlayerCountdown.load(ofToDataPath("audio/countdown.mp3"));
-	soundPlayerShutter.load(ofToDataPath("audio/shutter.mp3"));
+	soundPlayerCountdown.load(ofToDataPath("audio/countdown.wav"));
+	soundPlayerShutter.load(ofToDataPath("audio/shutter.wav"));
 
 
 

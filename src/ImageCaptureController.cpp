@@ -220,7 +220,7 @@ void ImageCaptureController::setDefaults() {
 
 	flickrAuthenticateTimeout = 10000;
 
-	ledBlinkSpeed = 40;
+	ledBlinkSpeed = 70;
 
 	camSettings = camDefault;
 
@@ -496,9 +496,11 @@ void ImageCaptureController::threadedFunction() {
 					lock();
 					if (currentPhotoState == PHOTO_FINISHED) {
 						currentPhotoState = PHOTO_NONE;
+						bLEDBlinkOn = false;
 					}
 					unlock();
 				}
+				
 			}
 			break;
 			}

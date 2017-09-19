@@ -1,123 +1,73 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <milestonesSpeed>
   <milestone>
-    <nameDE>ein regungsloses Tier</nameDE>
-    <nameEN>a motionless animal</nameEN>
+    <nameDE>eines schlafenden Tigers</nameDE>
+    <nameEN>a sleeping tiger</nameEN>
     <speed>0.000</speed>
   </milestone>
 	<milestone>
-		<nameDE>Schnecke</nameDE>
-    <nameEN>Schnecke</nameEN>
-		<speed>0.027</speed>
+		<nameDE>eines Faultiers</nameDE>
+    <nameEN>a sloth</nameEN>
+		<speed>0.1</speed>
 	</milestone>
 	<milestone>
-		<nameDE>Riesen-Schildkröte</nameDE>
-    <nameEN>Riesen-Schildkröte</nameEN>
-		<speed>0.37</speed>
+		<nameDE>eines Igels</nameDE>
+    <nameEN>a hedgehog</nameEN>
+		<speed>5</speed>
 	</milestone>
 	<milestone>
-		<nameDE>Tausendfüßer</nameDE>
-    <nameEN>Tausendfüßer</nameEN>
-		<speed>1.0</speed>
+		<nameDE>eines Kamels</nameDE>
+    <nameEN>a camel</nameEN>
+		<speed>10.0</speed>
 	</milestone>
 	<milestone>
-		<nameDE>Spinne</nameDE>
-    <nameEN>Spinne</nameEN>
-		<speed>1.3</speed>
-	</milestone>
-	<milestone>
-		<nameDE>Strandkrabbe</nameDE>
-    <nameEN>Strandkrabbe</nameEN>
-		<speed>3.6</speed>
-	</milestone>
-	<milestone>
-		<nameDE>Maulwurf</nameDE>
-    <nameEN>Maulwurf</nameEN>
-		<speed>4.0</speed>
-	</milestone>
-	<milestone>
-		<nameDE>Feldmaus</nameDE>
-    <nameEN>Feldmaus</nameEN>
-		<speed>8.0</speed>
-	</milestone>
-	<milestone>
-		<nameDE>Ratte</nameDE>
-    <nameEN>Ratte</nameEN>
-		<speed>9.6</speed>
-	</milestone>
-	<milestone>
-		<nameDE>Hausmaus</nameDE>
-    <nameEN>Hausmaus</nameEN>
-		<speed>12.0</speed>
-	</milestone>
-	<milestone>
-		<nameDE>Kamel</nameDE>
-    <nameEN>Kamel</nameEN>
+		<nameDE>einer Honigbiene</nameDE>
+    <nameEN>a honey bee</nameEN>
 		<speed>15.0</speed>
 	</milestone>
 	<milestone>
-		<nameDE>Eskimohund</nameDE>
-    <nameEN>Eskimohund</nameEN>
-		<speed>23.4</speed>
+		<nameDE>einer schwarzen Mamba</nameDE>
+    <nameEN>a black mamba</nameEN>
+		<speed>20.0</speed>
 	</milestone>
 	<milestone>
-		<nameDE>Smaragdeidechse</nameDE>
-    <nameEN>Smaragdeidechse</nameEN>
-		<speed>29.0</speed>
+		<nameDE>einer Libelle</nameDE>
+    <nameEN>a dragonfly</nameEN>
+		<speed>30.0</speed>
 	</milestone>
 	<milestone>
-		<nameDE>Mensch</nameDE>
-    <nameEN>Mensch</nameEN>
-		<speed>38.0</speed>
+		<nameDE>eines Blauhais</nameDE>
+    <nameEN>a blue shark</nameEN>
+		<speed>35.0</speed>
 	</milestone>
 	<milestone>
-		<nameDE>Afrikan. Elefant</nameDE>
-    <nameEN>Afrikan. Elefant</nameEN>
-		<speed>40.0</speed>
+		<nameDE>eines Storches</nameDE>
+    <nameEN>a stork</nameEN>
+		<speed>45.0</speed>
 	</milestone>
 	<milestone>
-		<nameDE>Flusspferd</nameDE>
-    <nameEN>Flusspferd</nameEN>
+		<nameDE>einer Hauskatze</nameDE>
+    <nameEN>a house cat</nameEN>
 		<speed>48.0</speed>
 	</milestone>
 	<milestone>
-		<nameDE>Bär</nameDE>
-    <nameEN>Bär</nameEN>
+		<nameDE>einer Giraffe</nameDE>
+    <nameEN>a giraffe</nameEN>
 		<speed>50.0</speed>
 	</milestone>
 	<milestone>
-		<nameDE>Giraffe</nameDE>
-    <nameEN>Giraffe</nameEN>
-		<speed>51.0</speed>
-	</milestone>
-	<milestone>
-		<nameDE>Bison</nameDE>
-    <nameEN>Bison</nameEN>
+		<nameDE>eines Löwens</nameDE>
+    <nameEN>a lion</nameEN>
 		<speed>55.0</speed>
 	</milestone>
 	<milestone>
-		<nameDE>Feldhase</nameDE>
-    <nameEN>Feldhase</nameEN>
+		<nameDE>eines Känguruhs</nameDE>
+    <nameEN>a kangaroo</nameEN>
+		<speed>64.0</speed>
+	</milestone>
+	<milestone>
+		<nameDE>eines Straußes</nameDE>
+    <nameEN>an ostrich</nameEN>
 		<speed>70.0</speed>
-	</milestone>
-	<milestone>
-		<nameDE>Gabelbock</nameDE>
-    <nameEN>Gabelbock</nameEN>
-		<speed>85.0</speed>
-	</milestone>
-	<milestone>
-		<nameDE>Gazelle</nameDE>
-    <nameEN>Gazelle</nameEN>
-		<speed>90.0</speed>
-	</milestone>
-	<milestone>
-		<nameDE>Windhund</nameDE>
-    <nameEN>Windhund</nameEN>
-		<speed>110.0</speed>
-	</milestone>
-	<milestone>
-		<nameDE>Gepard</nameDE>
-    <nameEN>Gepard</nameEN>
-		<speed>122.0</speed>
 	</milestone>
 </milestonesSpeed>

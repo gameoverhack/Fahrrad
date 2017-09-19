@@ -117,13 +117,12 @@ void ImageCaptureController::setup() {
 	for (int i = 0; i < camSettingNames.size(); i++) {
 		string setting = camSettingNames[i];
 		ostringstream os;
-		os << "v4l2 - ctl --set - ctrl " << setting << "=" << camSettings[setting];
+		os << "v4l2-ctl --set-ctrl " << setting << "=" << camSettings[setting];
 		ofLogNotice() << "Command system: " << os.str();
 		system(os.str().c_str());
 	}
 
-	system("v4l2-ctl --set-ctrl white_balance_temperature=2800");
-	system("v4l2-ctl --set-ctrl contrast=56");
+	//system("v4l2-ctl --set-ctrl contrast=56");
 
 	bLEDBlinkOn = false;
 	lastLedBlinkTime = ofGetElapsedTimeMillis();
@@ -682,7 +681,7 @@ void ImageCaptureController::drawGUI() {
 					if (camTemp[setting] != camSettings[setting]) {
 						camSettings[setting] = camTemp[setting];
 						ostringstream os;
-						os << "v4l2 - ctl --set - ctrl " << setting << "=" << camSettings[setting];
+						os << "v4l2-ctl --set-ctrl " << setting << "=" << camSettings[setting];
 						commands.push_back(os.str());
 					}
 				}

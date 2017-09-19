@@ -42,6 +42,19 @@ public:
 
 protected:
 
+	//typedef struct {
+	//	int val;
+	//	int min;
+	//	int max;
+	//} camSetting;
+
+	vector<string> camSettingNames;
+
+	map<string, int> camDefault;
+	map<string, int> camSettings;
+	map<string, int> camMins;
+	map<string, int> camMaxs;
+
 	ofxFlickr::API * flickr;
 	
 	int flickrAuthenticateTimeout;
@@ -133,5 +146,6 @@ protected:
 		ar & BOOST_SERIALIZATION_NVP(simulateTimeout);
 		ar & BOOST_SERIALIZATION_NVP(flickrAuthenticateTimeout);
 		ar & BOOST_SERIALIZATION_NVP(ledBlinkSpeed);
+		ar & BOOST_SERIALIZATION_NVP(camSettings);
 	}
 };

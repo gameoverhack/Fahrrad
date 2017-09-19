@@ -20,21 +20,8 @@
 				3: Aperture Priority Mode
               exposure_absolute (int)    : min=1 max=5000 step=1 default=157 value=157 flags=inactive
          exposure_auto_priority (bool)   : default=0 value=1
-                     brightness (int)    : min=-64 max=64 step=1 default=-8193 value=0
-                       contrast (int)    : min=0 max=64 step=1 default=57343 value=32
-                     saturation (int)    : min=0 max=128 step=1 default=57343 value=60
-                            hue (int)    : min=-40 max=40 step=1 default=-8193 value=0
- white_balance_temperature_auto (bool)   : default=1 value=0
-                          gamma (int)    : min=72 max=500 step=1 default=57343 value=100
-                           gain (int)    : min=0 max=100 step=1 default=57343 value=0
-           power_line_frequency (menu)   : min=0 max=2 default=1 value=1
-				0: Disabled
-				1: 50 Hz
-				2: 60 Hz
-      white_balance_temperature (int)    : min=2800 max=6500 step=1 default=57343 value=2800
-                      sharpness (int)    : min=0 max=6 step=1 default=57343 value=2
-         backlight_compensation (int)    : min=0 max=2 step=1 default=57343 value=1
 */
+
 
 //--------------------------------------------------------------
 ImageCaptureController::ImageCaptureController() {
@@ -64,8 +51,79 @@ void ImageCaptureController::setup() {
 
 	ofLogNotice() << className << ": setup";
 
+	camSettingNames = { "brightness",
+		"contrast",
+		"saturation",
+		"hue",
+		"white_balance_temperature_auto",
+		"gamma",
+		"gain",
+		"power_line_frequency",
+		"white_balance_temperature",
+		"sharpness",
+		"backlight_compensation",
+		"exposure_auto",
+		"exposure_absolute",
+		"exposure_auto_priority" };
+
+	camDefault["brightness"] = 0;
+	camDefault["contrast"] = 32;
+	camDefault["saturation"] = 60;
+	camDefault["hue"] = 0;
+	camDefault["white_balance_temperature_auto"] = 0;
+	camDefault["gamma"] = 100;
+	camDefault["gain"] = 0;
+	camDefault["power_line_frequency"] = 1;
+	camDefault["white_balance_temperature"] = 2800;
+	camDefault["sharpness"] = 2;
+	camDefault["backlight_compensation"] = 1;
+	camDefault["exposure_auto"] = 3;
+	camDefault["exposure_absolute"] = 157;
+	camDefault["exposure_auto_priority"] = 1;
+
+	camMins["brightness"] = -64;
+	camMaxs["brightness"] = +64;
+	camMins["contrast"] = 0;
+	camMaxs["contrast"] = 64;
+	camMins["saturation"] = 0;
+	camMaxs["saturation"] = 128;
+	camMins["hue"] = -40;
+	camMaxs["hue"] = +40;
+	camMins["white_balance_temperature_auto"] = 0;
+	camMaxs["white_balance_temperature_auto"] = 1;
+	camMins["gamma"] = 72;
+	camMaxs["gamma"] = 500;
+	camMins["gain"] = 0;
+	camMaxs["gain"] = 100;
+	camMins["power_line_frequency"] = 0;
+	camMaxs["power_line_frequency"] = 2;
+	camMins["white_balance_temperature"] = 2800;
+	camMaxs["white_balance_temperature"] = 6500;
+	camMins["sharpness"] = 0;
+	camMaxs["sharpness"] = 6;
+	camMins["backlight_compensation"] = 0;
+	camMaxs["backlight_compensation"] = 2;
+	camMins["exposure_auto"] = 0;
+	camMaxs["exposure_auto"] = 3;
+	camMins["exposure_absolute"] = 1;
+	camMaxs["exposure_absolute"] = 5000;
+	camMins["exposure_auto_priority"] = 0;
+	camMaxs["exposure_auto_priority"] = 1;
+
 	// call base clase setup for now
 	IGuiBase::setup();
+
+	// send commands to cam on nix
+	for (int i = 0; i < camSettingNames.size(); i++) {
+		string setting = camSettingNames[i];
+		ostringstream os;
+		os << "v4l2 - ctl --set - ctrl " << setting << "=" << camSettings[setting];
+		ofLogNotice() << "Command system: " << os.str();
+		system(os.str().c_str());
+	}
+
+	system("v4l2-ctl --set-ctrl white_balance_temperature=2800");
+	system("v4l2-ctl --set-ctrl contrast=56");
 
 	bLEDBlinkOn = false;
 	lastLedBlinkTime = ofGetElapsedTimeMillis();
@@ -80,9 +138,6 @@ void ImageCaptureController::setup() {
 	//setup Camera
 	float w = 1280.0;
 	float h = 720.0;
-
-	system("v4l2-ctl --set-ctrl white_balance_temperature=2800");
-	system("v4l2-ctl --set-ctrl contrast=56");
 
 	cam.setDeviceID(0);
 	cam.setDesiredFrameRate(60);
@@ -143,6 +198,7 @@ void ImageCaptureController::setup() {
 	ofAddListener(ofxFlickr::APIEvent::events, this, &ImageCaptureController::onFlickrEvent);
 
 	flickr->start();
+
 	startThread();
 }
 
@@ -166,6 +222,8 @@ void ImageCaptureController::setDefaults() {
 	flickrAuthenticateTimeout = 10000;
 
 	ledBlinkSpeed = 40;
+
+	camSettings = camDefault;
 
 }
 
@@ -218,9 +276,9 @@ void ImageCaptureController::update() {
 				shader.setUniform2f("tex_scaleU", 1.0, 1.0);
 				shader.setUniform2f("tex_scaleV", 1.0, 1.0);
 #endif
-				shader.setUniform1f("brightness", brightness);
-				shader.setUniform1f("contrast", contrast);
-				shader.setUniform1f("saturation", saturation);
+				//shader.setUniform1f("brightness", brightness);
+				//shader.setUniform1f("contrast", contrast);
+				//shader.setUniform1f("saturation", saturation);
 
 				mesh.draw();
 
@@ -588,24 +646,6 @@ void ImageCaptureController::drawGUI() {
 			bSetImageStorePath = ImGui::Button("Set Image Save Path");
 
 			ImGui::SliderInt("Flickr Authorize Timeout (millis)", &flickrAuthenticateTimeout, 1000, 20000);
-
-			if (ImGui::CollapsingHeader("Shader Settings"))
-			{
-
-				ImGui::SliderFloat("Image brightness", &brightness, 0.0, 1.0);
-				if (ImGui::Button("reset brightness")) brightness = 0.15;
-				ImGui::Spacing();
-
-				ImGui::SliderFloat("Image contrast", &contrast, 0.0, 10.0);
-				if (ImGui::Button("reset contrast")) contrast = 1.0;
-				ImGui::Spacing();
-
-				ImGui::SliderFloat("Image saturation", &saturation, 0.0, 10.0);
-				if (ImGui::Button("reset saturation")) saturation = 1.0;
-				ImGui::Spacing();
-
-			}
-
 			ImGui::SliderInt("LED Blink Speed (millis)", &ledBlinkSpeed, 10, 1000);
 
 			ImGui::Combo("Sensor Mode", (int*)&nextSensorMode, sensorModes);
@@ -626,6 +666,32 @@ void ImageCaptureController::drawGUI() {
 
 			}
 			break;
+			}
+
+			if (ImGui::CollapsingHeader("Camera Settings"))
+			{
+				
+				map<string, int> camTemp = camSettings;
+				vector<string> commands;
+				for (int i = 0; i < camSettingNames.size(); i++) {
+					string setting = camSettingNames[i];
+					if (ImGui::Button("reset")) camTemp[setting] = camDefault[setting]; ImGui::SameLine();
+					ImGui::SliderInt(setting.c_str(), &camTemp[setting], camMins[setting], camMaxs[setting]); 
+					ImGui::Spacing();
+
+					if (camTemp[setting] != camSettings[setting]) {
+						camSettings[setting] = camTemp[setting];
+						ostringstream os;
+						os << "v4l2 - ctl --set - ctrl " << setting << "=" << camSettings[setting];
+						commands.push_back(os.str());
+					}
+				}
+
+				for (int i = 0; i < commands.size(); i++) {
+					ofLogNotice() << "Command system: " << commands[i];
+					system(commands[i].c_str());
+				}
+
 			}
 
 			lock();

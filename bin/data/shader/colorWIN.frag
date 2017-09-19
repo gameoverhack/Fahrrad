@@ -92,8 +92,8 @@ void main(){
     col.b = dot(yuv, bcoeff);
     col.a = 1.0;
     
-    FRAG_COLOR = brightnessMatrix(brightness) * contrastMatrix(contrast) * saturationMatrix(saturation) * col * globalColor;
-    
+    //FRAG_COLOR = brightnessMatrix(brightness) * contrastMatrix(contrast) * saturationMatrix(saturation) * col * globalColor;
+    FRAG_COLOR = col * globalColor;
 }
 */
 

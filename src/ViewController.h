@@ -18,6 +18,11 @@ public:
 		VIEW_RECV
 	} ViewMode;
 
+	void setup(string path) {
+		configPath = path;
+		setup();
+	}
+
 	void setup();
 	void setMode(ViewMode mode);
 	void update();

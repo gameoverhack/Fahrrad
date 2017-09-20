@@ -649,10 +649,10 @@ void BicycleController::drawGUI() {
 
 //--------------------------------------------------------------
 bool BicycleController::loadParameters() {
-	return Serializer.loadClass(ofToDataPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
+	return Serializer.loadClass(ofToDataPath("configs/" + configPath + "/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }
 
 //--------------------------------------------------------------
 bool BicycleController::saveParameters() {
-	return Serializer.saveClass(ofToDataPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
+	return Serializer.saveClass(ofToDataPath("configs/" + configPath + "/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }

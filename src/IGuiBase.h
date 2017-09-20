@@ -35,6 +35,8 @@ public:
 
 protected:
 
+	string configPath;
+
 	string className = "UNKNOWN";
 
 	bool bUse = true;

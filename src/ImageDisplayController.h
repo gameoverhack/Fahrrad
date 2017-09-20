@@ -10,6 +10,11 @@ public:
 	ImageDisplayController();
 	~ImageDisplayController();
 
+	void setup(string path) {
+		configPath = path;
+		setup();
+	}
+
 	void setup();
 	void update();
 	void drawGUI();

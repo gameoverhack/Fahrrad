@@ -81,7 +81,8 @@ void ofApp::update() {
 		viewController->update();
 	}
 	break;
-	case APPLICATION_BIKEVIDEO:
+	case APPLICATION_BIKEVIDEO1:
+	case APPLICATION_BIKEVIDEO2:
 	{
 		bicycleController->update();
 		videoController->update();
@@ -123,8 +124,8 @@ void ofApp::draw() {
 		
 		const ofFbo& viewFbo = viewController->getFBO();
 		ofPushMatrix();
-		ofTranslate(viewFbo.getHeight(), 0.0f);
-		ofRotateZ(90);
+		ofTranslate(0, viewFbo.getWidth());
+		ofRotateZ(-90);
 		viewFbo.draw(0, 0);
 		ofPopMatrix();
 
@@ -138,7 +139,8 @@ void ofApp::draw() {
 
 	}
 	break;
-	case APPLICATION_BIKEVIDEO:
+	case APPLICATION_BIKEVIDEO1:
+	case APPLICATION_BIKEVIDEO2:
 	{
 		const RiderInfo& riderInfo = bicycleController->getCurrentRiderInfo();
 
@@ -246,7 +248,8 @@ void ofApp::drawGUI() {
 				viewController->drawGUI();
 			}
 			break;
-			case APPLICATION_BIKEVIDEO:
+			case APPLICATION_BIKEVIDEO1:
+			case APPLICATION_BIKEVIDEO2:
 			{
 				bicycleController->drawGUI();
 				videoController->drawGUI();
@@ -314,7 +317,8 @@ void ofApp::changeMode() {
 		viewController = nullptr;
 	}
 	break;
-	case APPLICATION_BIKEVIDEO:
+	case APPLICATION_BIKEVIDEO1:
+	case APPLICATION_BIKEVIDEO2:
 	{
 		if (bicycleController != nullptr) delete bicycleController;
 		if (videoController != nullptr) delete videoController;
@@ -352,6 +356,8 @@ void ofApp::changeMode() {
 
 	ofLogNotice() << "Setting up: " << applicationModes[nextApplicationMode];
 
+	string configPath = applicationModes[nextApplicationMode];
+
 	switch (nextApplicationMode) {
 	case APPLICATION_NONE:
 	{
@@ -377,14 +383,14 @@ void ofApp::changeMode() {
 	{
 		bicycleController = new BicycleController;
 		bicycleController->setRecordRiders(true);
-		bicycleController->setup();
+		bicycleController->setup(configPath);
 		pulseController = new PulseController;
-		pulseController->setup();
+		pulseController->setup(configPath);
 		networkController = new NetworkController;
-		networkController->setup();
+		networkController->setup(configPath);
 		networkController->setMode(NetworkController::NETWORK_SEND);
 		viewController = new ViewController;
-		viewController->setup();
+		viewController->setup(configPath);
 		viewController->setMode(ViewController::VIEW_SEND);
 		
 	}
@@ -392,18 +398,19 @@ void ofApp::changeMode() {
 	case APPLICATION_STATSREMOTE:
 	{
 		networkController = new NetworkController;
-		networkController->setup();
+		networkController->setup(configPath);
 		networkController->setMode(NetworkController::NETWORK_RECV);
 		viewController = new ViewController;
-		viewController->setup();
+		viewController->setup(configPath);
 		viewController->setMode(ViewController::VIEW_RECV);
 	}
 	break;
-	case APPLICATION_BIKEVIDEO:
+	case APPLICATION_BIKEVIDEO1:
+	case APPLICATION_BIKEVIDEO2:
 	{
 		bicycleController = new BicycleController;
 		bicycleController->setRecordRiders(false);
-		bicycleController->setup();
+		bicycleController->setup(configPath);
 		videoController = new VideoController;
 		videoController->setup();
 	}
@@ -411,25 +418,25 @@ void ofApp::changeMode() {
 	case APPLICATION_CAMERALOCAL:
 	{
 		imageCaptureController = new ImageCaptureController;
-		imageCaptureController->setup();
+		imageCaptureController->setup(configPath);
 	}
 	break;
 	case APPLICATION_CAMERAREMOTE:
 	{
 		imageDisplayController = new ImageDisplayController;
-		imageDisplayController->setup();
+		imageDisplayController->setup(configPath);
 		renderController = new RenderController;
-		renderController->setup();
+		renderController->setup(configPath);
 	}
 	break;
 	case APPLICATION_DEBUG:
 	{
 		imageCaptureController = new ImageCaptureController;
-		imageCaptureController->setup();
+		imageCaptureController->setup(configPath);
 		imageDisplayController = new ImageDisplayController;
-		imageDisplayController->setup();
+		imageDisplayController->setup(configPath);
 		renderController = new RenderController;
-		renderController->setup();
+		renderController->setup(configPath);
 	}
 	break;
 	}
@@ -513,13 +520,13 @@ void ofApp::keyPressed(int key) {
 	break;
 	case '.':
 	{
-		if(currentApplicationMode == APPLICATION_BIKEVIDEO) videoController->fastforward();
+		//if(currentApplicationMode == APPLICATION_BIKEVIDEO) videoController->fastforward();
 	}
 	break;
 	case ' ':
 	{
 
-		if(currentApplicationMode == APPLICATION_BIKEVIDEO || currentApplicationMode == APPLICATION_STATSLOCAL) bicycleController->triggerSensor(BicycleController::SENSOR_KEYBOARD);
+		if(currentApplicationMode == APPLICATION_STATSLOCAL) bicycleController->triggerSensor(BicycleController::SENSOR_KEYBOARD);
 
 		if (currentApplicationMode == APPLICATION_CAMERALOCAL || 
 			currentApplicationMode == APPLICATION_DEBUG) imageCaptureController->triggerSensor(ImageCaptureController::SENSOR_KEYBOARD);

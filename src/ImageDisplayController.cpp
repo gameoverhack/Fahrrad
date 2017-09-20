@@ -373,10 +373,10 @@ const ofTexture & ImageDisplayController::getDisplayFBO(){
 
 //--------------------------------------------------------------
 bool ImageDisplayController::loadParameters() {
-	return Serializer.loadClass(ofToDataPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
+	return Serializer.loadClass(ofToDataPath("configs/" + configPath + "/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }
 
 //--------------------------------------------------------------
 bool ImageDisplayController::saveParameters() {
-	return Serializer.saveClass(ofToDataPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
+	return Serializer.saveClass(ofToDataPath("configs/" + configPath + "/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }

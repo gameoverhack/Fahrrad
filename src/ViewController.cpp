@@ -633,10 +633,12 @@ void ViewController::renderToFbo(string fileName, ofFbo & imageFbo, float w, flo
 
 //--------------------------------------------------------------
 bool ViewController::loadParameters() {
-	return Serializer.loadClass(ofToDataPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
+	cout << "load: " << configPath << endl;
+	return Serializer.loadClass(ofToDataPath("configs/" + configPath + "/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }
 
 //--------------------------------------------------------------
 bool ViewController::saveParameters() {
-	return Serializer.saveClass(ofToDataPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
+	cout << "save: " << configPath << endl;
+	return Serializer.saveClass(ofToDataPath("configs/" + configPath + "/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }

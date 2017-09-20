@@ -16,6 +16,11 @@ public:
 		NETWORK_RECV
 	} NetworkMode;
 
+	void setup(string path) {
+		configPath = path;
+		setup();
+	}
+
 	void setup();
 	void setMode(NetworkMode mode);
 	void update();

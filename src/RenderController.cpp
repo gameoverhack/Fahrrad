@@ -120,12 +120,12 @@ void RenderController::mouseReleased(int x, int y) {
 
 //--------------------------------------------------------------
 bool RenderController::loadParameters() {
-	bool ok  = Serializer.loadClass(ofToDataPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
+	bool ok  = Serializer.loadClass(ofToDataPath("configs/" + configPath + "/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 	homography = ofxHomography::findHomography(originalCorners, distortedCorners);
 	return ok;
 }
 
 //--------------------------------------------------------------
 bool RenderController::saveParameters() {
-	return Serializer.saveClass(ofToDataPath("configs/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
+	return Serializer.saveClass(ofToDataPath("configs/" + configPath + "/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }

@@ -227,10 +227,12 @@ int VideoController::isLooping() {
 
 //--------------------------------------------------------------
 bool VideoController::loadParameters() {
+	cout << "load: " << configPath << endl;
 	return Serializer.loadClass(ofToDataPath("configs/" + configPath + "/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }
 
 //--------------------------------------------------------------
 bool VideoController::saveParameters() {
+	cout << "save: " << configPath << endl;
 	return Serializer.saveClass(ofToDataPath("configs/" + configPath + "/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }

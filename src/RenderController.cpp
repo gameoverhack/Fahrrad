@@ -120,6 +120,7 @@ void RenderController::mouseReleased(int x, int y) {
 
 //--------------------------------------------------------------
 bool RenderController::loadParameters() {
+	cout << "load: " << configPath << endl;
 	bool ok  = Serializer.loadClass(ofToDataPath("configs/" + configPath + "/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 	homography = ofxHomography::findHomography(originalCorners, distortedCorners);
 	return ok;
@@ -127,5 +128,6 @@ bool RenderController::loadParameters() {
 
 //--------------------------------------------------------------
 bool RenderController::saveParameters() {
+	cout << "save: " << configPath << endl;
 	return Serializer.saveClass(ofToDataPath("configs/" + configPath + "/" + className + CONFIG_TYPE), (*this), ARCHIVE_BINARY);
 }

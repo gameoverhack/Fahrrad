@@ -412,7 +412,7 @@ void ofApp::changeMode() {
 		bicycleController->setRecordRiders(false);
 		bicycleController->setup(configPath);
 		videoController = new VideoController;
-		videoController->setup();
+		videoController->setup(configPath); 
 	}
 	break;
 	case APPLICATION_CAMERALOCAL:

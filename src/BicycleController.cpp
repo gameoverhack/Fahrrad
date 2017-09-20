@@ -574,7 +574,7 @@ void BicycleController::drawGUI() {
 		beginGUI();
 		{
 			bSetBackupPath = ImGui::Button("Set Backup Path");
-			ImGui::SliderInt("Wheel Diameter (mm)", &wheelDiameter, 600, 700);
+			ImGui::SliderInt("Wheel Diameter (mm)", &wheelDiameter, 600, 750);
 			ImGui::SliderInt("Number of Magnets", &numberOfMagnets, 1, 4);
 			ImGui::SliderInt("Minimum Rider Time (s)", &minimumRiderTime, 1, 30);
 			

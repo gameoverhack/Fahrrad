@@ -234,9 +234,10 @@ void ImageDisplayController::threadedFunction() {
 						dir.allowExt("jpg");
 						dir.listDir(imageDownloadPath);
 
-						bool bHaveListed = false;
+						
 						for (int j = 0; j < downloadQueue.size(); j++) {
 							string title = downloadQueue[j].title + ".jpg";
+							bool bHaveListed = false;
 							for (int i = 0; i < allFlickrMedia.size(); i++) {
 								if (allFlickrMedia[i] == title) {
 									bHaveListed = true;
@@ -332,7 +333,7 @@ void ImageDisplayController::onFlickrEvent(ofxFlickr::APIEvent & evt) {
 				flickrSearchPage++;
 			}else{
 				flickrSearchPage = 0;
-				allFlickrMedia.clear();
+				//allFlickrMedia.clear();
 			}
 			unlock();
 		}

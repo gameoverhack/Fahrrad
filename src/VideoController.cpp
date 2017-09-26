@@ -166,6 +166,7 @@ void VideoController::setSpeed(float speed) {
 				vid.setPaused(false);
 			}
 			bRewindPending = false;
+			speed = CLAMP(speed, 0, 1);
 			vid.setSpeed(speed);
 		}
 		

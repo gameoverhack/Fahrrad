@@ -216,6 +216,7 @@ void BicycleController::threadedFunction() {
 			switch (thisCurrentMode) {
 			case SENSOR_SIMULATE:
 			{
+				//simulateVelocity = ofRandom(2, 22);
 				double wheelCircumference = wheelDiameter * PI;
 				double targetVelocity = simulateVelocity * 1000.0 * 1000.0 / 60.0 / 60.0; // km/h * meters * millimeters / minutes / seconds = mm/s
 				double simulateTimeout = (wheelCircumference / targetVelocity * 1000.0) / numberOfMagnets; // mm / mm/s * 1000.0 = milliseconds
@@ -306,14 +307,25 @@ void BicycleController::threadedFunction() {
 
 
 							float dailyDistance = 0;
-							for (int rider = 0; rider < todaysRiderInfo.size(); rider++) {
-								
-								dailyDistance += todaysRiderInfo[rider].distanceTravelled;
-								totalTimeTaken += todaysRiderInfo[rider].time;
-								totalDistanceTravelled += todaysRiderInfo[rider].distanceTravelled;
-								allRiderInfo.push_back(todaysRiderInfo[rider]);
 
+							vector<int> deleteIndexes;
+
+							for (int rider = 0; rider < todaysRiderInfo.size(); rider++) {
+								if(todaysRiderInfo[rider].topSpeed > 84){
+									cout << todaysRiderInfo[rider].topSpeed << "  " << todaysRiderInfo[rider].distanceTravelled << " " << todaysRiderInfo[rider].time << endl;
+									deleteIndexes.push_back(rider);
+								}else{
+									dailyDistance += todaysRiderInfo[rider].distanceTravelled;
+									totalTimeTaken += todaysRiderInfo[rider].time;
+									totalDistanceTravelled += todaysRiderInfo[rider].distanceTravelled;
+									allRiderInfo.push_back(todaysRiderInfo[rider]);
+								}
 							}
+							
+							for (int i = deleteIndexes.size() - 1; i >= 0; i--) {
+								todaysRiderInfo.erase(todaysRiderInfo.begin() + deleteIndexes[i]);
+							}
+
 
 							totalNumberRiders += todaysRiderInfo.size();
 							totalDailyDistances.push_back(dailyDistance);
@@ -369,7 +381,7 @@ void BicycleController::threadedFunction() {
 
 			// ease currentVelocity - both ease toward zero AND ease toward last measured velocity
 			if (ofGetElapsedTimeMillis() - lastVelocityTimeout > updateVelocityTime) {
-				currentAverageVelocity = currentAverageVelocity * (1.0 - velocityEase) + lastMeasuredVelocity * velocityEase;
+				currentAverageVelocity = CLAMP(currentAverageVelocity * (1.0 - velocityEase) + lastMeasuredVelocity * velocityEase, 0.0f, ofRandom(70, 85));
 				currentNormalisedVelocity = currentAverageVelocity / velocityNormalSpeed;
 				//lastMeasuredVelocity = lastMeasuredVelocity - velocityDecay; // do we need this? do we do this later? maybe...
 				

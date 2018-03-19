@@ -64,10 +64,10 @@ void ofApp::update() {
 		const vector<PulseData>& pulseData = pulseController->getPulseData();
 		const vector<PulseData>& rawPulseData = pulseController->getRawPulseData();
 
-		networkController->setRiderSummary(riderData.riderSummary);
+		//networkController->setRiderSummary(riderData.riderSummary);
 		viewController->setData(riderData.riderSummary, riderData.topRiderInfo, pulseData, rawPulseData);
 
-		networkController->update();
+		//networkController->update();
 		viewController->update();
 	}
 	break;
@@ -219,7 +219,7 @@ void ofApp::drawGUI() {
 			{
 				bicycleController->drawGUI();
 				pulseController->drawGUI();
-				networkController->drawGUI();
+				//networkController->drawGUI();
 				viewController->drawGUI();
 			}
 			break;
@@ -282,7 +282,7 @@ void ofApp::changeMode() {
 	{
 		if (bicycleController != nullptr) delete bicycleController;
 		if (pulseController != nullptr) delete pulseController;
-		if (networkController != nullptr) delete networkController;
+		//if (networkController != nullptr) delete networkController;
 		if (viewController != nullptr) delete viewController;
 		bicycleController = nullptr;
 		pulseController = nullptr;
@@ -367,9 +367,9 @@ void ofApp::changeMode() {
 		bicycleController->setup(configPath);
 		pulseController = new PulseController;
 		pulseController->setup(configPath);
-		networkController = new NetworkController;
-		networkController->setup(configPath);
-		networkController->setMode(NetworkController::NETWORK_SEND);
+		//networkController = new NetworkController;
+		//networkController->setup(configPath);
+		//networkController->setMode(NetworkController::NETWORK_SEND);
 		viewController = new ViewController;
 		viewController->setup(configPath);
 		viewController->setMode(ViewController::VIEW_SEND);

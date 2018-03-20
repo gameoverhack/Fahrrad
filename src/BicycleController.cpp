@@ -41,29 +41,13 @@ void BicycleController::setup() {
 		
 		totalDistanceTravelled = 0;
 
-		int daysTillOpening = days_between(30, 9 - 1, 2017, ofGetDay(), ofGetMonth() - 1, ofGetYear());
+		startDay = 20;
+		startMonth = 3 - 1;
+		startYear = 2018;
 
-		if (daysTillOpening < -1) {
-			startDay = 28;
-			startMonth = 8 - 1;
-			startYear = 2017;
-		}
-
-		if (daysTillOpening == -1) {
-			startDay = 29;
-			startMonth = 9 - 1;
-			startYear = 2017;
-		}
-
-		if (daysTillOpening >= 0) {
-			startDay = 30;
-			startMonth = 9 - 1;
-			startYear = 2017;
-		}
-
-		endDay = 18;
-		endMonth = 3 - 1;
-		endYear = 2025;
+		endDay = 31;
+		endMonth = 12 - 1;
+		endYear = 2018;
 		
 		bIsDataLoaded = false;
 		bDay = startDay;
@@ -257,7 +241,7 @@ void BicycleController::threadedFunction() {
 					bool bDone = false;
 					int nMonth = bMonth + 1;
 					int nYear = bYear;
-					if (nMonth > 11) {
+					if (nMonth > 12) {
 						nMonth = 0;
 						nYear = bYear + 1;
 					}

@@ -59,14 +59,14 @@ void ofApp::update() {
 	case APPLICATION_STATSLOCAL:
 	{
 		bicycleController->update();
-		pulseController->update();
+		//pulseController->update();
 
 		const RiderData& riderData = bicycleController->getRiderData();
-		const vector<PulseData>& pulseData = pulseController->getPulseData();
-		const vector<PulseData>& rawPulseData = pulseController->getRawPulseData();
+		//const vector<PulseData>& pulseData = pulseController->getPulseData();
+		//const vector<PulseData>& rawPulseData = pulseController->getRawPulseData();
 
 		//networkController->setRiderSummary(riderData.riderSummary);
-		viewController->setData(riderData.riderSummary, riderData.topRiderInfo, pulseData, rawPulseData);
+		viewController->setData(riderData.riderSummary, riderData.topRiderInfo);
 
 		//networkController->update();
 		viewController->update();
@@ -219,7 +219,7 @@ void ofApp::drawGUI() {
 			case APPLICATION_STATSLOCAL:
 			{
 				bicycleController->drawGUI();
-				pulseController->drawGUI();
+				//pulseController->drawGUI();
 				//networkController->drawGUI();
 				viewController->drawGUI();
 			}
@@ -282,11 +282,11 @@ void ofApp::changeMode() {
 	case APPLICATION_STATSLOCAL:
 	{
 		if (bicycleController != nullptr) delete bicycleController;
-		if (pulseController != nullptr) delete pulseController;
+		//if (pulseController != nullptr) delete pulseController;
 		//if (networkController != nullptr) delete networkController;
 		if (viewController != nullptr) delete viewController;
 		bicycleController = nullptr;
-		pulseController = nullptr;
+		//pulseController = nullptr;
 		networkController = nullptr;
 		viewController = nullptr;
 	}
@@ -366,8 +366,8 @@ void ofApp::changeMode() {
 		bicycleController = new BicycleController;
 		bicycleController->setRecordRiders(true);
 		bicycleController->setup(configPath);
-		pulseController = new PulseController;
-		pulseController->setup(configPath);
+		//pulseController = new PulseController;
+		//pulseController->setup(configPath);
 		//networkController = new NetworkController;
 		//networkController->setup(configPath);
 		//networkController->setMode(NetworkController::NETWORK_SEND);

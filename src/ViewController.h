@@ -28,7 +28,7 @@ public:
 	void update();
 	void drawGUI();
 
-	void setData(const RiderSummaryUnion& rsu, const vector<RiderInfo>& tri = vector<RiderInfo>(), const vector<PulseData>& pd = vector<PulseData>(), const vector<PulseData>& rd = vector<PulseData>());
+	void setData(const RiderSummaryUnion& rsu, const vector<RiderInfo>& tri = vector<RiderInfo>());
 	const ofFbo& getFBO();
 
 protected:

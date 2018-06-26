@@ -63,7 +63,7 @@ void BicycleController::setup() {
 
 		endDay = 18;
 		endMonth = 3 - 1;
-		endYear = 2025;
+		endYear = 2019;
 		
 		bIsDataLoaded = false;
 		bDay = startDay;

@@ -7,6 +7,7 @@ void ofApp::setup() {
 	ofSetVerticalSync(false);
 	ofSetFrameRate(1000);
 	ofSetLogLevel(OF_LOG_NOTICE);
+	ofSetLogLevel("ofSerial", OF_LOG_SILENT);
 
 	className = "ApplicationController";
 	// call base clase setup for now
@@ -124,8 +125,8 @@ void ofApp::draw() {
 		
 		const ofFbo& viewFbo = viewController->getFBO();
 		ofPushMatrix();
-		ofTranslate(0, viewFbo.getWidth());
-		ofRotateZ(-90);
+		//ofTranslate(0, viewFbo.getWidth());
+		//ofRotateZ(-90);
 		viewFbo.draw(0, 0);
 		ofPopMatrix();
 

@@ -163,27 +163,13 @@ void ViewController::renderSender() {
 
 		// draw white background
 		ofSetColor(255);
-		ofDrawRectangle(0.0f, 0.0f, 1080.0f, 1920.0f);
+		ofDrawRectangle(0.0f, 0.0f, 1920.0f, 1080.0f);
 
-		ofTranslate(78.029, 243.467);
+		
+		ofTranslate(536.184, 58.25);
+		ofScale(0.91472623675891821803158497027079, 0.91472623675891821803158497027079, 1.0);
 
 		dialGreyFbo.draw(0, 0); // background grey part of speedo
-
-		// draw the red curve part of the speedo (ie., current speed)
-
-		ofPushMatrix();
-		{
-			ofTranslate(dialRedFbo.getWidth() / 2.0f, dialRedFbo.getHeight() / 2.0f);
-			ofRotateZ(normalAngle * MIN(riderInfo.currentSpeed, maxDisplaySpeed) / maxDisplaySpeed - normalAngle);
-			ofTranslate(-dialRedFbo.getWidth() / 2.0f, -dialRedFbo.getHeight() / 2.0f);
-			if (riderInfo.currentSpeed < maxDisplaySpeed / 2.0) {
-				dialRedFbo.getTexture().drawSubsection(dialRedFbo.getWidth() / 2.0, 0, dialRedFbo.getWidth() / 2.0, dialRedFbo.getHeight(), dialRedFbo.getWidth() / 2.0, 0);
-			}
-			else {
-				dialRedFbo.draw(0, 0);
-			}
-		}
-		ofPopMatrix();
 
 		// draw the red line part of the speedo (ie., high speed) - TODO: check if it should be on top, underneath etc, color?
 
@@ -201,6 +187,24 @@ void ViewController::renderSender() {
 		}
 		ofPopMatrix();
 
+		// draw the red curve part of the speedo (ie., current speed)
+
+		ofPushMatrix();
+		{
+			ofTranslate(dialRedFbo.getWidth() / 2.0f, dialRedFbo.getHeight() / 2.0f);
+			ofRotateZ(normalAngle * MIN(riderInfo.currentSpeed, maxDisplaySpeed) / maxDisplaySpeed - normalAngle);
+			ofTranslate(-dialRedFbo.getWidth() / 2.0f, -dialRedFbo.getHeight() / 2.0f);
+			if (riderInfo.currentSpeed < maxDisplaySpeed / 2.0) {
+				dialRedFbo.getTexture().drawSubsection(dialRedFbo.getWidth() / 2.0, 0, dialRedFbo.getWidth() / 2.0, dialRedFbo.getHeight(), dialRedFbo.getWidth() / 2.0, 0);
+			}
+			else {
+				dialRedFbo.draw(0, 0);
+			}
+		}
+		ofPopMatrix();
+
+
+
 		dialMaskFbo.draw(0, 0); // draw the mask
 
 		ofPopMatrix();
@@ -215,82 +219,35 @@ void ViewController::renderSender() {
 		// need this hack because ofxTextAlign can't handle unicode strings :(
 
 		//fDeviceBold.draw(deviceDE, 45.578, 71.999, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_TOP);
-		fDeviceBold.drawString(deviceDE, 45.578, 71.999 + fDeviceBold.getLineHeight() + fDeviceBold.getDescenderHeight());
-		ofSetColor(112, 111, 111);
+		fDeviceBold.drawString(deviceDE, 80.679, 124.294 + fDeviceBold.getLineHeight() + fDeviceBold.getDescenderHeight());
+		ofSetColor(109, 111, 112);
 		//fDeviceItalic.draw(deviceEN, 50.125, 169.875, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_TOP);
-		fDeviceItalic.drawString(deviceEN, 50.125, 169.875 + fDeviceItalic.getLineHeight() + fDeviceItalic.getDescenderHeight());
+		fDeviceItalic.drawString(deviceEN, 81.105, 242.555 + fDeviceItalic.getLineHeight() + fDeviceItalic.getDescenderHeight());
 
 		// draw watts
 		ofSetColor(0);
-		fWattsCurrent.draw(watts, 871.709, 142.148, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
+		fWattsCurrent.draw(watts, 1708.846, 197.93, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
 
 		// draw speed - current and max
-		fSpeedCurrent.draw(speedCurrent, 537.281, 758.004, ofxTextAlign::HORIZONTAL_ALIGN_CENTER | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
+		fSpeedCurrent.draw(speedCurrent, 951.784, 541.506, ofxTextAlign::HORIZONTAL_ALIGN_CENTER | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
 		ofSetColor(130, 198, 116); // TODO: check this color!
-		fSpeedHigh.draw(speedHigh, 913.814, 307.874, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
+		fDistanceTime.draw(speedHigh, 1535.692, 664.677, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
 
 		// draw info about distance and time
 		ofSetColor(0);
-		fDistanceTime.draw(distanceToday, 206.733, 1051.155, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
-		fDistanceTime.draw(distanceRider, 552.785, 1051.155, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
-		fDistanceTime.draw(timeRider, 900.819, 1051.155, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
+		fDistanceTime.draw(distanceToday, 291.111, 663.211, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
+		fDistanceTime.draw(distanceRider, 291.111, 896.7, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
+		fDistanceTime.draw(timeRider, 1536.166, 895.381, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
 
-		// draw heartrate graph
-		ofFill();
-		ofSetColor(238, 82, 83);
-
-		// NB: using the last entry to hack encode the last index of pulse recorded
-		int lastBPMIndex = pulseData[35].bpm; 
-
-		// sort the bpm from latest to oldest
-		vector<float> bpm(35);
-		bpm[34] = pulseData[lastBPMIndex].bpm;
-
-		int bpmIndex = 0;
-		if (lastBPMIndex + 1 < 35) {
-			for (int i = lastBPMIndex + 1; i < 35; i++) {
-				bpm[bpmIndex] = pulseData[i].bpm;
-				bpmIndex++;
-			}
-		}
-
-		if (lastBPMIndex - 1 > 0) {
-			for (int i = 0; i <= lastBPMIndex - 1; i++) {
-				bpm[bpmIndex] = pulseData[i].bpm;
-				bpmIndex++;
-			}
-		}
-
-		// show it onscreen
-		for (int i = 0; i < 35; i++) {
-			float x = 83.726f + i * 21.468f;
-			float y = 1436.69f;
-			float w = 10.716;
-			float h = (CLAMP(bpm[i], 60, 200) - 60) * (145.068f / (200.0f - 60.0f));
-			ofDrawRectangle(x, y, w, -h);
-		}
-		ofNoFill();
-
-		// draw pulse signal
-		if (bShowPulseSignal) {
-			ofSetColor(0, 73, 148);
-			ofMesh mesh;
-			mesh.setMode(OF_PRIMITIVE_LINE_STRIP);
-			for (int i = 0; i < rawPulseData.size(); i++) {
-				mesh.addVertex(ofPoint(77.533f + i, 1436.69f - CLAMP(rawPulseData[i].signal, 0, 1024) * (145.068f / 1024.0f), 0));
-			}
-			mesh.draw();
-		}
+		float allTimeTopSpeed = 0;
 		
-		// draw heart rate in the heart!
-		ofSetColor(0); 
-		fHeartRate.draw(ofToString(CLAMP(pulseData[lastBPMIndex].bpm, 0, 200)), 937.0f, 1373.888, ofxTextAlign::HORIZONTAL_ALIGN_CENTER | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
-
 		// draw high scores
 		for (int i = 0; i < topRiderInfo.size(); i++) {
 			
 			float offsetY = i * 53.5f;
 			
+			if (i == 0) allTimeTopSpeed = topRiderInfo[i].topSpeed;
+
 			// get data for each rider high score
 			string rank = getString(topRiderInfo[i].allranking + 1) + ".";
 			string topspeed = getString(topRiderInfo[i].topSpeed, 1) + " km/h";
@@ -307,25 +264,26 @@ void ViewController::renderSender() {
 			}
 			
 			// draw rank, top speed, distance and date
-			fHighScores.draw(rank, 154.06, offsetY + 1669.842, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
-			fHighScores.draw(topspeed, 446.652, offsetY + 1669.842, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
-			fHighScores.draw(distance, 701.179, offsetY + 1669.842, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
-			fHighScores.draw(date, 1009.421, offsetY + 1669.842, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
+			fHighScores.draw(rank, 483.268, offsetY + 787.88, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
+			fHighScores.draw(topspeed, 833.86, offsetY + 787.88, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
+			fHighScores.draw(distance, 1091.387, offsetY + 787.88, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
+			fHighScores.draw(date, 1419.629, offsetY + 787.88, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
 
 		}
 
 		// hide watts and top speed if no rider
 		if (riderInfo.isActive) {
 			timeSinceLastRider = ofGetElapsedTimeMillis();
-			lastTopSpeed = MAX(lastTopSpeed, riderInfo.currentSpeed);
-			lastTopWatts = MAX(lastTopWatts, riderInfo.currentKiloWatts);
+			lastTopSpeed = riderInfo.topSpeed;// MAX(lastTopSpeed, riderInfo.currentSpeed);
+			lastTopWatts = riderInfo.topKiloWatts;// MAX(lastTopWatts, riderInfo.currentKiloWatts);
 		}
 		if (ofGetElapsedTimeMillis() - timeSinceLastRider > timeoutSinceLastRider) {
 			ofFill();
 			ofSetColor(255);
-			ofDrawRectangle(600, 30, 470, 160);
-			ofDrawRectangle(850, 240, 215, 75);
-			lastTopSpeed = lastTopWatts = 0.0f;
+			ofDrawRectangle(1364.418, 68.489, 505.475, 155.28);
+			//ofDrawRectangle(850, 240, 215, 75);
+			lastTopWatts = 0.0f;
+			lastTopSpeed = allTimeTopSpeed;
 		}
 	}
 	else {
@@ -338,154 +296,154 @@ void ViewController::renderSender() {
 //--------------------------------------------------------------
 void ViewController::renderReciever() {
 
-	if (riderSummary.data != nullptr) {
+	//if (riderSummary.data != nullptr) {
 
-		// get and format data from riderSummary
-		float tP = riderSummary.data[RS_DISTANCE_TOTAL] / 1000.0f / 4664.0f * 100.0f; int tPprecision = (tP < 100 ? (tP < 10 ? 2 : 1) : 0);
-		string percentage = getString(tP, tPprecision) + " %";
-		string speedCurrent = getString(riderSummary.data[RS_SPEED_CURRENT]);
-		string riderTotal = getString(riderSummary.data[RS_RIDERS_TOTAL] + riderSummary.data[RS_IS_ACTIVE]); // count the active rider!
-		float total = riderSummary.data[RS_TIME_TOTAL]; int seconds = int(total) % 60; int minutes = (int(total / 60) % 60); int hours = int(total / 60) / 60.0f; // format hhh:mm
-		string timeTotal = getString(hours, 0, 2) + ":" + getString(minutes, 0, 2) + ":" + getString(seconds, 0, 2);
-		float dDT = riderSummary.data[RS_DISTANCE_DAY] / 1000.0f; int dDTprecision = (dDT < 1000 ? (dDT < 100 ? (dDT < 10 ? 3 : 2) : 1) : 0); // display floating point when less than 100
-		string distanceToday = getString(dDT, dDTprecision);
-		float dTT = riderSummary.data[RS_DISTANCE_TOTAL] / 1000.0f; int dTTprecision = (dTT < 1000 ? (dTT < 100 ? (dTT < 10 ? 3 : 2) : 1) : 0); // display floating point when less than 1000
-		string distanceTotal = getString(dTT, dTTprecision);
-		string distanceGermany = "4664";
+	//	// get and format data from riderSummary
+	//	float tP = riderSummary.data[RS_DISTANCE_TOTAL] / 1000.0f / 4664.0f * 100.0f; int tPprecision = (tP < 100 ? (tP < 10 ? 2 : 1) : 0);
+	//	string percentage = getString(tP, tPprecision) + " %";
+	//	string speedCurrent = getString(riderSummary.data[RS_SPEED_CURRENT]);
+	//	string riderTotal = getString(riderSummary.data[RS_RIDERS_TOTAL] + riderSummary.data[RS_IS_ACTIVE]); // count the active rider!
+	//	float total = riderSummary.data[RS_TIME_TOTAL]; int seconds = int(total) % 60; int minutes = (int(total / 60) % 60); int hours = int(total / 60) / 60.0f; // format hhh:mm
+	//	string timeTotal = getString(hours, 0, 2) + ":" + getString(minutes, 0, 2) + ":" + getString(seconds, 0, 2);
+	//	float dDT = riderSummary.data[RS_DISTANCE_DAY] / 1000.0f; int dDTprecision = (dDT < 1000 ? (dDT < 100 ? (dDT < 10 ? 3 : 2) : 1) : 0); // display floating point when less than 100
+	//	string distanceToday = getString(dDT, dDTprecision);
+	//	float dTT = riderSummary.data[RS_DISTANCE_TOTAL] / 1000.0f; int dTTprecision = (dTT < 1000 ? (dTT < 100 ? (dTT < 10 ? 3 : 2) : 1) : 0); // display floating point when less than 1000
+	//	string distanceTotal = getString(dTT, dTTprecision);
+	//	string distanceGermany = "4664";
 
-		// calculate current speed equivalent for animals
+	//	// calculate current speed equivalent for animals
 
-		string animalDE = "";
-		string animalEN = "";
+	//	string animalDE = "";
+	//	string animalEN = "";
 
-		//int currentAnimal = -1;
-		for (int i = 0; i < milestonesSpeed.size(); i++) {
-			if (riderSummary.data[RS_SPEED_CURRENT] >= milestonesSpeed[i].value) {
-				animalDE = milestonesSpeed[i].typeDE;
-				animalEN = milestonesSpeed[i].typeEN;
-			}
-		}
+	//	//int currentAnimal = -1;
+	//	for (int i = 0; i < milestonesSpeed.size(); i++) {
+	//		if (riderSummary.data[RS_SPEED_CURRENT] >= milestonesSpeed[i].value) {
+	//			animalDE = milestonesSpeed[i].typeDE;
+	//			animalEN = milestonesSpeed[i].typeEN;
+	//		}
+	//	}
 
-		// draw white background
-		ofSetColor(255);
-		ofDrawRectangle(0.0f, 0.0f, 1080.0f, 1920.0f);
+	//	// draw white background
+	//	ofSetColor(255);
+	//	ofDrawRectangle(0.0f, 0.0f, 1920.0f, 1080.0f);
 
-		backgroundFbo.draw(0, 0); // draw all the rest of the static info
+	//	backgroundFbo.draw(0, 0); // draw all the rest of the static info
 
-		// draw info text
-		ofSetColor(255);
-		fPercentageDone.draw(percentage, 487.359, 287.827, ofxTextAlign::HORIZONTAL_ALIGN_CENTER | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
-		ofSetColor(0, 73, 148);
-		fSpeedCurrent2.draw(speedCurrent, 46.787, 421.78, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
+	//	// draw info text
+	//	ofSetColor(255);
+	//	fPercentageDone.draw(percentage, 487.359, 287.827, ofxTextAlign::HORIZONTAL_ALIGN_CENTER | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
+	//	ofSetColor(0, 73, 148);
+	//	fSpeedCurrent2.draw(speedCurrent, 46.787, 421.78, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
 
-		fAnimalBold.drawString(animalDE, 46.787, 490.353 + fAnimalBold.getDescenderHeight());
-		ofSetColor(112, 111, 111);
-		fAnimalItalic.drawString(animalEN, 46.787, 563.939 + fAnimalItalic.getDescenderHeight());
+	//	fAnimalBold.drawString(animalDE, 46.787, 490.353 + fAnimalBold.getDescenderHeight());
+	//	ofSetColor(112, 111, 111);
+	//	fAnimalItalic.drawString(animalEN, 46.787, 563.939 + fAnimalItalic.getDescenderHeight());
 
-		ofSetColor(0, 73, 148);
-		fDistanceTime2.draw(riderTotal, 46.787, 960.345, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
-		fDistanceTime2.draw(timeTotal, 208.414, 960.345, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
-		fDistanceTime2.draw(distanceToday, 443.772, 960.345, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
-		fDistanceTime2.draw(distanceTotal, 646.457, 960.345, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
-		fDistanceTime2.draw(distanceGermany, 867.313, 960.345, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
+	//	ofSetColor(0, 73, 148);
+	//	fDistanceTime2.draw(riderTotal, 46.787, 960.345, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
+	//	fDistanceTime2.draw(timeTotal, 208.414, 960.345, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
+	//	fDistanceTime2.draw(distanceToday, 443.772, 960.345, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
+	//	fDistanceTime2.draw(distanceTotal, 646.457, 960.345, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
+	//	fDistanceTime2.draw(distanceGermany, 867.313, 960.345, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
 
-		// draw daily distance graph
+	//	// draw daily distance graph
 
-		ofFill();
+	//	ofFill();
 
-		int nDays = (int)riderSummary.data[RS_NUM_DAYS];
-		for (int i = 0; i < MIN(nDays, 171); i++) {
+	//	int nDays = (int)riderSummary.data[RS_NUM_DAYS];
+	//	for (int i = 0; i < MIN(nDays, 171); i++) {
 
-			float x = 49.322 + i * 5.786f;
-			float y = 797.268f;
-			float w = 2.888f;
-			float dist = riderSummary.data[RS_DATA_START + i] / 1000.0f;
-			float h = dist * (85.095f / 40.0f);
-			h = CLAMP(h, 0, 50.0f * (85.095f / 40.0f));
-			//if (i == 170) ofSetColor(255, 0, 0);
-			ofDrawRectangle(x, y, w, -h);
+	//		float x = 49.322 + i * 5.786f;
+	//		float y = 797.268f;
+	//		float w = 2.888f;
+	//		float dist = riderSummary.data[RS_DATA_START + i] / 1000.0f;
+	//		float h = dist * (85.095f / 40.0f);
+	//		h = CLAMP(h, 0, 50.0f * (85.095f / 40.0f));
+	//		//if (i == 170) ofSetColor(255, 0, 0);
+	//		ofDrawRectangle(x, y, w, -h);
 
-		}
+	//	}
 
 
-		// calculate outline of germany
-		//float mx = ofGetMouseX();
-		//CLAMP(mx, 1.0f, ofGetWidth());
-		//float step = mx / ofGetWidth() * 2.0 * 100.0f;
-		
-		float width = 6.0f;
-		ofPoint finalPosition;
+	//	// calculate outline of germany
+	//	//float mx = ofGetMouseX();
+	//	//CLAMP(mx, 1.0f, ofGetWidth());
+	//	//float step = mx / ofGetWidth() * 2.0 * 100.0f;
+	//	
+	//	float width = 6.0f;
+	//	ofPoint finalPosition;
 
-		if (tP <= 100) {
-			ofMesh mesh;
-			setDistanceMesh(mesh, finalPosition, width, tP);
-			ofFill();
-			ofSetColor(255, 79, 56, 255);
-			mesh.draw();
-		}
-		else {
-			ofMesh mesh1;
-			setDistanceMesh(mesh1, finalPosition, width, 100);
-			ofFill();
-			ofSetColor(255, 79, 56, 255);
-			mesh1.draw();
-			ofMesh mesh2;
-			float remainder = (int)tP % 100;
-			setDistanceMesh(mesh2, finalPosition, width, remainder);
-			ofFill();
-			ofSetColor(130, 198, 116, 255);
-			mesh2.draw();
-		}
+	//	if (tP <= 100) {
+	//		ofMesh mesh;
+	//		setDistanceMesh(mesh, finalPosition, width, tP);
+	//		ofFill();
+	//		ofSetColor(255, 79, 56, 255);
+	//		mesh.draw();
+	//	}
+	//	else {
+	//		ofMesh mesh1;
+	//		setDistanceMesh(mesh1, finalPosition, width, 100);
+	//		ofFill();
+	//		ofSetColor(255, 79, 56, 255);
+	//		mesh1.draw();
+	//		ofMesh mesh2;
+	//		float remainder = (int)tP % 100;
+	//		setDistanceMesh(mesh2, finalPosition, width, remainder);
+	//		ofFill();
+	//		ofSetColor(130, 198, 116, 255);
+	//		mesh2.draw();
+	//	}
 
-		// draw current position around germany
-		ofSetColor(0, 73, 148);
-		ofDrawCircle(finalPosition, width);
-		//ofDrawBitmapString(ofToString(num), vL[2]);
+	//	// draw current position around germany
+	//	ofSetColor(0, 73, 148);
+	//	ofDrawCircle(finalPosition, width);
+	//	//ofDrawBitmapString(ofToString(num), vL[2]);
 
-	}
-	else {
-		backgroundFbo.draw(0, 0);
-	}
+	//}
+	//else {
+	//	backgroundFbo.draw(0, 0);
+	//}
 
 }
 //--------------------------------------------------------------
 void ViewController::setDistanceMesh(ofMesh & mesh, ofPoint & finalPosition, float width, float pct) {
 	
-	mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+	//mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
 
-	//float W = 6.0; // width of line - TODO: parameter
-	ofPoint vL[4];
+	////float W = 6.0; // width of line - TODO: parameter
+	//ofPoint vL[4];
 
-	int num = (pct / 100.0f * polyDEOutlines.size()) + 11; // step // 11 is Dresden startpoint
+	//int num = (pct / 100.0f * polyDEOutlines.size()) + 11; // step // 11 is Dresden startpoint
 
-	// from https://stackoverflow.com/questions/14514543/opengl-es-2-0-dynamically-change-line-width
-	for (int j = 10; j < num; j++) {
+	//// from https://stackoverflow.com/questions/14514543/opengl-es-2-0-dynamically-change-line-width
+	//for (int j = 10; j < num; j++) {
 
-		int index1 = j - 1;
-		int index2 = j - 0;
-		if (index1 >= polyDEOutlines.size()) index1 = index1 - polyDEOutlines.size() + 10;
-		if (index2 >= polyDEOutlines.size()) index2 = index2 - polyDEOutlines.size() + 10;
-		ofPoint p1 = polyDEOutlines[index1];
-		ofPoint p2 = polyDEOutlines[index2];
-		ofPoint  v = p2 - p1;
+	//	int index1 = j - 1;
+	//	int index2 = j - 0;
+	//	if (index1 >= polyDEOutlines.size()) index1 = index1 - polyDEOutlines.size() + 10;
+	//	if (index2 >= polyDEOutlines.size()) index2 = index2 - polyDEOutlines.size() + 10;
+	//	ofPoint p1 = polyDEOutlines[index1];
+	//	ofPoint p2 = polyDEOutlines[index2];
+	//	ofPoint  v = p2 - p1;
 
-		v /= v.length();  // make it a unit vector
+	//	v /= v.length();  // make it a unit vector
 
-		ofPoint vp(-v.y, v.x);  // compute the vector perpendicular to v
+	//	ofPoint vp(-v.y, v.x);  // compute the vector perpendicular to v
 
-		vL[0] = p1 + width / 2 * vp;
-		vL[1] = p1 - width / 2 * vp;
-		vL[2] = p2 + width / 2 * vp;
-		vL[3] = p2 - width / 2 * vp;
+	//	vL[0] = p1 + width / 2 * vp;
+	//	vL[1] = p1 - width / 2 * vp;
+	//	vL[2] = p2 + width / 2 * vp;
+	//	vL[3] = p2 - width / 2 * vp;
 
-		mesh.addVertex(vL[0]);
-		mesh.addVertex(vL[1]);
-		mesh.addVertex(vL[2]);
-		mesh.addVertex(vL[3]);
+	//	mesh.addVertex(vL[0]);
+	//	mesh.addVertex(vL[1]);
+	//	mesh.addVertex(vL[2]);
+	//	mesh.addVertex(vL[3]);
 
-	}
+	//}
 
-	finalPosition = vL[2];
+	//finalPosition = vL[2];
 
 }
 
@@ -526,44 +484,44 @@ void ViewController::changeMode() {
 	case VIEW_SEND:
 	{
 
-		fbo.allocate(1080.0f, 1920.0f, GL_RGBA); // vertical layout
-		renderToFbo("Erg_Sender", backgroundFbo, 1080.0f, 1920.0f, ofColor(255, 255, 255, 0));
+		fbo.allocate(1920.0f, 1080.0f, GL_RGBA); // horizontal layout
+		renderToFbo("Erg_SenderNeu", backgroundFbo, 1920.0f, 1080.0f, ofColor(255, 255, 255, 0));
 		renderToFbo("Erg_DialRed", dialRedFbo, 923.422f, 923.422f, ofColor(0, 0, 0, 0));
-		renderToFbo("Erg_DialMax", dialMaxFbo, 923.422f, 923.422f, ofColor(0, 0, 0, 0));
+		renderToFbo("Erg_DialGreen", dialMaxFbo, 923.422f, 923.422f, ofColor(0, 0, 0, 0));
 		renderToFbo("Erg_DialGrey", dialGreyFbo, 923.422f, 923.422f, ofColor(0, 0, 0, 0));
 		renderToFbo("Erg_DialMask", dialMaskFbo, 923.422f, 923.422f, ofColor(0, 0, 0, 0));
 		
 		fDeviceBold.load("fonts/NotBd.ttf",38);
-		fDeviceItalic.load("fonts/NotRgI.ttf", 17);
+		fDeviceItalic.load("fonts/NotRgI.ttf", 26.5);
 
 		fWattsCurrent.load("fonts/OpenSans-Bold.ttf", 56);
 		fSpeedCurrent.load("fonts/OpenSans-Bold.ttf", 166);
-		fSpeedHigh.load("fonts/OpenSans-Regular.ttf", 42);
-		fDistanceTime.load("fonts/OpenSans-Bold.ttf", 45);
+		//fSpeedHigh.load("fonts/OpenSans-Regular.ttf", 42);
+		fDistanceTime.load("fonts/OpenSans-Bold.ttf", 36);
 		fHeartRate.load("fonts/OpenSans-Bold.ttf", 30);
-		fHighScores.load("fonts/Roboto-Regular.ttf", 26);
+		fHighScores.load("fonts/Roboto-Regular.ttf", 22);
 
 	}
 	break;
 	case VIEW_RECV:
 	{
 
-		fbo.allocate(1080.0f, 1080.0f, GL_RGBA); // horizontal/square layout
-		renderToFbo("Erg_Receiver", backgroundFbo, 1080.0f, 1080.0f, ofColor(255, 255, 255, 0));
-		
-		fAnimalBold.load("fonts/NotMd_.ttf", 24);
-		fAnimalItalic.load("fonts/NotRgI.ttf", 24);
+		//fbo.allocate(1080.0f, 1080.0f, GL_RGBA); // horizontal/square layout
+		//renderToFbo("Erg_Receiver", backgroundFbo, 1080.0f, 1080.0f, ofColor(255, 255, 255, 0));
+		//
+		//fAnimalBold.load("fonts/NotMd_.ttf", 24);
+		//fAnimalItalic.load("fonts/NotRgI.ttf", 24);
 
-		fPercentageDone.load("fonts/OpenSans-Bold.ttf", 42);
-		fSpeedCurrent2.load("fonts/OpenSans-Bold.ttf", 65);
-		fDistanceTime2.load("fonts/OpenSans-Bold.ttf", 36);
+		//fPercentageDone.load("fonts/OpenSans-Bold.ttf", 42);
+		//fSpeedCurrent2.load("fonts/OpenSans-Bold.ttf", 65);
+		//fDistanceTime2.load("fonts/OpenSans-Bold.ttf", 36);
 
-		ofxSVG svgDEOutline;
-		svgDEOutline.load("images/Erg_DEOutline.svg");
-		ofPath p = svgDEOutline.getPathAt(0);
-		p.setPolyWindingMode(OF_POLY_WINDING_ODD);
-		vector<ofPolyline>& lines = const_cast<vector<ofPolyline>&>(p.getOutline());
-		polyDEOutlines = lines[0].getResampledByCount(800);
+		//ofxSVG svgDEOutline;
+		//svgDEOutline.load("images/Erg_DEOutline.svg");
+		//ofPath p = svgDEOutline.getPathAt(0);
+		//p.setPolyWindingMode(OF_POLY_WINDING_ODD);
+		//vector<ofPolyline>& lines = const_cast<vector<ofPolyline>&>(p.getOutline());
+		//polyDEOutlines = lines[0].getResampledByCount(800);
 
 	}
 	break;

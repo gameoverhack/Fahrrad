@@ -33,7 +33,7 @@ void BicycleController::setup() {
 	timeSinceLastSensor = 0;
 	lastVelocityTimeout = 0;
 	simulateVelocity = 0;
-	distanceTravelled = 0; // neters
+	distanceTravelled = 0; // meters
 
 	bIsRiderActive = false;
 
@@ -129,6 +129,8 @@ void BicycleController::setDefaults() {
 
 	numberOfMagnets = 2;
 	minimumRiderTime = 10;
+
+	velocityModifier = 1.0f;
 
 #ifdef TARGET_WIN32
 	backupPath = "C:/Users/gameover8/Desktop/backup";
@@ -572,7 +574,7 @@ void BicycleController::triggerSensor(SensorMode sensorMode) {
 
 		lastSensorTimeout = ofGetElapsedTimeMillis();
 		float dist = (wheelDiameter * PI / 1000.0) / numberOfMagnets;
-		lastMeasuredVelocity = (dist / 1000.0) / (timeSinceLastSensor / 1000.0 / 60.0 / 60.0);
+		lastMeasuredVelocity = (dist / 1000.0) / (timeSinceLastSensor / 1000.0 / 60.0 / 60.0) * velocityModifier;
 		distanceTravelled += dist;
 		currentRider.distanceTravelled += dist;
 		totalDistanceTravelled += dist;
@@ -625,6 +627,8 @@ void BicycleController::drawGUI() {
 			ImGui::SliderFloat("Velocity Decay (per/update)", &velocityDecay, 0.0, 20.0);
 			ImGui::SliderFloat("Velocity Ease (per/update)", &velocityEase, 0.01, 1.0);
 
+			ImGui::SliderFloat("Velocity Modifier", &velocityModifier, 0.5, 1.5);
+			
 			ImGui::SliderInt("Rider Inactive Time (millis)", &riderInactiveTime, 1000, 6000);
 
 			ImGui::SliderFloat("Velocity Normal (km/h)", &velocityNormalSpeed, 0.01, 80.0);

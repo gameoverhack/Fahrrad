@@ -104,6 +104,7 @@ protected:
 	double currentNormalisedVelocity;
 	int updateVelocityTime;
 	int lastVelocityTimeout;
+	float velocityModifier;
 
 	int minimumRiderTime;
 	int numberOfMagnets;
@@ -144,6 +145,7 @@ protected:
 		ar & BOOST_SERIALIZATION_NVP(velocityDecay);
 		ar & BOOST_SERIALIZATION_NVP(velocityEase);
 		ar & BOOST_SERIALIZATION_NVP(velocityNormalSpeed);
+		ar & BOOST_SERIALIZATION_NVP(velocityModifier);
 		ar & BOOST_SERIALIZATION_NVP(updateVelocityTime);
 		ar & BOOST_SERIALIZATION_NVP(riderInactiveTime);
 		ar & BOOST_SERIALIZATION_NVP(boosterDifficulty);

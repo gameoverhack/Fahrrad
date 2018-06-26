@@ -7,7 +7,7 @@ void ofApp::setup() {
 	ofSetVerticalSync(false);
 	ofSetFrameRate(1000);
 	ofSetLogLevel(OF_LOG_NOTICE);
-	ofSetLogLevel("ofSerial", OF_LOG_SILENT);
+	//ofSetLogLevel("ofSerial", OF_LOG_SILENT);
 
 	className = "ApplicationController";
 	// call base clase setup for now

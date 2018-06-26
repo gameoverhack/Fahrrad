@@ -31,6 +31,23 @@ typedef union {
 	char chars[sizeof(PulseData)];
 } PulseDataUnion;
 
+static int days_in_month(const int& month, const int& year) {
+	if (month == 4 || month == 6 || month == 9 || month == 11) {
+		return 30;
+	} 
+	else if (month == 2) {
+		if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {
+			return 29;
+		} 
+		else {
+			return 28;
+		}
+	}
+	else {
+		return 31;
+	}
+}
+
 static int days_between( struct tm &tsa,  struct tm &tsb) {
 	time_t a = mktime(&tsa);
 	time_t b = mktime(&tsb);

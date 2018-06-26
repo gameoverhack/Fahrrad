@@ -41,29 +41,58 @@ void BicycleController::setup() {
 		
 		totalDistanceTravelled = 0;
 
-		int daysTillOpening = days_between(30, 9 - 1, 2017, ofGetDay(), ofGetMonth() - 1, ofGetYear());
+		int weekDay = ofGetWeekday();			// 0 == Sunday, 1 == Monday...
+		weekDay = ofWrap(weekDay - 1, 0, 7);	// 6 == Sunday, 0 == Monday...
 
-		if (daysTillOpening < -1) {
-			startDay = 28;
-			startMonth = 8 - 1;
-			startYear = 2017;
+		if (ofGetDay() - weekDay < 1) {
+			// we start in the last month
+			if (ofGetMonth() == 1) { // handle january
+				startMonth = 12 - 1;
+				startYear = ofGetYear() - 1;
+			}
+			else { // handle all other months
+				startMonth = ofGetMonth() - 2;
+				startYear = ofGetYear();
+			}
+			startDay = days_in_month(startMonth, startYear) + (ofGetDay() - weekDay) + 1; 
+
+		}
+		else {
+			// we start in the same month
+			startDay = ofGetDay() - weekDay;
+			startMonth = ofGetMonth() - 1;
+			startYear = ofGetYear();
 		}
 
-		if (daysTillOpening == -1) {
-			startDay = 29;
-			startMonth = 9 - 1;
-			startYear = 2017;
-		}
+		endDay = ofGetDay() + 1;
+		endMonth = ofGetMonth() - 1;
+		endYear = ofGetYear();
+		 
+		ofLogNotice() << "Start to end dates: " << startDay << " " << startMonth << " " << startYear << "   " << endDay << " " << endMonth << " " << endYear << endl; // remember these are plus and minus one for day and month
 
-		if (daysTillOpening >= 0) {
-			startDay = 30;
-			startMonth = 9 - 1;
-			startYear = 2017;
-		}
+		//int daysTillOpening = days_between(30, 9 - 1, 2017, ofGetDay(), ofGetMonth() - 1, ofGetYear());
 
-		endDay = 18;
-		endMonth = 3 - 1;
-		endYear = 2019;
+		//if (daysTillOpening < -1) {
+		//	startDay = 28;
+		//	startMonth = 8 - 1;
+		//	startYear = 2017;
+		//}
+
+		//if (daysTillOpening == -1) {
+		//	startDay = 29;
+		//	startMonth = 9 - 1;
+		//	startYear = 2017;
+		//}
+
+		//if (daysTillOpening >= 0) {
+		//	startDay = 30;
+		//	startMonth = 9 - 1;
+		//	startYear = 2017;
+		//}
+
+		//endDay = 18;
+		//endMonth = 3 - 1;
+		//endYear = 2019;
 		
 		bIsDataLoaded = false;
 		bDay = startDay;
@@ -586,6 +615,7 @@ void BicycleController::drawGUI() {
 		beginGUI();
 		{
 			bSetBackupPath = ImGui::Button("Set Backup Path");
+
 			ImGui::SliderInt("Wheel Diameter (mm)", &wheelDiameter, 600, 750);
 			ImGui::SliderInt("Number of Magnets", &numberOfMagnets, 1, 4);
 			ImGui::SliderInt("Minimum Rider Time (s)", &minimumRiderTime, 1, 30);

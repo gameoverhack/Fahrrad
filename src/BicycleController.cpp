@@ -131,6 +131,7 @@ void BicycleController::setDefaults() {
 	minimumRiderTime = 10;
 
 	velocityModifier = 1.0f;
+	velocityMaximum = 60.0f;
 
 #ifdef TARGET_WIN32
 	backupPath = "C:/Users/gameover8/Desktop/backup";
@@ -342,7 +343,7 @@ void BicycleController::threadedFunction() {
 							vector<int> deleteIndexes;
 
 							for (int rider = 0; rider < todaysRiderInfo.size(); rider++) {
-								if(todaysRiderInfo[rider].topSpeed > 84){
+								if(todaysRiderInfo[rider].topSpeed > velocityMaximum){
 									cout << todaysRiderInfo[rider].topSpeed << "  " << todaysRiderInfo[rider].distanceTravelled << " " << todaysRiderInfo[rider].time << endl;
 									deleteIndexes.push_back(rider);
 								}else{
@@ -412,7 +413,7 @@ void BicycleController::threadedFunction() {
 
 			// ease currentVelocity - both ease toward zero AND ease toward last measured velocity
 			if (ofGetElapsedTimeMillis() - lastVelocityTimeout > updateVelocityTime) {
-				currentAverageVelocity = CLAMP(currentAverageVelocity * (1.0 - velocityEase) + lastMeasuredVelocity * velocityEase, 0.0f, ofRandom(70, 85));
+				currentAverageVelocity = CLAMP(currentAverageVelocity * (1.0 - velocityEase) + lastMeasuredVelocity * velocityEase, 0.0f, velocityMaximum);
 				currentNormalisedVelocity = currentAverageVelocity / velocityNormalSpeed;
 				//lastMeasuredVelocity = lastMeasuredVelocity - velocityDecay; // do we need this? do we do this later? maybe...
 				
@@ -434,6 +435,7 @@ void BicycleController::threadedFunction() {
 					riderData.riderSummary.data[RS_DISTANCE_TOTAL] = totalDistanceTravelled;
 					riderData.riderSummary.data[RS_TIME_TOTAL] = (totalTimeTaken + currentRider.time) / 1000.0f;
 					riderData.riderSummary.data[RS_RIDERS_TOTAL] = totalNumberRiders;
+					riderData.riderSummary.data[RS_MAX_VELOCITY] = velocityMaximum;
 
 					int usedDay = 0;
 
@@ -628,6 +630,7 @@ void BicycleController::drawGUI() {
 			ImGui::SliderFloat("Velocity Ease (per/update)", &velocityEase, 0.01, 1.0);
 
 			ImGui::SliderFloat("Velocity Modifier", &velocityModifier, 0.5, 1.5);
+			ImGui::SliderFloat("Velocity Maximum", &velocityMaximum, 50, 80);
 			
 			ImGui::SliderInt("Rider Inactive Time (millis)", &riderInactiveTime, 1000, 6000);
 

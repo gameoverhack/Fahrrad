@@ -157,7 +157,7 @@ void ViewController::renderSender() {
 		// calculate and draw speedo readout - TODO: parameterise hard coded settings if necessary
 
 		float normalAngle = 218.5f;
-		float maxDisplaySpeed = 70.0f;
+		float maxDisplaySpeed = riderSummary.data[RS_MAX_VELOCITY];
 
 		ofPushMatrix();
 

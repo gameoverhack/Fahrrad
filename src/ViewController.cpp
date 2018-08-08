@@ -133,7 +133,8 @@ void ViewController::renderSender() {
 
 		const RiderInfo& riderInfo = topRiderInfo[topRiderInfo.size() - 2];
 		
-		string watts = string(riderInfo.isActive ? getString(riderInfo.currentKiloWatts) : getString(lastTopWatts));
+		int wattsNum = ceil((riderInfo.isActive ? riderInfo.currentKiloWatts : lastTopWatts) / 5.0f) * 5.0f;
+		string watts = string(getString(wattsNum));
 		string speedCurrent = getString(riderInfo.currentSpeed);
 		string speedHigh = string(riderInfo.isActive ? getString(riderInfo.topSpeed) : getString(lastTopSpeed));
 		string distanceToday = getString(riderSummary.data[RS_DISTANCE_DAY] / 1000.0f, 1);
@@ -238,6 +239,8 @@ void ViewController::renderSender() {
 		fDistanceTime.draw(distanceToday, 291.111, 663.211, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
 		fDistanceTime.draw(distanceRider, 291.111, 896.7, ofxTextAlign::HORIZONTAL_ALIGN_RIGHT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
 		fDistanceTime.draw(timeRider, 1536.166, 895.381, ofxTextAlign::HORIZONTAL_ALIGN_LEFT | ofxTextAlign::VERTICAL_ALIGN_BOTTOM);
+
+		if(ofGetFrameNum() % 50 == 0) cout << "Todays dist: " << distanceToday << endl;
 
 		float allTimeTopSpeed = 0;
 		

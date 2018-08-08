@@ -1,4 +1,6 @@
 /bin/Fahrrad
+/bin/Fahrrad_debug
+/bin/data/configs/*
 
 #################
 ## Eclipse

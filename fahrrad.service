@@ -1,0 +1,13 @@
+[Unit]
+Description=Fahrrad Service
+After = network.target
+
+[Service]
+ExecStart=/home/pi/openFrameworks/apps/myApps/Fahrrad/startFahrrad.sh
+StandardInput=tty
+StandardOutput=tty
+TTYPath=/dev/tty2
+TTYReset=yes
+
+[Install]
+WantedBy=multi-user.target

@@ -42,19 +42,9 @@ protected:
 	bool bSetBackupPath;
 	string backupPath;
 
-	int startDay;
-	int startMonth;
-	int startYear;
-
-	int endDay;
-	int endMonth;
-	int endYear;
-
-	int bDay;
-	int bMonth;
-	int bYear;
-
 	bool bIsDataLoaded;
+
+	vector<string> datesToLoad;
 
 	int getTodaysRiderIndex();
 	vector<RiderInfo>& getTodaysRiderInfo();

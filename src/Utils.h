@@ -31,6 +31,13 @@ typedef union {
 	char chars[sizeof(PulseData)];
 } PulseDataUnion;
 
+static string date_as_string(int day, int month, int year) {
+	ostringstream os;
+	os << year << "_" << std::setfill('0') << std::setw(2) << month << "_" << std::setfill('0') << std::setw(2) << day;
+	return os.str();
+}
+
+// http://www.codecodex.com/wiki/Calculate_the_number_of_days_in_a_month 
 static int days_in_month(const int& month, const int& year) {
 	if (month == 4 || month == 6 || month == 9 || month == 11) {
 		return 30;

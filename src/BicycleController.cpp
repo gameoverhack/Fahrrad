@@ -4,6 +4,8 @@ bool RiderRankFunction(const RiderInfo& a, const RiderInfo& b) {
 	return a.topSpeed > b.topSpeed;
 }
 
+vector<string> daysOfTheWeek = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+
 //--------------------------------------------------------------
 BicycleController::BicycleController() {
 	className = "BicycleController";
@@ -41,63 +43,54 @@ void BicycleController::setup() {
 		
 		totalDistanceTravelled = 0;
 
+
+
+
+		// we need to generate the dates for all days in the week
+		// we are loading from Monday to Monday of whatever month, year, day
+
+		// get the current weekday - this tells us how many days prior and how many days future we need to load
+
 		int weekDay = ofGetWeekday();			// 0 == Sunday, 1 == Monday...
-		weekDay = ofWrap(weekDay - 1, 0, 7);	// 6 == Sunday, 0 == Monday...
+		weekDay = ofWrap(weekDay - 1, 0, 7);	// 6 == Sunday, 0 == Monday, 1 == Tuesday, 2 == Wednesday, 3 == Thursday, 4 == Friday, 5 == Saturday, 6 == Sunday
 
-		if (ofGetDay() - weekDay < 1) {
-			// we start in the last month
-			if (ofGetMonth() == 1) { // handle january
-				startMonth = 12 - 1;
-				startYear = ofGetYear() - 1;
-			}
-			else { // handle all other months
-				startMonth = ofGetMonth() - 2;
-				startYear = ofGetYear();
-			}
-			startDay = days_in_month(startMonth, startYear) + (ofGetDay() - weekDay) + 1; 
+		// weekDay should give us the number of days between the current 
+		// day and Monday eg., when Monday: 0; when Thursday = 3 etc
 
-		}
-		else {
-			// we start in the same month
-			startDay = ofGetDay() - weekDay;
-			startMonth = ofGetMonth() - 1;
-			startYear = ofGetYear();
-		}
-
-		endDay = ofGetDay() + 1;
-		endMonth = ofGetMonth() - 1;
-		endYear = ofGetYear();
-		 
-		ofLogNotice() << "Start to end dates: " << startDay << " " << startMonth << " " << startYear << "   " << endDay << " " << endMonth << " " << endYear << endl; // remember these are plus and minus one for day and month
-
-		//int daysTillOpening = days_between(30, 9 - 1, 2017, ofGetDay(), ofGetMonth() - 1, ofGetYear());
-
-		//if (daysTillOpening < -1) {
-		//	startDay = 28;
-		//	startMonth = 8 - 1;
-		//	startYear = 2017;
-		//}
-
-		//if (daysTillOpening == -1) {
-		//	startDay = 29;
-		//	startMonth = 9 - 1;
-		//	startYear = 2017;
-		//}
-
-		//if (daysTillOpening >= 0) {
-		//	startDay = 30;
-		//	startMonth = 9 - 1;
-		//	startYear = 2017;
-		//}
-
-		//endDay = 18;
-		//endMonth = 3 - 1;
-		//endYear = 2019;
+		int todaysDay = ofGetDay();
+		int todaysMonth = ofGetMonth();
+		int todaysYear = ofGetYear();
+		int thisDay = todaysDay;
+		int thisMonth = todaysMonth;
+		int thisYear = todaysYear;
 		
+		// push all previous days (when 0 this doesn't execute
+		int i = 0;
+		for (; i < weekDay; i++) {
+			// push todays date (actually previous day)
+			datesToLoad.push_back(date_as_string(thisDay, thisMonth, thisYear));
+			ofLogNotice() << i << " == " << daysOfTheWeek[weekDay - i] << datesToLoad[datesToLoad.size() - 1] << endl;
+
+			thisDay--;
+			if (thisDay == 0) { // then we are at the beginning/end of a month
+				if (todaysMonth - 1 == 0) { // then we are at the beginning/end of a year
+					thisMonth = 12;
+					thisYear--;
+				}
+				else {
+					thisMonth--;
+				}
+				thisDay = days_in_month(thisMonth, thisYear);
+			}
+		}
+		
+		
+		// push todays date (actually today)
+		datesToLoad.push_back(date_as_string(thisDay, thisMonth, thisYear));
+		ofLogNotice() << i << " == " << daysOfTheWeek[weekDay - i] << datesToLoad[datesToLoad.size() - 1] << endl;
+
+
 		bIsDataLoaded = false;
-		bDay = startDay;
-		bMonth = startMonth;
-		bYear = startYear;
 
 		numTopRiders = 3;
 		riderData.topRiderInfo.resize(numTopRiders + 2); // top N + current + last
@@ -286,128 +279,79 @@ void BicycleController::threadedFunction() {
 
 				if (!bIsDataLoaded) {
 
-					bool bDone = false;
-					int nMonth = bMonth + 1;
-					int nYear = bYear;
-					if (nMonth > 11) {
-						nMonth = 0;
-						nYear = bYear + 1;
-					}
-					int nDay = 1;
-					if (nYear == endYear && bMonth == endMonth) {
-						nDay = endDay;
-					}
-					if (nYear == endYear && bMonth == endMonth && nDay == endDay) {
-						nMonth = bMonth;
-						bDone = true;
-					}
+					
 
-					int daysInMonth = days_between(bDay, bMonth, bYear, nDay, nMonth, nYear);
+					for (int i = 0; i < datesToLoad.size(); i++) {
 
-					if (daysInMonth > 0) {
+						vector<RiderInfo> todaysRiderInfo;
 
-						ofLogNotice() << "Adding rider info: " << daysInMonth << " " << bDay << " " << bMonth << " " << bYear << " " << nDay << " " << nMonth << " " << nYear << endl;
-						
-						int month = bMonth + 1;
-						int year = bYear;
-						for (int day = bDay; day < bDay + daysInMonth; day++) {
+						string date = datesToLoad[i];
 
-							vector<RiderInfo> todaysRiderInfo;
+						ofLogNotice() << "Loading day: " << date;
+						Serializer.loadClass(ofToDataPath("configs/stats/dailyRiderInfo_" + date + string(CONFIG_TYPE)), (todaysRiderInfo), ARCHIVE_BINARY);
 
-							ostringstream os;
-							os << year << "_" << std::setfill('0') << std::setw(2) << month << "_" << std::setfill('0') << std::setw(2) << day;
+						float dailyDistance = 0;
 
+						vector<int> deleteIndexes;
 
-							//for (int i = 0; i < 100; i++) {
-							//	float rTime = 1 * 60 * 1000;// ofRandom(0.5 * 60 * 1000.0f, 10 * 60 * 1000.0f);
-							//	// generate random riders
-							//	currentRider = RiderInfo();
-							//	currentRider.currentSpeed = 26.0f;// ofRandom(20, 58);
-							//	currentRider.distanceTravelled = currentRider.currentSpeed / 60.0 / 60.0 * rTime;
-							//	currentRider.day = day;
-							//	currentRider.month = month;
-							//	currentRider.year = year;
-							//	updateRiderInfo();
-							//	currentRider.time = rTime; // do this here to avoid overflow in time
-							//	todaysRiderInfo.push_back(currentRider);
-							//}
-							//Serializer.saveClass(ofToDataPath("configs/stats/dailyRiderInfo_" + os.str() + string(CONFIG_TYPE)), (todaysRiderInfo), ARCHIVE_BINARY);
-							//Serializer.saveClass(ofToDataPath(backupPath + "/dailyRiderInfo_" + os.str() + string(CONFIG_TYPE)), (todaysRiderInfo), ARCHIVE_BINARY);
-
-							ofLogNotice() << "Loading day: " << os.str();
-							Serializer.loadClass(ofToDataPath("configs/stats/dailyRiderInfo_" + os.str() + string(CONFIG_TYPE)), (todaysRiderInfo), ARCHIVE_BINARY);
-
-
-							float dailyDistance = 0;
-
-							vector<int> deleteIndexes;
-
-							for (int rider = 0; rider < todaysRiderInfo.size(); rider++) {
-								if(todaysRiderInfo[rider].topSpeed > velocityMaximum){
-									cout << todaysRiderInfo[rider].topSpeed << "  " << todaysRiderInfo[rider].distanceTravelled << " " << todaysRiderInfo[rider].time << endl;
-									deleteIndexes.push_back(rider);
-								}else{
-									dailyDistance += todaysRiderInfo[rider].distanceTravelled;
-									totalTimeTaken += todaysRiderInfo[rider].time;
-									totalDistanceTravelled += todaysRiderInfo[rider].distanceTravelled;
-									allRiderInfo.push_back(todaysRiderInfo[rider]);
-								}
+						for (int rider = 0; rider < todaysRiderInfo.size(); rider++) {
+							if (todaysRiderInfo[rider].topSpeed > velocityMaximum) {
+								cout << todaysRiderInfo[rider].topSpeed << "  " << todaysRiderInfo[rider].distanceTravelled << " " << todaysRiderInfo[rider].time << endl;
+								deleteIndexes.push_back(rider);
 							}
-							
-							for (int i = deleteIndexes.size() - 1; i >= 0; i--) {
-								todaysRiderInfo.erase(todaysRiderInfo.begin() + deleteIndexes[i]);
+							else {
+								dailyDistance += todaysRiderInfo[rider].distanceTravelled;
+								totalTimeTaken += todaysRiderInfo[rider].time;
+								totalDistanceTravelled += todaysRiderInfo[rider].distanceTravelled;
+								allRiderInfo.push_back(todaysRiderInfo[rider]);
 							}
-
-
-							totalNumberRiders += todaysRiderInfo.size();
-							totalDailyDistances.push_back(dailyDistance);
-							
-							int dayOfWeek = day_of_week(day, month, year);
-							daysOfWeek.push_back(dayOfWeek);
-							bool bUseDay = false;
-							for (int i = 0; i < daysOpen.size(); i++) {
-								if (daysOpen[i] == dayOfWeek) {
-									bUseDay = true;
-									activeDaysUsed++;
-									break;
-								}
-							}
-							daysOfWeekToUse.push_back(bUseDay);
-
-							dailyRiderInfo[os.str()] = todaysRiderInfo;
-
 						}
 
-					}
-
-					bDay = 1;
-					bMonth = nMonth;
-					bYear = nYear;
-
-					if (bDone) {
-
-						// sort todays rider info
-						vector<RiderInfo>& todaysRiderInfo = getTodaysRiderInfo();
-						std::sort(todaysRiderInfo.begin(), todaysRiderInfo.end(), RiderRankFunction);
-						std::sort(allRiderInfo.begin(), allRiderInfo.end(), RiderRankFunction);
-
-						int allranking = 0;
-						for (int i = 0; i < allRiderInfo.size(); i++) {
-							allRiderInfo[i].allranking = allranking;
-							if (i < numTopRiders) riderData.topRiderInfo[i] = allRiderInfo[i];
-							allranking++;
+						for (int i = deleteIndexes.size() - 1; i >= 0; i--) {
+							todaysRiderInfo.erase(todaysRiderInfo.begin() + deleteIndexes[i]);
 						}
 
-						if(allRiderInfo.size() > 0) riderData.topRiderInfo[riderData.topRiderInfo.size() - 1] = allRiderInfo[allRiderInfo.size() - 1];
+						vector<string> dateSplit = ofSplitString(date, "_");
+						int dayOfWeek = day_of_week(ofToInt(dateSplit[2]), ofToInt(dateSplit[1]), ofToInt(dateSplit[0]));
+						daysOfWeek.push_back(dayOfWeek);
+						bool bUseDay = false;
+						for (int i = 0; i < daysOpen.size(); i++) {
+							if (daysOpen[i] == dayOfWeek) {
+								bUseDay = true;
+								activeDaysUsed++;
+								break;
+							}
+						}
+						daysOfWeekToUse.push_back(bUseDay);
 
-						bIsDataLoaded = true;
+						totalNumberRiders += todaysRiderInfo.size();
+						totalDailyDistances.push_back(dailyDistance);
 
-						//riderSummary.data = new float[4 + totalDailyDistances.size()];
-						riderData.riderSummary.data = new float[RS_DATA_START + activeDaysUsed];
-						riderData.riderSummary.data[RS_DATA_SIZE] = RS_DATA_START + activeDaysUsed;
-						riderData.riderSummary.data[RS_NUM_DAYS] = activeDaysUsed;
+						dailyRiderInfo[date] = todaysRiderInfo;
 
 					}
+					
+					// sort todays rider info
+					vector<RiderInfo>& todaysRiderInfo = getTodaysRiderInfo();
+					std::sort(todaysRiderInfo.begin(), todaysRiderInfo.end(), RiderRankFunction);
+					std::sort(allRiderInfo.begin(), allRiderInfo.end(), RiderRankFunction);
+
+					int allranking = 0;
+					for (int i = 0; i < allRiderInfo.size(); i++) {
+						allRiderInfo[i].allranking = allranking;
+						if (i < numTopRiders) riderData.topRiderInfo[i] = allRiderInfo[i];
+						allranking++;
+					}
+
+					if (allRiderInfo.size() > 0) riderData.topRiderInfo[riderData.topRiderInfo.size() - 1] = allRiderInfo[allRiderInfo.size() - 1];
+
+					//riderSummary.data = new float[4 + totalDailyDistances.size()];
+					riderData.riderSummary.data = new float[RS_DATA_START + activeDaysUsed];
+					riderData.riderSummary.data[RS_DATA_SIZE] = RS_DATA_START + activeDaysUsed;
+					riderData.riderSummary.data[RS_NUM_DAYS] = activeDaysUsed;
+
+					bIsDataLoaded = true;
+
 				}
 			}
 
@@ -520,7 +464,7 @@ void BicycleController::threadedFunction() {
 }
 //--------------------------------------------------------------
 int BicycleController::getTodaysRiderIndex() {
-	return days_between(startDay, startMonth, startYear, ofGetDay(), ofGetMonth() - 1, ofGetYear());
+	return datesToLoad.size() - 1;// days_between(startDay, startMonth, startYear, ofGetDay(), ofGetMonth() - 1, ofGetYear());
 }
 
 //--------------------------------------------------------------
